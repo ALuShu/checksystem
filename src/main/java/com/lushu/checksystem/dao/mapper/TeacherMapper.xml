@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lushu.checksystem.dao.TeacherDao">
+
+
+    <!-- 增加目录 -->
+    <insert id="addFile" parameterType="File">
+        insert into file
+        (name, size, updateTime, type, permission, owner, status)
+        values
+        (#{name},#{size},#{updateTime},#{type},#{permission},#{owner},#{status})
+    </insert>
+
+    <!-- 更新目录,作业状态 -->
+    <update id="updateFile" parameterType="File">
+        update file
+        <set>
+            <if test="name != null and name != ''">
+                name=#{name},
+            </if>
+            <if test="updateTime != null and updateTime != ''">
+                updateTime=#{updateTime},
+            </if>
+            <if test="permission != null and permission != ''">
+                permission=#{permission},
+            </if>
+            <if test="status != null and status != ''">
+                status=#{status},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+
+    <!-- 删除目录 -->
+    <delete id="deleteFile" parameterType="BigInteger">
+        delete from file
+        where id=#{id}
+    </delete>
+
+    <!-- 更新密码 -->
+    <update id="updatePassword" parameterType="Teacher">
+        update teacher
+        set password = #{password}
+        where id=#{id}
+    </update>
+
+    <!-- 批量发布通知 -->
+    <insert id="addInform" parameterType="java.util.List">
+        insert into inform (sendId, receiveId, content)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{sendId},
+             #{receiveId},
+             #{content})
+        </foreach>
+    </insert>
+
+    <!-- 查询通知 -->
+    <select id="selectInform" parameterType="BigInteger" resultType="Inform">
+        select * from inform
+        where receiveId=#{receiveId}
+    </select>
+
+    <!-- 查询课程目录（分页）-->
+
+
+    <!-- 查询班级目录（分页）-->
+
+
+    <!-- 查询作业目录（分页）or 作业查重-->
+
+
+</mapper>

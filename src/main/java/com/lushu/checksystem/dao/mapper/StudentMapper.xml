@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lushu.checksystem.dao.StudentDao">
+
+    <!-- 教师结果集 -->
+
+
+
+
+
+    <!-- 上传作业 -->
+    <insert id="addWorkFile" parameterType="File">
+        insert into file
+        (name, size, updateTime, type, permission, owner, status)
+        values
+        (#{name},#{size},#{updateTime},#{type},#{permission},#{owner},#{status})
+    </insert>
+
+    <!-- 修改密码 -->
+    <update id="updatePassword" parameterType="Student">
+        update student
+        set password = #{password}
+        where id=#{id}
+    </update>
+
+    <!-- 查询学生作业 -->
+    <select id="selectWorkFile" parameterType="BigInteger" resultType="File">
+        select * from file
+        where owner=#{owner}
+    </select>
+
+    <!-- 查询通知 -->
+    <select id="selectInform" parameterType="BigInteger" resultType="Inform">
+        select * from inform
+        where receiveId=#{receiveId}
+    </select>
+
+    <!-- 教师列表（分页）-->
+
+
+</mapper>
