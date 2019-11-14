@@ -1,2 +1,2 @@
-# CheckSystem
-java,simHash
+# checksystem
+计算机科学与技术专业毕业设计——作业查重系统的设计与实现
