@@ -6,9 +6,20 @@ import com.lushu.checksystem.pojo.Teacher;
 import com.lushu.checksystem.service.AdminService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.io.*;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +70,32 @@ class AdminTest extends ChecksystemApplicationTests{
         c.setMajor("Web应用软件开发");
         students.add(c);
         assertEquals(3,adminService.addStudents(students));
+    }
+
+    @Test
+    void PoiTest() {
+        File file = new File("D:\\FTP\\IntelliJ IDEA\\Projects\\checksystem\\src\\main\\resources\\excel\\test.xlsx");
+        try {
+            FileInputStream in = new FileInputStream(file);
+            XSSFWorkbook workbook = new XSSFWorkbook(in);//workbook对象
+            for (int i = 0; i < workbook.getNumberOfSheets(); i++){
+                XSSFSheet sheet = workbook.getSheetAt(i);//表对象
+                for (int row = 0; row <= sheet.getLastRowNum(); row++){
+                    XSSFRow sheetRow = sheet.getRow(row);//行对象
+                    if (sheetRow != null){
+                        for (int cell = 0; cell < sheetRow.getLastCellNum(); cell++){
+                            XSSFCell xssfCell = sheetRow.getCell(cell);//纯数字过大时会成科学计数法
+                            xssfCell.setCellType(CellType.STRING);
+                            System.out.println(xssfCell.toString());
+                        }
+                    }
+                }
+            }
+
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
