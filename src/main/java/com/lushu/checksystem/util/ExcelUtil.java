@@ -54,7 +54,7 @@ public class ExcelUtil {
                 for(int headIndex = 0; headIndex < row.getLastCellNum(); headIndex++){
                     headCell = row.getCell(headIndex);
                     if (sheetHead.containsKey(headCell)){
-
+                        //写beanutil代码
                     }
                 }
             }
@@ -70,6 +70,5 @@ public class ExcelUtil {
 
     }
 
-    private static
 
 }
