@@ -36,6 +36,9 @@
     </select>
 
     <!-- 教师列表（分页）-->
+    <select id="selectTeacher" resultType="Teacher">
+        select * from teacher limit 10
+    </select>
 
 
 </mapper>

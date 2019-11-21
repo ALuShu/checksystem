@@ -67,4 +67,9 @@ public class AdminServiceImpl implements AdminService {
     public Student selectStudent(Student student) {
         return adminDao.selectStudent(student);
     }
+
+    @Override
+    public List<Student> selectStudents() {
+        return adminDao.selectStudents();
+    }
 }

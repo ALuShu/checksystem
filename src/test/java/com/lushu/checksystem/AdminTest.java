@@ -7,6 +7,8 @@ import com.lushu.checksystem.service.AdminService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.lushu.checksystem.service.StudentService;
+import com.lushu.checksystem.util.ExcelUtil;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -18,8 +20,10 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +36,8 @@ class AdminTest extends ChecksystemApplicationTests{
 
     @Autowired
     private AdminService adminService;
+    @Autowired
+    private StudentService studentService;
 
     private Student a = new Student();
     private Student b = new Student();
@@ -53,19 +59,16 @@ class AdminTest extends ChecksystemApplicationTests{
         a.setId(BigInteger.valueOf(1640706201));
         //字符过长抛org.springframework.dao.DataIntegrityViolationException
         a.setName("阿鲁叔");
-        a.setPassword("111111");
         a.setDepartment("计算机");
         a.setMajor("Web应用软件开发");
         students.add(a);
         b.setId(BigInteger.valueOf(1640706200));
         b.setName("阿鲁");
-        b.setPassword("111111");
         b.setDepartment("计算机");
         b.setMajor("Web应用软件开发");
         students.add(b);
         c.setId(BigInteger.valueOf(1640706199));
         c.setName("鲁");
-        c.setPassword("111111");
         c.setDepartment("计算机");
         c.setMajor("Web应用软件开发");
         students.add(c);
@@ -74,53 +77,56 @@ class AdminTest extends ChecksystemApplicationTests{
 
     @Test
     void PoiTest() {
-        File file = new File("D:\\FTP\\IntelliJ IDEA\\Projects\\checksystem\\src\\main\\resources\\excel\\test.xlsx");
+        String fileName = "D:\\FTP\\IntelliJ IDEA\\Projects\\checksystem\\src\\main\\resources\\excel\\test.xlsx";
+        String fileName1 = "D:\\FTP\\IntelliJ IDEA\\Projects\\checksystem\\src\\main\\resources\\excel\\testA.xls";
+        ExcelUtil<Student> excelUtil = new ExcelUtil<>(Student.class);
+        ExcelUtil<Teacher> excelUtil1 = new ExcelUtil<>(Teacher.class);
         try {
-            FileInputStream in = new FileInputStream(file);
-            XSSFWorkbook workbook = new XSSFWorkbook(in);//workbook对象
-            for (int i = 0; i < workbook.getNumberOfSheets(); i++){
-                XSSFSheet sheet = workbook.getSheetAt(i);//表对象
-                for (int row = 0; row <= sheet.getLastRowNum(); row++){
-                    XSSFRow sheetRow = sheet.getRow(row);//行对象
-                    if (sheetRow != null){
-                        for (int cell = 0; cell < sheetRow.getLastCellNum(); cell++){
-                            XSSFCell xssfCell = sheetRow.getCell(cell);//纯数字过大时会成科学计数法
-                            xssfCell.setCellType(CellType.STRING);
-                            System.out.println(xssfCell.toString());
-                        }
-                    }
-                }
+            List<Student> students = excelUtil.explain(fileName);
+            List<Teacher> teachers = excelUtil1.explain(fileName1);
+            for(Student s : students){
+                System.out.println(s.toString());
             }
-
-            in.close();
+            for(Teacher s : teachers){
+                System.out.println(s.toString());
+            }
+            assertEquals(students.size(), adminService.addStudents(students));
+            assertEquals(teachers.size(), adminService.addTeachers(teachers));
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
     }
 
     @Test
     void deleteStudentsTest(){
-        integerList.add(BigInteger.valueOf(1640706201));
-        integerList.add(BigInteger.valueOf(1640706200));
-        integerList.add(BigInteger.valueOf(1640706199));
-        assertEquals(3,adminService.deleteStudents(integerList));
+        students = adminService.selectStudents();
+        for (Student s : students){
+            System.out.println(s.toString());
+        }
+        for (int i = 0;i<students.size(); i++){
+            integerList.add(students.get(i).getId());
+        }
+        assertEquals(students.size(),adminService.deleteStudents(integerList));
     }
 
     @Test
     void addTeachersTest(){
         ta.setId(BigInteger.valueOf(8080));
         ta.setName("小刘");
-        ta.setPassword("000000");
         ta.setDepartment("计算机");
         teachers.add(ta);
         tb.setId(BigInteger.valueOf(9090));
         tb.setName("小红");
-        tb.setPassword("000000");
         tb.setDepartment("计算机");
         teachers.add(tb);
         tc.setId(BigInteger.valueOf(6060));
         tc.setName("小王");
-        tc.setPassword("000000");
         tc.setDepartment("计算机");
         teachers.add(tc);
         assertEquals(3, adminService.addTeachers(teachers));
@@ -128,10 +134,14 @@ class AdminTest extends ChecksystemApplicationTests{
 
     @Test
     void deleteTeachersTest(){
-        integerList.add(BigInteger.valueOf(8080));
-        integerList.add(BigInteger.valueOf(9090));
-        integerList.add(BigInteger.valueOf(6060));
-        assertEquals(3,adminService.deleteTeachers(integerList));
+        teachers = studentService.selectTeacher();
+        for(Teacher t:teachers){
+            System.out.println(t.toString());
+        }
+        for (int i=0; i<teachers.size();i++){
+            integerList.add(teachers.get(i).getId());
+        }
+        assertEquals(teachers.size(),adminService.deleteTeachers(integerList));
     }
 
     @Test
@@ -183,11 +193,4 @@ class AdminTest extends ChecksystemApplicationTests{
         assertEquals(3, adminService.addInforms(informs));
     }
 
-    @Test
-    void selectTeacherTest(){
-    }
-
-    @Test
-    void selectStudentTest(){
-    }
 }

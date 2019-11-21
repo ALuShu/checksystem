@@ -9,7 +9,7 @@
         <foreach collection="list" item="item" separator=",">
             (#{item.id},
             #{item.name},
-            #{item.password},
+            111111,
             #{item.department},
             #{item.major})
         </foreach>
@@ -30,7 +30,7 @@
         <foreach collection="list" item="item" separator=",">
             (#{item.id},
             #{item.name},
-            #{item.password},
+            111111,
             #{item.department})
         </foreach>
     </insert>
@@ -128,5 +128,10 @@
         <if test="major!=null and major!=''">
             and major=#{major}
         </if>
+    </select>
+
+    <!-- 查询前10个学生 -->
+    <select id="selectStudents" resultType="Student">
+        select * from student limit 10
     </select>
 </mapper>

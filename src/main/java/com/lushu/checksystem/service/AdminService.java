@@ -22,4 +22,10 @@ public interface AdminService {
     int addInforms(List<Inform> informs);
     Teacher selectTeacher(Teacher teacher);
     Student selectStudent(Student student);
+
+    /**
+     * 查询前10个学生的信息
+     * @return a list of 10 students
+     */
+    List<Student> selectStudents();
 }

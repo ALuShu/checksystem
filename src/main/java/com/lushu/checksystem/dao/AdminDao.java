@@ -79,4 +79,10 @@ public interface AdminDao {
      * @return a Object of Student
      */
     Student selectStudent(Student student);
+
+    /**
+     * 查询前10个学生
+     * @return a list of 10 students
+     */
+    List<Student> selectStudents();
 }
