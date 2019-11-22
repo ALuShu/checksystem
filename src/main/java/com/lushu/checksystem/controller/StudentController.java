@@ -1,6 +1,7 @@
 package com.lushu.checksystem.controller;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * @author lushu
@@ -8,4 +9,9 @@ import org.springframework.stereotype.Controller;
  **/
 @Controller
 public class StudentController {
+
+    @RequestMapping("/say")
+    public String sayHello(){
+        return "sayhello";
+    }
 }
