@@ -14,4 +14,9 @@ public class StudentController {
     public String sayHello(){
         return "sayhello";
     }
+
+    @RequestMapping("/index")
+    public String stuIndex(){
+        return "index";
+    }
 }

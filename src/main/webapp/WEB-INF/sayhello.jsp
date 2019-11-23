@@ -7,8 +7,10 @@
 <html>
 <head>
     <title>hello</title>
+    <link rel="stylesheet" href="../layui/css/layui.css">
 </head>
 <body>
-Hello World!
+<i class="layui-icon layui-icon-face-smile" style="font-size: 50px; color: #1E9FFF;"></i>
+<button type="button" class="layui-btn layui-btn-lg layui-btn-normal">Hello World!</button>
 </body>
 </html>
