@@ -24,7 +24,7 @@ public class StudentController {
         return modelAndView;
     }
 
-    @RequestMapping("/index")
+    @RequestMapping("/student")
     public ModelAndView studentIndex(ModelAndView modelAndView){
         modelAndView.setViewName("/index");
         return modelAndView;
@@ -37,7 +37,7 @@ public class StudentController {
         return modelAndView;
     }
 
-    @RequestMapping("/private")
+    @RequestMapping("/personal")
     public ModelAndView personal(ModelAndView modelAndView){
         modelAndView.setViewName("/private");
         return modelAndView;

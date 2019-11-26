@@ -17,7 +17,7 @@ public class TeacherController {
         this.teacherService = teacherService;
     }
 
-    @RequestMapping("/index")
+    @RequestMapping("/teacher")
     public ModelAndView teacherIndex(ModelAndView modelAndView){
         modelAndView.setViewName("/teacherindex");
         return modelAndView;
