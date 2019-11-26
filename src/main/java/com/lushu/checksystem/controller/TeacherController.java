@@ -19,13 +19,13 @@ public class TeacherController {
 
     @RequestMapping("/index")
     public ModelAndView teacherIndex(ModelAndView modelAndView){
-
+        modelAndView.setViewName("/teacherindex");
         return modelAndView;
     }
 
     @RequestMapping("/private")
     public ModelAndView personal(ModelAndView modelAndView){
-
+        modelAndView.setViewName("/teacherprivate");
         return modelAndView;
     }
 

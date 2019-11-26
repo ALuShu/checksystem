@@ -33,13 +33,13 @@ public class StudentController {
 
     @RequestMapping("/upload")
     public ModelAndView uploadJob(ModelAndView modelAndView){
-
+        modelAndView.setViewName("/upload");
         return modelAndView;
     }
 
     @RequestMapping("/private")
     public ModelAndView personal(ModelAndView modelAndView){
-
+        modelAndView.setViewName("/private");
         return modelAndView;
     }
 }
