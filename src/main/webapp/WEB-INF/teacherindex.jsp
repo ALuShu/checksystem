@@ -25,6 +25,69 @@
             <li class="layui-nav-item"><a href="" style="color: #393D49">退了</a></li>
         </ul>
     </div>
+
+    <div class="layui-bg-green">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px; width: 80%; margin: auto">
+            <div class="layui-row layui-col-space5 layui-bg-gray">
+                <div class="layui-col-md12">
+                    <div class="layui-row grid-demo">
+
+                        <%-- 路径 --%>
+                        <div class="layui-col-md12 layui-form-item">
+                            <label class="layui-form-label">单行输入框</label>
+                        </div>
+
+                        <%-- 搜索框 --%>
+                        <div class="layui-col-md12" style="background: #00FF00; padding-top: 15px; padding-left: 20px">
+                            <div>
+                                <button type="button" class="layui-btn layui-btn-primary layui-btn-radius">原始按钮</button>
+                                <button type="button" class="layui-btn layui-btn-radius">默认按钮</button>
+                                <button type="button" class="layui-btn layui-btn-normal layui-btn-radius">百搭按钮</button>
+                                <button type="button" class="layui-btn layui-btn-warm layui-btn-radius">暖色按钮</button>
+                                <button type="button" class="layui-btn layui-btn-disabled layui-btn-radius">禁用按钮</button>
+                            </div>
+                        </div>
+
+                        <%-- 列表 --%>
+                        <div class="layui-col-md12" style="background: #1E9FFF">
+                            <div class="layui-btn-group demoTable" style="margin-bottom: 10px;">
+                                <button class="layui-btn" data-type="parseTable">立即转化为数据表格</button>
+                            </div>
+                            <table lay-filter="parse-table-demo">
+                                <thead>
+                                <tr>
+                                    <th lay-data="{field:'username', width:200}">昵称</th>
+                                    <th lay-data="{field:'joinTime', width:150}">加入时间</th>
+                                    <th lay-data="{field:'sign', minWidth: 180}">签名</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>贤心1</td>
+                                    <td>2016-11-28</td>
+                                    <td>人生就像是一场修行 A</td>
+                                </tr>
+                                <tr>
+                                    <td>贤心2</td>
+                                    <td>2016-11-29</td>
+                                    <td>人生就像是一场修行 B</td>
+                                </tr>
+                                <tr>
+                                    <td>贤心3</td>
+                                    <td>2016-11-30</td>
+                                    <td>人生就像是一场修行 C</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 <script src="../layui/layui.js"></script>
 <script>

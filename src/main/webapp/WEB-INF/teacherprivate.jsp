@@ -25,6 +25,131 @@
             <li class="layui-nav-item"><a href="" style="color: #393D49">退了</a></li>
         </ul>
     </div>
+
+    <div class="layui-bg-green">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px; width: 80%; margin: auto">
+            <div class="layui-row layui-col-space5 layui-bg-gray">
+                <div class="layui-col-md12">
+                    <div class="layui-row grid-demo">
+
+                        <%-- 搜索框 --%>
+                        <div class="layui-col-md12" style="background: #00FF00; padding-top: 15px; padding-left: 20px">
+                            <form class="layui-form" action="">
+                                <div class="layui-form-item">
+                                    <div class="layui-input-inline">
+                                        <select name="modules" lay-verify="required" lay-search="">
+                                            <option value="">选择系别</option>
+                                            <option value="1">计算机系</option>
+                                            <option value="2">软件系</option>
+                                            <option value="3">外语系</option>
+                                            <option value="4">国贸系</option>
+                                            <option value="5">市场营销系</option>
+                                            <option value="6">电子系</option>
+                                            <option value="7">数码媒体系</option>
+                                            <option value="8">游戏系</option>
+                                            <option value="9">flow</option>
+                                            <option value="10">util</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="layui-input-inline">
+                                        <select name="modules" lay-verify="required" lay-search="">
+                                            <option value="">选择系别</option>
+                                            <option value="1">计算机系</option>
+                                            <option value="2">软件系</option>
+                                            <option value="3">外语系</option>
+                                            <option value="4">国贸系</option>
+                                            <option value="5">市场营销系</option>
+                                            <option value="6">电子系</option>
+                                            <option value="7">数码媒体系</option>
+                                            <option value="8">游戏系</option>
+                                            <option value="9">flow</option>
+                                            <option value="10">util</option>
+                                        </select>
+                                    </div>
+                                    <div class="layui-input-inline" style="width: 30%">
+                                        <input type="text" name="title" lay-verify="title" autocomplete="off"
+                                               placeholder="输入教师姓名" class="layui-input">
+                                    </div>
+                                    <div class="layui-input-inline">
+                                        <button type="submit" class="layui-btn layui-btn-warm" lay-submit="" lay-filter="demo1">搜索</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <%-- 列表 --%>
+                        <div class="layui-col-md9" style="background: #1E9FFF">
+                            <div class="layui-btn-group demoTable" style="margin-bottom: 10px;">
+                                <button class="layui-btn" data-type="parseTable">立即转化为数据表格</button>
+                            </div>
+                            <table lay-filter="parse-table-demo">
+                                <thead>
+                                <tr>
+                                    <th lay-data="{field:'username', width:200}">昵称</th>
+                                    <th lay-data="{field:'joinTime', width:150}">加入时间</th>
+                                    <th lay-data="{field:'sign', minWidth: 180}">签名</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr>
+                                    <td>贤心1</td>
+                                    <td>2016-11-28</td>
+                                    <td>人生就像是一场修行 A</td>
+                                </tr>
+                                <tr>
+                                    <td>贤心2</td>
+                                    <td>2016-11-29</td>
+                                    <td>人生就像是一场修行 B</td>
+                                </tr>
+                                <tr>
+                                    <td>贤心3</td>
+                                    <td>2016-11-30</td>
+                                    <td>人生就像是一场修行 C</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="layui-col-md3 layui-row grid-demo">
+                            <%-- 右侧教师 --%>
+                            <div class="layui-col-md12" style="background: #8D8D8D">
+                                <table lay-filter="parse-table-demo">
+                                    <thead>
+                                    <tr>
+                                        <th lay-data="{field:'username', width:200}">昵称</th>
+                                        <th lay-data="{field:'joinTime', width:150}">加入时间</th>
+                                        <th lay-data="{field:'sign', minWidth: 180}">签名</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>贤心1</td>
+                                        <td>2016-11-28</td>
+                                        <td>人生就像是一场修行 A</td>
+                                    </tr>
+                                    <tr>
+                                        <td>贤心2</td>
+                                        <td>2016-11-29</td>
+                                        <td>人生就像是一场修行 B</td>
+                                    </tr>
+                                    <tr>
+                                        <td>贤心3</td>
+                                        <td>2016-11-30</td>
+                                        <td>人生就像是一场修行 C</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 <script src="../layui/layui.js"></script>
 <script>
