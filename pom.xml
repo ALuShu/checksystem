@@ -45,6 +45,14 @@
             <version>1.2</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.xzixi.algorithm/simhash-common -->
+        <dependency>
+            <groupId>com.xzixi.algorithm</groupId>
+            <artifactId>simhash-common</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+
+
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
