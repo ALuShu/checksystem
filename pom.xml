@@ -51,6 +51,18 @@
             <artifactId>simhash-common</artifactId>
             <version>1.1.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.xzixi.algorithm/simhash-core -->
+        <dependency>
+            <groupId>com.xzixi.algorithm</groupId>
+            <artifactId>simhash-core</artifactId>
+            <version>1.1.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.xzixi.algorithm/simhash-analyzer -->
+        <dependency>
+            <groupId>com.xzixi.algorithm</groupId>
+            <artifactId>simhash-analyzer</artifactId>
+            <version>1.1.0</version>
+        </dependency>
 
 
         <dependency>
