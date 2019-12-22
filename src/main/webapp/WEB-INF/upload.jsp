@@ -51,6 +51,10 @@
                                     </div>
                                 </div>
                             </form>
+                            <form method="post" action="/upload" enctype="multipart/form-data">
+                                <input type="file" name="file"><br>
+                                <input type="submit" value="提交">
+                            </form>
                         </div>
 
                         <%-- 列表 --%>

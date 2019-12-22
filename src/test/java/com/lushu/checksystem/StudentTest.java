@@ -29,7 +29,7 @@ class StudentTest extends ChecksystemApplicationTests {
     private StudentService studentService;
 
     @Test
-    void addWorkFileTest(){
+    void simHashTest1(){
         KeywordsExtractor keywordsExtractor = new JcsegKeywordsExtractor();
         HashGenerator hashGenerator = new FVNHashGenerator();
         SimHasher simHasher = new SimHasher(keywordsExtractor, hashGenerator);
@@ -39,22 +39,7 @@ class StudentTest extends ChecksystemApplicationTests {
     }
 
     @Test
-    void updatePasswordTest(){
-
+    void simHashTest2(){
     }
 
-    @Test
-    void selectWorkFileTest(){
-
-    }
-
-    @Test
-    void selectInformTest(){
-
-    }
-
-    @Test
-    void selectTeacherTest(){
-
-    }
 }
