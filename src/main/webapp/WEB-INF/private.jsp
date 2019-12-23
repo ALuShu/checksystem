@@ -7,6 +7,8 @@
 <html>
 <head>
     <title>个人主页</title>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+
 </head>
 <body>
 <div class="layui-layout layui-layout-admin">

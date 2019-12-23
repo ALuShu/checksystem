@@ -7,6 +7,8 @@
 <html>
 <head>
     <title>系统后台页面</title>
+    <link rel="stylesheet" href="../layui/css/layui.css">
+
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
