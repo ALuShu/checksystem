@@ -34,61 +34,30 @@
                 <div class="layui-col-md12">
                     <div class="layui-row grid-demo">
 
-                        <%-- 路径 --%>
-                        <div class="layui-col-md12 layui-form-item">
-                            <label class="layui-form-label">单行输入框</label>
-                        </div>
-
-                        <%-- 搜索框 --%>
-                        <div class="layui-col-md12" style="background: #00FF00; padding-top: 15px; padding-left: 20px">
-                            <form class="layui-form" action="">
-                                <div class="layui-form-item">
-                                    <div class="layui-input-inline" style="width: 66%">
-                                        <input type="text" name="title" lay-verify="title" autocomplete="off"
-                                               placeholder="输入教师姓名" class="layui-input">
-                                    </div>
-                                    <div class="layui-input-inline">
-                                        <button type="submit" class="layui-btn layui-btn-warm" lay-submit="" lay-filter="demo1">搜索</button>
-                                    </div>
-                                </div>
-                            </form>
-                            <form method="post" action="/upload" enctype="multipart/form-data">
-                                <input type="file" name="file"><br>
-                                <input type="submit" value="提交">
-                            </form>
+                        <%-- 面包屑导航 --%>
+                        <div class="layui-col-md12 layui-form-item" style="padding-left: 20px">
+                            <span id="view" class="layui-breadcrumb" lay-filter="breaddemo">
+                                <script id="bread" type="text/html">
+                                    {{# layui.each(d.bread, function (i, e) { }}
+                                    <a href="javascript:;" onclick="breadOn('{{e.name}}');" style="font-size: 20px">{{ e.name }}</a>
+                                    <span lay-separator>/</span>
+                                    {{# }); }}
+                                </script>
+                            </span>
                         </div>
 
                         <%-- 列表 --%>
-                        <div class="layui-col-md12" style="background: #1E9FFF">
-                            <div class="layui-btn-group demoTable" style="margin-bottom: 10px;">
-                                <button class="layui-btn" data-type="parseTable">立即转化为数据表格</button>
+                        <div class="layui-col-md9" style="background: #1E9FFF; padding-left: 20px">
+                            <%-- 数据表格 --%>
+                            <table id="test" class="layui-table" lay-filter="test"></table>
+                        </div>
+
+                        <%-- 上传区域 --%>
+                        <div class="layui-col-md3 layui-row grid-demo">
+                            <div class="layui-upload-drag" id="test10">
+                                <i class="layui-icon"></i>
+                                <p>点击上传，或将文件拖拽到此处</p>
                             </div>
-                            <table lay-filter="parse-table-demo">
-                                <thead>
-                                <tr>
-                                    <th lay-data="{field:'username', width:200}">昵称</th>
-                                    <th lay-data="{field:'joinTime', width:150}">加入时间</th>
-                                    <th lay-data="{field:'sign', minWidth: 180}">签名</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>贤心1</td>
-                                    <td>2016-11-28</td>
-                                    <td>人生就像是一场修行 A</td>
-                                </tr>
-                                <tr>
-                                    <td>贤心2</td>
-                                    <td>2016-11-29</td>
-                                    <td>人生就像是一场修行 B</td>
-                                </tr>
-                                <tr>
-                                    <td>贤心3</td>
-                                    <td>2016-11-30</td>
-                                    <td>人生就像是一场修行 C</td>
-                                </tr>
-                                </tbody>
-                            </table>
                         </div>
 
                     </div>
@@ -100,34 +69,122 @@
 </div>
 <script src="../layui/layui.js"></script>
 <script>
-    layui.use(['form','table'], function () {
-        var form = layui.form
-            ,table = layui.table;
+    var url = '${pageContext.request.contextPath}/list';
+    var path = [];
+    var breadArray = [];
+    var j = {"name": "root"};
+    breadArray.push(j);
+    var breadData = {
+        "bread": breadArray
+    };
+    var getTpl = bread.innerHTML
+        , view = document.getElementById('view');
 
-        var $ = layui.$, active = {
-            parseTable: function(){
-                table.init('parse-table-demo', { //转化静态表格
-                    //height: 'full-500'
-                });
+
+    //layui官方方法
+    layui.use(['table', 'tree', 'util', 'element', 'laytpl'], function () {
+        var table = layui.table
+            , layer = layui.layer
+            , element = layui.element
+            , laytpl = layui.laytpl;
+
+
+        //layui数据表格
+        table.render({
+            elem: '#test'
+            , url: url
+            , height: 400
+            , width: 760
+            , cols: [[
+                {type: 'checkbox', fixed: 'left'}
+                , {field: 'name', title: '文件名', width: 300, sort: true, style: 'cursor: pointer;', event: 'setSign'}
+                , {field: 'date', title: '修改日期', width: 150, sort: true}
+                , {field: 'size', title: '文件大小', width: 120, sort: true}
+                , {field: 'type', title: '文件类型', width: 120}
+            ]]
+            , limit: 15
+        });
+
+
+        //layui表格点击文件事件
+        table.on('tool(test)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'setSign') {
+                if (data.type === 'file') {
+                    layer.alert("暂不支持打开文件");
+                } else {
+                    path.push(data.name);
+                    var j = {};
+                    j.name = path[path.length - 1];
+                    breadArray.push(j);
+                    breadData = {
+                        "bread": breadArray
+                    };
+                    laytpl(getTpl).render(breadData, function (html) {
+                        view.innerHTML = html;
+                    });
+
+                    table.reload('test', {
+                        where: { //设定异步数据接口的额外参数，任意设
+                            path: ('/' + path.join('/') + '/' + this.name).replace(/\/\//, '/')
+                        }
+                    });
+                }
             }
+        });
+
+        //监听面包屑导航点击
+        window.breadOn = function (breadName) {
+            breadArray = [];
+            var j = {"name": "root"};
+            breadArray.push(j);
+            if (breadName === 'root') {
+                path = [];
+            } else {
+                var i = path.indexOf(breadName);
+                if (i === 0) {
+                    path = [breadName];
+                    j = {};
+                    j.name = path[0];
+                    breadArray.push(j);
+                } else {
+                    path = path.slice(0, i + 1);
+                    for (var x = 0; x < i + 1; x++) {
+                        j = {};
+                        j.name = path[x];
+                        breadArray.push(j);
+                    }
+                }
+            }
+            breadData = {
+                "bread": breadArray
+            };
+            laytpl(getTpl).render(breadData, function (html) {
+                view.innerHTML = html;
+            });
+
+            table.reload('test', {
+                where: { //设定异步数据接口的额外参数，任意设
+                    path: ('/' + path.join('/') + '/' + this.name).replace(/\/\//, '/')
+                }
+            });
         };
 
-        $('.demoTable .layui-btn').on('click', function(){
-            var type = $(this).data('type');
-            active[type] ? active[type].call(this) : '';
+        //拖拽上传
+        upload.render({
+            elem: '#test10'
+            ,url: 'javascript:;'
+            ,done: function(res){
+                console.log(res)
+            }
         });
 
-        //监听提交
-        form.on('submit(demo1)', function(data){
-            layer.alert(JSON.stringify(data.field), {
-                title: '最终的提交信息'
-            })
-            return false;
+        //初始化面包屑导航
+        laytpl(getTpl).render(breadData, function (html) {
+            view.innerHTML = html;
         });
 
-        //但是，如果你的HTML是动态生成的，自动渲染就会失效
-        //因此你需要在相应的地方，执行下述方法来进行渲染
-        form.render();
+
     });
 
 
