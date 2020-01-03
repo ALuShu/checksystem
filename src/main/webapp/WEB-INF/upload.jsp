@@ -38,6 +38,7 @@
                         <div class="layui-col-md12 layui-form-item" style="padding-left: 20px">
                             <span id="view" class="layui-breadcrumb" lay-filter="breaddemo">
                                 <script id="bread" type="text/html">
+                                    {{# console.log(d);}}
                                     {{# layui.each(d.bread, function (i, e) { }}
                                     <a href="javascript:;" onclick="breadOn('{{e.name}}');" style="font-size: 20px">{{ e.name }}</a>
                                     <span lay-separator>/</span>
@@ -47,7 +48,7 @@
                         </div>
 
                         <%-- 列表 --%>
-                        <div class="layui-col-md9" style="background: #1E9FFF; padding-left: 20px">
+                        <div class="layui-col-md9" style=" padding-left: 20px">
                             <%-- 数据表格 --%>
                             <table id="test" class="layui-table" lay-filter="test"></table>
                         </div>
@@ -82,8 +83,9 @@
 
 
     //layui官方方法
-    layui.use(['table', 'tree', 'util', 'element', 'laytpl'], function () {
+    layui.use(['table', 'tree', 'util', 'element', 'laytpl','upload'], function () {
         var table = layui.table
+            , upload = layui.upload
             , layer = layui.layer
             , element = layui.element
             , laytpl = layui.laytpl;
@@ -93,11 +95,11 @@
         table.render({
             elem: '#test'
             , url: url
-            , height: 400
-            , width: 760
+            , height: 570
+            , width: 890
             , cols: [[
                 {type: 'checkbox', fixed: 'left'}
-                , {field: 'name', title: '文件名', width: 300, sort: true, style: 'cursor: pointer;', event: 'setSign'}
+                , {field: 'name', title: '文件名', width: 430, sort: true, style: 'cursor: pointer;', event: 'setSign'}
                 , {field: 'date', title: '修改日期', width: 150, sort: true}
                 , {field: 'size', title: '文件大小', width: 120, sort: true}
                 , {field: 'type', title: '文件类型', width: 120}

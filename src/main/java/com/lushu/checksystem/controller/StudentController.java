@@ -27,7 +27,7 @@ import java.util.*;
 @Controller
 public class StudentController {
 
-    @Value("${root}")
+    @Value("${checksystem.root}")
     private String root;
 
     private StudentService studentService;
