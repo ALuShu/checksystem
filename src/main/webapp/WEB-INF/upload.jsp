@@ -95,11 +95,11 @@
         table.render({
             elem: '#test'
             , url: url
-            , height: 570
-            , width: 890
+            , height: 400
+            , width: 800
             , cols: [[
                 {type: 'checkbox', fixed: 'left'}
-                , {field: 'name', title: '文件名', width: 430, sort: true, style: 'cursor: pointer;', event: 'setSign'}
+                , {field: 'name', title: '文件名', width: 340, sort: true, style: 'cursor: pointer;', event: 'setSign'}
                 , {field: 'date', title: '修改日期', width: 150, sort: true}
                 , {field: 'size', title: '文件大小', width: 120, sort: true}
                 , {field: 'type', title: '文件类型', width: 120}

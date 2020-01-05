@@ -4,19 +4,18 @@ import com.lushu.checksystem.pojo.Inform;
 import com.lushu.checksystem.pojo.Student;
 import com.lushu.checksystem.pojo.Teacher;
 import com.lushu.checksystem.service.AdminService;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import com.lushu.checksystem.service.StudentService;
 import com.lushu.checksystem.util.ExcelUtil;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.*;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author lushu
@@ -82,13 +81,7 @@ class AdminTest extends ChecksystemApplicationTests{
             }
             assertEquals(students.size(), adminService.addStudents(students));
             assertEquals(teachers.size(), adminService.addTeachers(teachers));
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (IOException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
         }
     }
