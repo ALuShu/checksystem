@@ -13,6 +13,7 @@ import java.util.List;
  **/
 
 public interface TeacherService {
+    Teacher selTeacher(Teacher teacher);
     int addFile(File file);
     int updateFile(File file);
     int deleteFile(BigInteger id);

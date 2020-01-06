@@ -16,6 +16,12 @@ import java.util.List;
 @Repository
 @Mapper
 public interface TeacherDao {
+    /**
+     * 登录检查
+     * @param teacher a param of Teacher
+     * @return the correct Teacher
+     */
+    Teacher selTeacher(Teacher teacher);
 
     /**
      * 增加目录

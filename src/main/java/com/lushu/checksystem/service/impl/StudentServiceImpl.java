@@ -6,7 +6,6 @@ import com.lushu.checksystem.pojo.Inform;
 import com.lushu.checksystem.pojo.Student;
 import com.lushu.checksystem.pojo.Teacher;
 import com.lushu.checksystem.service.StudentService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -22,6 +21,11 @@ public class StudentServiceImpl implements StudentService {
     private StudentDao studentDao;
     public StudentServiceImpl(StudentDao studentDao) {
         this.studentDao = studentDao;
+    }
+
+    @Override
+    public Student selStudent(Student student) {
+        return studentDao.selStudent(student);
     }
 
     @Override

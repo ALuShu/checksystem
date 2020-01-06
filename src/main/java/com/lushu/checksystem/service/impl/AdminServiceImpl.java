@@ -1,11 +1,11 @@
 package com.lushu.checksystem.service.impl;
 
 import com.lushu.checksystem.dao.AdminDao;
+import com.lushu.checksystem.pojo.Admin;
 import com.lushu.checksystem.pojo.Inform;
 import com.lushu.checksystem.pojo.Student;
 import com.lushu.checksystem.pojo.Teacher;
 import com.lushu.checksystem.service.AdminService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -21,6 +21,11 @@ public class AdminServiceImpl implements AdminService {
     private AdminDao adminDao;
     public AdminServiceImpl(AdminDao adminDao) {
         this.adminDao = adminDao;
+    }
+
+    @Override
+    public Admin selAdmin(Admin admin) {
+        return adminDao.selAdmin(admin);
     }
 
     @Override

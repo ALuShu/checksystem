@@ -14,6 +14,7 @@ import java.util.List;
  **/
 
 public interface StudentService {
+    Student selStudent(Student student);
     int addWorkFile(File file);
     int updatePassword(Student student);
     List<File> selectWorkFile(BigInteger owner);

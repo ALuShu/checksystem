@@ -5,7 +5,6 @@ import com.lushu.checksystem.pojo.File;
 import com.lushu.checksystem.pojo.Inform;
 import com.lushu.checksystem.pojo.Teacher;
 import com.lushu.checksystem.service.TeacherService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
@@ -26,6 +25,10 @@ public class TeacherServiceImpl implements TeacherService {
         this.teacherDao = teacherDao;
     }
 
+    @Override
+    public Teacher selTeacher(Teacher teacher) {
+        return teacherDao.selTeacher(teacher);
+    }
 
     @Override
     public int addFile(File file) {

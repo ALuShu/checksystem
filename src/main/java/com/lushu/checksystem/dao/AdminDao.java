@@ -1,5 +1,6 @@
 package com.lushu.checksystem.dao;
 
+import com.lushu.checksystem.pojo.Admin;
 import com.lushu.checksystem.pojo.Inform;
 import com.lushu.checksystem.pojo.Student;
 import com.lushu.checksystem.pojo.Teacher;
@@ -17,6 +18,13 @@ import java.util.List;
 @Repository
 @Mapper
 public interface AdminDao {
+    /**
+     * 管理员身份检查，有且只有一个
+     * @param admin a param of admin
+     * @return the only administrator
+     */
+    Admin selAdmin(Admin admin);
+
     /**
      * 批量导入学生信息
      * @param list a param of List

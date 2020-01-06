@@ -3,18 +3,20 @@ package com.lushu.checksystem.pojo;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigInteger;
+import java.util.Date;
 
 @Data
 public class File implements Serializable {
 
-  private Long id;
+  private BigInteger id;
   private String name;
-  private Double size;
-  private java.sql.Timestamp updateTime;
-  private Long type;
+  private Float size;
+  private Date updateTime;
+  private Integer type;
   private String permission;
-  private Long owner;
-  private Long status;
+  private BigInteger owner;
+  private Integer status;
 
 
 }

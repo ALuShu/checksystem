@@ -18,6 +18,13 @@ import java.util.List;
 @Mapper
 public interface StudentDao {
     /**
+     * 登录检查
+     * @param student a param of Student
+     * @return the correct Student
+     */
+    Student selStudent(Student student);
+
+    /**
      * 上传作业
      * @param file a param of File
      * @return the rows of influenced

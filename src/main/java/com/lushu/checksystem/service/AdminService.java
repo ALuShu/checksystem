@@ -1,5 +1,6 @@
 package com.lushu.checksystem.service;
 
+import com.lushu.checksystem.pojo.Admin;
 import com.lushu.checksystem.pojo.Inform;
 import com.lushu.checksystem.pojo.Student;
 import com.lushu.checksystem.pojo.Teacher;
@@ -13,6 +14,7 @@ import java.util.List;
  **/
 
 public interface AdminService {
+    Admin selAdmin(Admin admin);
     int addStudents(List<Student> students);
     int deleteStudents(List<BigInteger> list);
     int addTeachers(List<Teacher> teachers);
