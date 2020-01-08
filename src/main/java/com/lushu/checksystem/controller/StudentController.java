@@ -36,14 +36,6 @@ public class StudentController {
     }
 
 
-
-    @RequestMapping("/say")
-    public ModelAndView sayHello(ModelAndView modelAndView){
-        modelAndView.setViewName("/sayhello");
-        modelAndView.addObject("msg","controller测试");
-        return modelAndView;
-    }
-
     @RequestMapping("/student")
     public ModelAndView studentIndex(ModelAndView modelAndView){
         modelAndView.setViewName("/index");

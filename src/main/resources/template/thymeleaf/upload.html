@@ -1,11 +1,7 @@
-<%--
-  User: lushu
-  Date: 2019/11/26
-  Time: 10:22
---%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <title>提交作业</title>
     <link rel="stylesheet" href="../layui/css/layui.css">
 </head>
@@ -34,7 +30,7 @@
                 <div class="layui-col-md12">
                     <div class="layui-row grid-demo">
 
-                        <%-- 面包屑导航 --%>
+                        <!-- 面包屑导航 -->
                         <div class="layui-col-md12 layui-form-item" style="padding-left: 20px">
                             <span id="view" class="layui-breadcrumb" lay-filter="breaddemo">
                                 <script id="bread" type="text/html">
@@ -47,13 +43,13 @@
                             </span>
                         </div>
 
-                        <%-- 列表 --%>
+                        <!-- 列表 -->
                         <div class="layui-col-md9" style=" padding-left: 20px">
-                            <%-- 数据表格 --%>
+                            <!-- 数据表格 -->
                             <table id="test" class="layui-table" lay-filter="test"></table>
                         </div>
 
-                        <%-- 上传区域 --%>
+                        <!-- 上传区域 -->
                         <div class="layui-col-md3 layui-row grid-demo">
                             <div class="layui-upload-drag" id="test10">
                                 <i class="layui-icon"></i>
@@ -69,8 +65,8 @@
 
 </div>
 <script src="../layui/layui.js"></script>
-<script>
-    var url = '${pageContext.request.contextPath}/list';
+<script th:inline="none">
+    var url = 'http://localhost:8088/list';
     var path = [];
     var breadArray = [];
     var j = {"name": "root"};
