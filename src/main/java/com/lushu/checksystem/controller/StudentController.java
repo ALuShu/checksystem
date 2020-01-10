@@ -1,6 +1,7 @@
 package com.lushu.checksystem.controller;
 
-import com.lushu.checksystem.service.StudentService;
+import com.lushu.checksystem.service.FileService;
+import com.lushu.checksystem.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.stereotype.Controller;
@@ -30,11 +31,14 @@ public class StudentController {
     @Value("${checksystem.root}")
     private String root;
 
-    private StudentService studentService;
-    public void setStudentService(StudentService studentService) {
-        this.studentService = studentService;
+    private UserService userService;
+    private FileService fileService;
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
-
+    public void setFileService(FileService fileService) {
+        this.fileService = fileService;
+    }
 
     @RequestMapping("/student")
     public ModelAndView studentIndex(ModelAndView modelAndView){

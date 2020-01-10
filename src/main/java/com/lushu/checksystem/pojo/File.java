@@ -9,9 +9,9 @@ import java.util.Date;
 @Data
 public class File implements Serializable {
 
-  private BigInteger id;
+  private Integer id;
   private String name;
-  private Float size;
+  private BigInteger size;
   private Date updateTime;
   private Integer type;
   private String permission;

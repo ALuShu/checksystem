@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.lushu.checksystem.dao.FileDao">
+
+    <!-- selectWorkFile：查询学生作业；return：List<File> -->
+    <!--<select id="selectWorkFile" parameterType="Integer" resultType="File">
+        select *
+        from sys_file
+        where owner = #{owner}
+    </select>-->
+
+    <!-- selectDirFile：查询目录,分页；return：List<File> -->
+
+
+    <!-- addWorkFile：上传作业；return：int -->
+    <insert id="addWorkFile" parameterType="File">
+        insert into sys_file (name, size, update_time, type, permission, owner, status)
+        values (#{name}, #{size}, #{updateTime}, 1, #{permission}, #{owner}, #{status})
+    </insert>
+
+    <!-- addFile：增加目录；return：int -->
+    <insert id="addFile" parameterType="File">
+        insert into sys_file (name, size, update_time, type, permission, owner, status)
+        values (#{name}, #{size}, #{updateTime}, 0, #{permission}, #{owner}, #{status})
+    </insert>
+
+    <!-- updateFile：更新目录,作业状态；return：int -->
+    <update id="updateFile" parameterType="File">
+        update sys_file
+        <set>
+            <if test="name != null and name != ''">
+                name=#{name},
+            </if>
+            <if test="updateTime != null and updateTime != ''">
+                update_time=#{updateTime},
+            </if>
+            <if test="permission != null and permission != ''">
+                permission=#{permission},
+            </if>
+            <if test="status != null and status != ''">
+                status=#{status},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <!-- deleteFile：删除目录；return：int -->
+    <delete id="deleteFile" parameterType="Integer">
+        delete
+        from sys_file
+        where id = #{id}
+    </delete>
+
+
+</mapper>

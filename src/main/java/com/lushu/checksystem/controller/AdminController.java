@@ -1,6 +1,6 @@
 package com.lushu.checksystem.controller;
 
-import com.lushu.checksystem.service.AdminService;
+import com.lushu.checksystem.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -14,9 +14,9 @@ import org.springframework.web.servlet.ModelAndView;
 public class AdminController {
 
 
-    private AdminService adminService;
-    public void setAdminService(AdminService adminService) {
-        this.adminService = adminService;
+    private UserService userService;
+    public void setUserService(UserService userService) {
+        this.userService = userService;
     }
 
     @RequestMapping("/manager")

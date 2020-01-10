@@ -1,6 +1,6 @@
 package com.lushu.checksystem.controller;
 
-import com.lushu.checksystem.service.TeacherService;
+import com.lushu.checksystem.service.FileService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -12,9 +12,9 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class TeacherController {
 
-    private TeacherService teacherService;
-    public void setTeacherService(TeacherService teacherService) {
-        this.teacherService = teacherService;
+    private FileService fileService;
+    public void setFileService(FileService fileService) {
+        this.fileService = fileService;
     }
 
     @RequestMapping("/teacher")

@@ -11,11 +11,11 @@ public final class TranslationField {
     private static final Map<String, String> sheetHead;
     static {
         sheetHead = new HashMap<>();
-        sheetHead.put("姓名","name");
-        sheetHead.put("学号","id");
+        sheetHead.put("姓名","realname");
+        sheetHead.put("学号","username");
         sheetHead.put("系别","department");
         sheetHead.put("专业","major");
-        sheetHead.put("工号","id");
+        sheetHead.put("工号","username");
     }
 
     public static Map<String, String> getSheetHead() {
