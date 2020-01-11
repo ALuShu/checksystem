@@ -47,6 +47,12 @@ public interface UserDao {
     List<Authority> selectAuthoritiesByUsername(String username);
 
     /**
+     * 搜索总记录数
+     * @return
+     */
+    int countUsers();
+
+    /**
      * 批量增加用户
      * @param users
      * @return

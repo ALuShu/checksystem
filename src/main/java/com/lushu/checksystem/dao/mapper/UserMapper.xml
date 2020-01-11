@@ -35,6 +35,12 @@
         where user.realname = #{realname}
     </select>
 
+    <!-- countUsers：搜索总记录数；return：int -->
+    <select id="countUsers" resultType="Integer">
+        select count(id) from sys_user
+    </select>
+
+
     <!-- addUsers：批量增加用户；return：int -->
     <insert id="addUsers" parameterType="java.util.List">
         insert into sys_user (username, password, realname, department, major, create_time,
@@ -92,19 +98,26 @@
                         when id=#{item.id} then #{item.major} else major
                     </if>
                 </trim>
-                <trim prefix="accountNonExpired=case" suffix="end,">
+
+                /*这里开始有点问题，待测试*/
+                <trim prefix="last_login_time=case" suffix="end,">
+                    <if test="item.major!=null">
+                        when id=#{item.id} then #{item.lastLoginTime} else last_login_time
+                    </if>
+                </trim>
+                <trim prefix="account_non_expired=case" suffix="end,">
                     <if test="item.accountNonExpired!=null">
-                        when id=#{item.id} then #{item.accountNonExpired} else accountNonExpired
+                        when id=#{item.id} then #{item.accountNonExpired} else account_non_expired
                     </if>
                 </trim>
-                <trim prefix="accountNonLocked=case" suffix="end,">
+                <trim prefix="account_non_locked=case" suffix="end,">
                     <if test="item.accountNonLocked!=null">
-                        when id=#{item.id} then #{item.accountNonLocked} else accountNonLocked
+                        when id=#{item.id} then #{item.accountNonLocked} else account_non_locked
                     </if>
                 </trim>
-                <trim prefix="credentialsNonExpired=case" suffix="end,">
+                <trim prefix="credentials_non_expired=case" suffix="end,">
                     <if test="item.credentialsNonExpired!=null">
-                        when id=#{item.id} then #{item.credentialsNonExpired} else credentialsNonExpired
+                        when id=#{item.id} then #{item.credentialsNonExpired} else credentials_non_expired
                     </if>
                 </trim>
                 <trim prefix="enabled=case" suffix="end,">

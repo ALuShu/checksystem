@@ -18,6 +18,7 @@ public interface UserService {
     User selectUser(String username);
     Role selectRoleByUsername(String username);
     List<Authority> selectAuthoritiesByUsername(String username);
+    int countUsers();
     int addUsers(List<User> users);
     int deleteUsers(List<Integer> ids);
     int updateUsers(List<User> users);
