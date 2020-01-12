@@ -26,6 +26,13 @@ public interface UserDao {
     List<User> selectAllUser();
 
     /**
+     * id搜索用户（测试用）
+     * @param id
+     * @return
+     */
+    User selectById(Integer id);
+
+    /**
      * 用户名搜索用户
      * @param username
      * @return

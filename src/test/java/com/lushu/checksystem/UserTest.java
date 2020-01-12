@@ -121,32 +121,21 @@ class UserTest extends ChecksystemApplicationTests{
 
     @Test
     void updateUsersTest(){
-        User user1 = new User();
-        User user2 = new User();
-        User user3 = new User();
-        User user4 = new User();
-        User user5 = new User();
-        User user6 = new User();
-        User user7 = new User();
-        User user8 = new User();
-        User user9 = new User();
-        User user10 = new User();
-        user1.setId(2);
-        user2.setId(3);
-        user3.setId(4);
-        user4.setId(5);
-        user5.setId(6);
-        user6.setId(7);
-        user7.setId(8);
-        user8.setId(9);
-        user9.setId(10);
-        user10.setId(11);
+        User user1 = userService.selectById(2);
+        User user2 = userService.selectById(3);
+        User user3 = userService.selectById(4);
+        User user4 = userService.selectById(5);
+        User user5 = userService.selectById(6);
+        User user6 = userService.selectById(7);
+        User user7 = userService.selectById(8);
+        User user8 = userService.selectById(9);
+        User user9 = userService.selectById(10);
+        User user10 = userService.selectById(11);
         user1.setUsername("10001");
         user2.setPassword("123456");
         user3.setRealname("测试人员");
         user4.setDepartment("数码媒体");
         user5.setMajor("大数据工程");
-
         user6.setLastLoginTime(df.format(new Date()));
         user7.setAccountNonExpired(false);
         user8.setAccountNonLocked(false);

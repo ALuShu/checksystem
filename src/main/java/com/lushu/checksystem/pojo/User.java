@@ -26,6 +26,9 @@ public class User implements UserDetails, Serializable {
     private String major;
     private String createTime;
     private String lastLoginTime;
+    /**
+     * boolean默认值是false，最好在更新用户界面附带checkbox以防返回时没有下面几个值导致返回默认false
+     */
     private boolean accountNonExpired;
     private boolean accountNonLocked;
     private boolean credentialsNonExpired;

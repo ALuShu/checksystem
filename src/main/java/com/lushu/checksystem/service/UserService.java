@@ -15,6 +15,7 @@ import java.util.List;
  */
 public interface UserService {
     List<User> selectAllUser();
+    User selectById(Integer id);
     User selectUser(String username);
     Role selectRoleByUsername(String username);
     List<Authority> selectAuthoritiesByUsername(String username);

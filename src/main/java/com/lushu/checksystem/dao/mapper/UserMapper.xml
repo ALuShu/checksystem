@@ -8,6 +8,13 @@
         from sys_user
     </select>
 
+    <!-- selectById：id搜索用户（测试用）；return：User -->
+    <select id="selectById" parameterType="Integer" resultType="User">
+        select *
+        from sys_user
+        where id=#{id}
+    </select>
+
     <!-- selectUser：用户名搜索用户；return：User -->
     <select id="selectUser" parameterType="String" resultType="User">
         select *
@@ -98,13 +105,13 @@
                         when id=#{item.id} then #{item.major} else major
                     </if>
                 </trim>
-
-                /*这里开始有点问题，待测试*/
                 <trim prefix="last_login_time=case" suffix="end,">
-                    <if test="item.major!=null">
+                    <if test="item.lastLoginTime!=null">
                         when id=#{item.id} then #{item.lastLoginTime} else last_login_time
                     </if>
                 </trim>
+
+                /*有问题*/
                 <trim prefix="account_non_expired=case" suffix="end,">
                     <if test="item.accountNonExpired!=null">
                         when id=#{item.id} then #{item.accountNonExpired} else account_non_expired
