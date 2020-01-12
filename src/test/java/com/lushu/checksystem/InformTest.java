@@ -11,11 +11,9 @@ class InformTest extends ChecksystemApplicationTests{
 
     @Test
     void addInformTest(){
-
     }
 
     @Test
     void selectInformTest(){
-
     }
 }
