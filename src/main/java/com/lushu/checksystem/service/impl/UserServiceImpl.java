@@ -50,6 +50,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> selectUserByRole(Integer role) {
+        return userDao.selectUserByRole(role);
+    }
+
+    @Override
     public int countUsers() {
         return userDao.countUsers();
     }
@@ -72,5 +77,15 @@ public class UserServiceImpl implements UserService {
     @Override
     public int updatePassword(User user) {
         return userDao.updatePassword(user);
+    }
+
+    @Override
+    public int deleteUserRole(List<Integer> userIds) {
+        return userDao.deleteUserRole(userIds);
+    }
+
+    @Override
+    public int updateUserRole(Integer userId, Integer roleId) {
+        return userDao.updateUserRole(userId, roleId);
     }
 }

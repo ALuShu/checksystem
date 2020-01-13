@@ -38,21 +38,5 @@ class FileTest extends ChecksystemApplicationTests {
         System.out.println("distance:"+SimHashUtil.getHammingDistance(sign1,sign2));
     }
 
-    @Test
-    void addWorkFileTest(){
-
-    }
-
-    @Test
-    void addFileTest(){
-    }
-
-    @Test
-    void updateFileTest(){
-    }
-
-    @Test
-    void deleteFileTest(){
-    }
 
 }

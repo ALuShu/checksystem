@@ -4,9 +4,11 @@ import com.lushu.checksystem.pojo.Authority;
 import com.lushu.checksystem.pojo.Role;
 import com.lushu.checksystem.pojo.User;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author ALuShu
@@ -54,6 +56,13 @@ public interface UserDao {
     List<Authority> selectAuthoritiesByUsername(String username);
 
     /**
+     * 根据角色搜索用户群（用户与角色n:1）
+     * @param role
+     * @return
+     */
+    List<User> selectUserByRole(Integer role);
+
+    /**
      * 搜索总记录数
      * @return
      */
@@ -86,4 +95,26 @@ public interface UserDao {
      * @return
      */
     int updatePassword(User user);
+
+    /**
+     * 批量添加用户角色中间表记录（用户与角色n:1）
+     * @param ids （注意）使用时请务必把userId和roleId的list集合分别封装在HashMap里面——mapper未完成
+     * @return
+     */
+    int addUserRole(Map<String, List<Integer>> ids);
+
+    /**
+     * 批量删除用户角色中间表记录（用户与角色n:1）
+     * @param userIds
+     * @return
+     */
+    int deleteUserRole(List<Integer> userIds);
+
+    /**
+     * 更新用户角色中间表记录（用户与角色n:1）
+     * @param userId
+     * @param roleId
+     * @return
+     */
+    int updateUserRole(@Param("userId")Integer userId, @Param("roleId")Integer roleId);
 }

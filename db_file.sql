@@ -11,7 +11,7 @@
  Target Server Version : 80018
  File Encoding         : 65001
 
- Date: 13/01/2020 10:35:19
+ Date: 13/01/2020 17:24:36
 */
 
 SET NAMES utf8mb4;
@@ -40,6 +40,10 @@ INSERT INTO `sys_authority` VALUES (6, '更新文件', 'FILE_UPDATE');
 INSERT INTO `sys_authority` VALUES (7, '删除文件', 'FILE_DELETE');
 INSERT INTO `sys_authority` VALUES (8, '搜索文件', 'FILE_SELECT');
 INSERT INTO `sys_authority` VALUES (9, '查重', 'FILE_CHECK');
+INSERT INTO `sys_authority` VALUES (10, '角色增加', 'ROLE_ADD');
+INSERT INTO `sys_authority` VALUES (11, '角色更新', 'ROLE_UPDATE');
+INSERT INTO `sys_authority` VALUES (12, '角色删除', 'ROLE_DELETE');
+INSERT INTO `sys_authority` VALUES (13, '角色查询', 'ROLE_SELECT');
 
 -- ----------------------------
 -- Table structure for sys_file
@@ -115,6 +119,15 @@ INSERT INTO `sys_role_authority` VALUES (8, 2, 8);
 INSERT INTO `sys_role_authority` VALUES (9, 2, 9);
 INSERT INTO `sys_role_authority` VALUES (10, 3, 4);
 INSERT INTO `sys_role_authority` VALUES (11, 3, 5);
+INSERT INTO `sys_role_authority` VALUES (12, 1, 5);
+INSERT INTO `sys_role_authority` VALUES (13, 1, 6);
+INSERT INTO `sys_role_authority` VALUES (14, 1, 7);
+INSERT INTO `sys_role_authority` VALUES (15, 1, 8);
+INSERT INTO `sys_role_authority` VALUES (16, 1, 9);
+INSERT INTO `sys_role_authority` VALUES (17, 1, 10);
+INSERT INTO `sys_role_authority` VALUES (18, 1, 11);
+INSERT INTO `sys_role_authority` VALUES (19, 1, 12);
+INSERT INTO `sys_role_authority` VALUES (20, 1, 13);
 
 -- ----------------------------
 -- Table structure for sys_user
