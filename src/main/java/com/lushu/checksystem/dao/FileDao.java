@@ -32,28 +32,21 @@ public interface FileDao {
     //List<File> selectDirFile(Integer id, Integer owner, Integer type);
 
     /**
-     * 上传作业
-     * @param file
-     * @return
-     */
-    int addWorkFile(File file);
-
-    /**
-     * 增加目录
+     * 增加文件
      * @param file
      * @return
      */
     int addFile(File file);
 
     /**
-     * 更新目录,作业状态
+     * 更新文件,作业状态
      * @param file
      * @return
      */
     int updateFile(File file);
 
     /**
-     * 删除目录
+     * 删除文件
      * @param id
      * @return
      */

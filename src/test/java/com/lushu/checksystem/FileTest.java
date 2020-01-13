@@ -1,6 +1,7 @@
 package com.lushu.checksystem;
 
 
+import com.lushu.checksystem.util.WordUtil;
 import com.xzixi.algorithm.simhash.analyzer.extractor.JcsegKeywordsExtractor;
 import com.xzixi.algorithm.simhash.analyzer.hash.FVNHashGenerator;
 import com.xzixi.algorithm.simhash.common.HashGenerator;
@@ -28,7 +29,13 @@ class FileTest extends ChecksystemApplicationTests {
     }
 
     @Test
-    void simHashTest2(){
+    void simHashTest2() {
+        KeywordsExtractor keywordsExtractor = new JcsegKeywordsExtractor();
+        HashGenerator hashGenerator = new FVNHashGenerator();
+        SimHasher simHasher = new SimHasher(keywordsExtractor, hashGenerator);
+        BigInteger sign1 = simHasher.simhash(WordUtil.readWord("D:\\FTP\\IntelliJ IDEA\\Projects\\checksystem\\src\\main\\resources\\word\\123.doc"));
+        BigInteger sign2 = simHasher.simhash(WordUtil.readWord("D:\\FTP\\IntelliJ IDEA\\Projects\\checksystem\\src\\main\\resources\\word\\123.docx"));
+        System.out.println("distance:"+SimHashUtil.getHammingDistance(sign1,sign2));
     }
 
     @Test

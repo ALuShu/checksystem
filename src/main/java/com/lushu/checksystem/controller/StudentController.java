@@ -2,6 +2,7 @@ package com.lushu.checksystem.controller;
 
 import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.stereotype.Controller;
@@ -26,6 +27,7 @@ import java.util.*;
  * @date 19-11-13 下午1:48
  **/
 @Controller
+@Slf4j
 public class StudentController {
 
     @Value("${checksystem.root}")
@@ -59,8 +61,9 @@ public class StudentController {
     public Map list(@RequestParam(required = false) String page,
                     @RequestParam(required = false) String limit,
                     @RequestParam(required = false) String path) throws ServletException, JSONException {
+        long star = System.currentTimeMillis();
         Map<String, Object> res = new HashMap<>();
-        System.out.println("path参数是否为空："+ (path));
+        log.info("path参数是否为空："+ (path));
         if (path == null){
             path = "/";
         }else {
@@ -71,8 +74,7 @@ public class StudentController {
                 path = path.substring(0, index);
             }
         }
-        System.out.println("当前页数:"+page+";每页记录数:"+limit);
-        System.out.println(System.currentTimeMillis());
+        log.info("当前页数:"+page+";每页记录数:"+limit);
 
         try {
 
@@ -96,15 +98,17 @@ public class StudentController {
                     fileItems.add(fileItem);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("递归文件出错:",e);
             }
             res.put("code",0);
             res.put("msg","");
             res.put("count",fileItems.size());
             res.put("data",fileItems);
+            long end = System.currentTimeMillis();
+            log.info("花费时间："+(end-star)+"ms");
             return res;
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("递归文件出错:"+e);
             res.put("code",0);
             res.put("msg","数据获取错误");
             res.put("count",0);

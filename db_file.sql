@@ -11,7 +11,7 @@
  Target Server Version : 80018
  File Encoding         : 65001
 
- Date: 10/01/2020 23:47:54
+ Date: 13/01/2020 10:35:19
 */
 
 SET NAMES utf8mb4;
@@ -48,9 +48,10 @@ DROP TABLE IF EXISTS `sys_file`;
 CREATE TABLE `sys_file`  (
   `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '文件id',
   `name` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '文件命名',
+  `path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '真实物理路径',
   `size` bigint(12) NULL DEFAULT NULL COMMENT '文件大小',
   `update_time` datetime(0) NOT NULL COMMENT '最后修改时间',
-  `type` int(2) NOT NULL COMMENT '文件类型，0表示dir或1表示file',
+  `type` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '文件类型，0表示dir或1表示file',
   `permission` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '-所有人-拥有者-管理员：如文件夹：-rw--rw--rw-;\r\n-rwx-rwx-rwx',
   `owner` int(10) NOT NULL COMMENT '拥有者id',
   `status` int(2) NULL DEFAULT NULL COMMENT '作业文件状态',

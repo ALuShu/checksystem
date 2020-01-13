@@ -11,25 +11,21 @@
 
     <!-- selectDirFile：查询目录,分页；return：List<File> -->
 
-
-    <!-- addWorkFile：上传作业；return：int -->
-    <insert id="addWorkFile" parameterType="File">
-        insert into sys_file (name, size, update_time, type, permission, owner, status)
-        values (#{name}, #{size}, #{updateTime}, 1, #{permission}, #{owner}, #{status})
-    </insert>
-
-    <!-- addFile：增加目录；return：int -->
+    <!-- addFile：增加文件；return：int -->
     <insert id="addFile" parameterType="File">
-        insert into sys_file (name, size, update_time, type, permission, owner, status)
-        values (#{name}, #{size}, #{updateTime}, 0, #{permission}, #{owner}, #{status})
+        insert into sys_file (name, path, size, update_time, type, permission, owner, status)
+        values (#{name}, #{path}, #{size}, #{updateTime}, #{type}, #{permission}, #{owner}, #{status});
     </insert>
 
-    <!-- updateFile：更新目录,作业状态；return：int -->
+    <!-- updateFile：更新文件,作业状态；return：int -->
     <update id="updateFile" parameterType="File">
         update sys_file
         <set>
             <if test="name != null and name != ''">
                 name=#{name},
+            </if>
+            <if test="path != null and path != ''">
+                path=#{path},
             </if>
             <if test="updateTime != null and updateTime != ''">
                 update_time=#{updateTime},
@@ -44,7 +40,7 @@
         where id=#{id}
     </update>
 
-    <!-- deleteFile：删除目录；return：int -->
+    <!-- deleteFile：删除文件；return：int -->
     <delete id="deleteFile" parameterType="Integer">
         delete
         from sys_file

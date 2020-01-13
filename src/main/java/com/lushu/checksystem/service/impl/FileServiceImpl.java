@@ -21,11 +21,6 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public int addWorkFile(File file) {
-        return fileDao.addWorkFile(file);
-    }
-
-    @Override
     public int addFile(File file) {
         return fileDao.addFile(file);
     }
