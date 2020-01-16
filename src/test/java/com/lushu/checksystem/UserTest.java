@@ -65,6 +65,14 @@ class UserTest extends ChecksystemApplicationTests{
     }
 
     @Test
+    void selectUserByRoleTest(){
+        users = userService.selectUserByRole(1);
+        for (User user : users){
+            System.out.println(user);
+        }
+    }
+
+    @Test
     void addUsersTest(){
         User user = new User();
         user.setUsername("root");
