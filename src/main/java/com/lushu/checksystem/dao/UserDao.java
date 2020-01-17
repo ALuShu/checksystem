@@ -8,7 +8,6 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author ALuShu
@@ -26,6 +25,13 @@ public interface UserDao {
      * @return
      */
     List<User> selectAllUser();
+
+    /**
+     * 根据学号或工号群，查询用户群
+     * @param username
+     * @return
+     */
+    List<User> selectUserByUsername(List<String> username);
 
     /**
      * id搜索用户（测试用）
@@ -98,10 +104,11 @@ public interface UserDao {
 
     /**
      * 批量添加用户角色中间表记录（用户与角色n:1）
-     * @param ids （注意）使用时请务必把userId和roleId的list集合分别封装在HashMap里面——mapper未完成
+     * @param userId
+     * @param roleId
      * @return
      */
-    int addUserRole(Map<String, List<Integer>> ids);
+    int addUserRole(@Param("userId") List<Integer> userId, @Param("roleId") Integer roleId);
 
     /**
      * 批量删除用户角色中间表记录（用户与角色n:1）

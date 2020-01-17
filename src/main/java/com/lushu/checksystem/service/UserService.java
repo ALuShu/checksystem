@@ -15,6 +15,7 @@ import java.util.List;
  */
 public interface UserService {
     List<User> selectAllUser();
+    List<User> selectUserByUsername(List<String> username);
     User selectById(Integer id);
     User selectUser(String username);
     Role selectRoleByUsername(String username);
@@ -25,7 +26,7 @@ public interface UserService {
     int deleteUsers(List<Integer> ids);
     int updateUsers(List<User> users);
     int updatePassword(User user);
-    //int addUserRole(Map<String, List<Integer>> ids);
+    int addUserRole(List<Integer> userId, Integer roleId);
     int deleteUserRole(List<Integer> userIds);
     int updateUserRole(Integer userId, Integer roleId);
 }

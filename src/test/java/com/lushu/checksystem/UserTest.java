@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * @author lushu
  * @date 19-11-11 下午10:08
@@ -27,6 +25,12 @@ class UserTest extends ChecksystemApplicationTests{
     private UserService userService;
     private List<User> users = new ArrayList<>();
     private List<Integer> ids = new ArrayList<>();
+    private List<String> studentUsername = new ArrayList<>();
+    private List<String> teacherUsername = new ArrayList<>();
+    private List<Integer> studentUserId = new ArrayList<>();
+    private List<Integer> teacherUserId = new ArrayList<>();
+    private Integer studentRoleId = 3;
+    private Integer teacherRoleId = 2;
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
 
     @Test
@@ -92,15 +96,25 @@ class UserTest extends ChecksystemApplicationTests{
             List<User> studentList = students.explain(fileName);
             List<User> teacherList = teachers.explain(fileName1);
             for(User s : studentList){
+                studentUsername.add(s.getUsername());
                 s.setCreateTime(df.format(new Date()));
                 System.out.println(s.toString());
             }
             for(User s : teacherList){
+                teacherUsername.add(s.getUsername());
                 s.setCreateTime(df.format(new Date()));
                 System.out.println(s.toString());
             }
-            assertEquals(studentList.size(), userService.addUsers(studentList));
-            assertEquals(teacherList.size(), userService.addUsers(teacherList));
+            userService.addUsers(studentList);
+            userService.addUsers(teacherList);
+            for (User s : userService.selectUserByUsername(studentUsername)){
+                studentUserId.add(s.getId());
+            }
+            for (User s : userService.selectUserByUsername(teacherUsername)){
+                teacherUserId.add(s.getId());
+            }
+            userService.addUserRole(studentUserId, studentRoleId);
+            userService.addUserRole(teacherUserId, teacherRoleId);
         } catch (IOException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
             e.printStackTrace();
         }

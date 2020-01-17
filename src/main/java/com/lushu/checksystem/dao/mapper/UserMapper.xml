@@ -8,6 +8,16 @@
         from sys_user
     </select>
 
+    <!-- selectUserByUsername：根据学号或工号群，查询用户群；return：List<User> -->
+    <select id="selectUserByUsername" parameterType="java.util.List" resultType="User">
+        select *
+        from sys_user
+        where username in
+        <foreach collection="list" item="username" open="(" close=")" separator="," index="index">
+            #{username}
+        </foreach>
+    </select>
+
     <!-- selectById：id搜索用户（测试用）；return：User -->
     <select id="selectById" parameterType="Integer" resultType="User">
         select *
@@ -155,10 +165,11 @@
     </update>
 
     <!-- addUserRole：批量添加用户角色中间表记录（用户与角色n:1）；return：int -->
-    <insert id="addUserRole" parameterType="java.util.Map">
+    <insert id="addUserRole">
         insert into sys_user_role (user_id, role_id)
         values
-        <foreach collection="userId">
+        <foreach collection="userId" item="id" separator="," index="index">
+            (#{id},#{roleId})
         </foreach>
     </insert>
 
