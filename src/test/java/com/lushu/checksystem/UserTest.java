@@ -3,6 +3,7 @@ package com.lushu.checksystem;
 import com.lushu.checksystem.pojo.Authority;
 import com.lushu.checksystem.pojo.Role;
 import com.lushu.checksystem.pojo.User;
+import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.service.UserService;
 import com.lushu.checksystem.util.ExcelUtil;
 import org.junit.jupiter.api.Test;
@@ -23,15 +24,17 @@ class UserTest extends ChecksystemApplicationTests{
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private FileService fileService;
     private List<User> users = new ArrayList<>();
     private List<Integer> ids = new ArrayList<>();
     private List<String> studentUsername = new ArrayList<>();
     private List<String> teacherUsername = new ArrayList<>();
     private List<Integer> studentUserId = new ArrayList<>();
     private List<Integer> teacherUserId = new ArrayList<>();
-    private Integer studentRoleId = 3;
-    private Integer teacherRoleId = 2;
-    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+    private static final Integer studentRoleId = 3;
+    private static final Integer teacherRoleId = 2;
+    private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
 
     @Test
     void selectAllUserTest(){

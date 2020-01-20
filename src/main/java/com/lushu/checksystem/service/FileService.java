@@ -1,6 +1,7 @@
 package com.lushu.checksystem.service;
 
 import com.lushu.checksystem.pojo.File;
+import com.lushu.checksystem.pojo.User;
 
 /**
  * @author ALuShu
@@ -12,7 +13,11 @@ import com.lushu.checksystem.pojo.File;
 public interface FileService {
     //List<File> selectWorkFile(Integer owner);
     //List<File> selectDirFile(Integer id, Integer owner, Integer type);
+    int newTeacherFile(User user);
+
     int addFile(File file);
+
     int updateFile(File file);
+
     int deleteFile(Integer id);
 }
