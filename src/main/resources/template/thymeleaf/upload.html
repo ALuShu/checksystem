@@ -171,10 +171,12 @@
         //拖拽上传
         upload.render({
             elem: '#test10'
-            ,url: 'javascript:;'
+            ,url: 'http://localhost:8088/uploadFile'
             ,done: function(res){
                 console.log(res)
             }
+            ,accept: 'file'
+            ,multiple:'true'
         });
 
         //初始化面包屑导航

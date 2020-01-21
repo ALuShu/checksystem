@@ -3,6 +3,7 @@ package com.lushu.checksystem.service.impl;
 import com.lushu.checksystem.dao.InformDao;
 import com.lushu.checksystem.pojo.Inform;
 import com.lushu.checksystem.service.InformService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
  * @since
  */
 @Service
+@Slf4j
 public class InformServiceImpl implements InformService {
 
     private InformDao informDao;

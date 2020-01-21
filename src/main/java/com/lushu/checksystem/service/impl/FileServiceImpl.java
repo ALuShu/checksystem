@@ -13,6 +13,8 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.attribute.FileAttribute;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -51,10 +53,10 @@ public class FileServiceImpl implements FileService {
                 if (pathObject.getFileName().toString().equals(teacherRoot)){
                     log.info("已有同名文件夹:"+pathObject.getFileName().toString());
                     return 0;
-                }else {
-                    return fileDao.addFile(teacherFile);
                 }
             }
+            Files.createDirectory(Paths.get(root+teacherRoot));
+            return fileDao.addFile(teacherFile);
         }catch (IOException e){
             log.error("教师:"+user.getRealname()+"创建文件夹失败!", e);
         }

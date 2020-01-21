@@ -1,10 +1,13 @@
 package com.lushu.checksystem.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -119,21 +122,23 @@ public class StudentController {
 
     @PostMapping("/uploadFile")
     @ResponseBody
-    public String uploadres(@RequestParam("file") MultipartFile file, HttpServletRequest request){
+    public ModelAndView uploadres(MultipartFile file, ModelAndView view, HttpServletRequest request){
         if (file.isEmpty()) {
-            return "上传失败，请选择文件";
+            view.addObject("code",0);
+            view.addObject("msg","请选择作业文件!");
+            view.addObject("data","{'file':'"+file.getOriginalFilename()+"'}");
+            return view;
         }
-
         String fileName = file.getOriginalFilename();
         String filePath = request.getServletContext().getRealPath("upload");
         File dest = new File(filePath, UUID.randomUUID().toString()+fileName);
         try {
             file.transferTo(dest);
-            return "上传成功";
+            return view;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return "上传失败！";
+        return view;
     }
 
 

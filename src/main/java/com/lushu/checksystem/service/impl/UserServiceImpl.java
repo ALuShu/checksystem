@@ -5,6 +5,7 @@ import com.lushu.checksystem.pojo.Authority;
 import com.lushu.checksystem.pojo.Role;
 import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
  * @since
  */
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private UserDao userDao;
