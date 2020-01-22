@@ -1,13 +1,10 @@
 package com.lushu.checksystem.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,13 +32,11 @@ public class StudentController {
 
     @Value("${checksystem.root}")
     private String root;
+    private final UserService userService;
+    private final FileService fileService;
 
-    private UserService userService;
-    private FileService fileService;
-    public void setUserService(UserService userService) {
+    public StudentController(UserService userService, FileService fileService) {
         this.userService = userService;
-    }
-    public void setFileService(FileService fileService) {
         this.fileService = fileService;
     }
 
@@ -61,9 +56,9 @@ public class StudentController {
      */
     @RequestMapping(value = "/list", method = RequestMethod.GET)
     @ResponseBody
-    public Map list(@RequestParam(required = false) String page,
-                    @RequestParam(required = false) String limit,
-                    @RequestParam(required = false) String path) throws ServletException, JSONException {
+    public Map list(@RequestParam(required = false) String page
+            , @RequestParam(required = false) String limit
+            , @RequestParam(required = false) String path) throws ServletException, JSONException {
         long star = System.currentTimeMillis();
         Map<String, Object> res = new HashMap<>();
         log.info("path参数是否为空："+ (path));
@@ -122,23 +117,48 @@ public class StudentController {
 
     @PostMapping("/uploadFile")
     @ResponseBody
-    public ModelAndView uploadres(MultipartFile file, ModelAndView view, HttpServletRequest request){
+    public Map uploadres(@RequestParam("file")MultipartFile file
+            , @RequestParam("path") String path
+            , HttpServletRequest request){
+        Map<String, Object> json = new HashMap<>();
+        com.lushu.checksystem.pojo.File daoDest = new com.lushu.checksystem.pojo.File();
         if (file.isEmpty()) {
-            view.addObject("code",0);
-            view.addObject("msg","请选择作业文件!");
-            view.addObject("data","{'file':'"+file.getOriginalFilename()+"'}");
-            return view;
+            json.put("code",1);
+            json.put("msg","请选择作业文件!");
+            json.put("data","{'file':'"+file.getOriginalFilename()+"'}");
+            return json;
+        }
+        File rootPath = new File("src/main/resources/root"+path);
+        if (!rootPath.exists()){
+            rootPath.mkdir();
         }
         String fileName = file.getOriginalFilename();
-        String filePath = request.getServletContext().getRealPath("upload");
-        File dest = new File(filePath, UUID.randomUUID().toString()+fileName);
+        String filePath = rootPath.getAbsolutePath();
+        daoDest.setName(fileName);
+        daoDest.setPath(filePath);
+        daoDest.setSize(file.getSize());
+        File dest = new File(filePath, fileName);
         try {
-            file.transferTo(dest);
-            return view;
+            if (!dest.exists()) {
+                fileService.addFile(daoDest);
+                file.transferTo(dest);
+                json.put("code", 0);
+                json.put("msg", "上传成功！");
+                json.put("data", "{'file':'" + file.getOriginalFilename() + "'}");
+                return json;
+            }else {
+                json.put("code", 2);
+                json.put("msg", "上传失败，有同名文件");
+                json.put("data", "{'file':'" + file.getOriginalFilename() + "'}");
+                return json;
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return view;
+        json.put("code",-1);
+        json.put("msg","上传失败");
+        json.put("data","{'file':'"+file.getOriginalFilename()+"'}");
+        return json;
     }
 
 

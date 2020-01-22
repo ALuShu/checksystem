@@ -11,7 +11,7 @@
  Target Server Version : 80018
  File Encoding         : 65001
 
- Date: 13/01/2020 17:24:36
+ Date: 22/01/2020 21:23:57
 */
 
 SET NAMES utf8mb4;
@@ -26,7 +26,7 @@ CREATE TABLE `sys_authority`  (
   `name` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `tag` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 10 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_authority
@@ -58,10 +58,10 @@ CREATE TABLE `sys_file`  (
   `type` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '文件类型，0表示dir或1表示file',
   `permission` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '-所有人-拥有者-管理员：如文件夹：-rw--rw--rw-;\r\n-rwx-rwx-rwx',
   `owner` int(10) NOT NULL COMMENT '拥有者id',
-  `status` int(2) NULL DEFAULT NULL COMMENT '作业文件状态',
+  `status` int(2) NULL DEFAULT NULL COMMENT '作业文件状态;0表示未查；2表示已查；1表示通过；-1表示未通过',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `owner_index`(`owner`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for sys_inform
@@ -74,7 +74,7 @@ CREATE TABLE `sys_inform`  (
   `content` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `recieve_index`(`receive_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for sys_role
@@ -85,14 +85,14 @@ CREATE TABLE `sys_role`  (
   `name` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `detail` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_role
 -- ----------------------------
-INSERT INTO `sys_role` VALUES (1, 'admin', '超级管理');
-INSERT INTO `sys_role` VALUES (2, 'teacher', '教师');
-INSERT INTO `sys_role` VALUES (3, 'student', '学生');
+INSERT INTO `sys_role` VALUES (1, 'ADMIN', '超级管理');
+INSERT INTO `sys_role` VALUES (2, 'TEACHER', '教师');
+INSERT INTO `sys_role` VALUES (3, 'STUDENT', '学生');
 
 -- ----------------------------
 -- Table structure for sys_role_authority
@@ -103,7 +103,7 @@ CREATE TABLE `sys_role_authority`  (
   `role_id` int(1) NOT NULL,
   `authority_id` int(2) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_role_authority
@@ -148,7 +148,7 @@ CREATE TABLE `sys_user`  (
   `enabled` tinyint(1) NOT NULL COMMENT '账户是否可用',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `username_index`(`username`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_user
@@ -163,8 +163,9 @@ CREATE TABLE `sys_user_role`  (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `user_id` int(10) NOT NULL,
   `role_id` int(1) NOT NULL,
-  PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `user_id_index`(`user_id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_user_role

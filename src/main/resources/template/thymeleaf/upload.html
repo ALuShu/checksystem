@@ -66,7 +66,7 @@
 </div>
 <script src="../layui/layui.js"></script>
 <script th:inline="none">
-    var url = 'http://localhost:8088/list';
+    var url = '/list';
     var path = [];
     var breadArray = [];
     var j = {"name": "root"};
@@ -133,12 +133,16 @@
 
         //监听面包屑导航点击
         window.breadOn = function (breadName) {
+            //breadArray会比path多放一个root元素在开头
             breadArray = [];
+            //面包屑导航默认显示root/
             var j = {"name": "root"};
             breadArray.push(j);
+            //若点击root，则把path清空
             if (breadName === 'root') {
                 path = [];
             } else {
+                //否则
                 var i = path.indexOf(breadName);
                 if (i === 0) {
                     path = [breadName];
@@ -171,12 +175,27 @@
         //拖拽上传
         upload.render({
             elem: '#test10'
-            ,url: 'http://localhost:8088/uploadFile'
+            ,url: '/uploadFile'
+            ,method:'post'
             ,done: function(res){
-                console.log(res)
+                if(res.code === 0){
+                    layer.msg("上传成功")
+                } else if (res.code === -1){
+                    layer.msg("上传失败")
+                } else if (res.code === 1){
+                    layer.msg("请选择上传文件")
+                } else if (res.code === 2){
+                    layer.msg("已有同名文件")
+                } else {
+                    layer.msg("未知错误，请联系管理员")
+                }
+            }
+            ,data:{
+                path:('/' + path.join('/') + '/' + this.name).replace(/\/\//, '/')
             }
             ,accept: 'file'
             ,multiple:'true'
+            ,size: 10240
         });
 
         //初始化面包屑导航

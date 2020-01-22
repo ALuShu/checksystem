@@ -91,10 +91,10 @@ class UserTest extends ChecksystemApplicationTests{
 
     @Test
     void addUsersTest2() {
-        //String fileName = "D:\\FTP\\IntelliJ IDEA\\Projects\\checksystem\\src\\main\\resources\\excel\\test.xlsx";
-        //String fileName1 = "D:\\FTP\\IntelliJ IDEA\\Projects\\checksystem\\src\\main\\resources\\excel\\testA.xls";
-        String fileName = "/usr/IntelliJ IDEA/Projects/checksystem/src/main/resources/excel/test.xlsx";
-        String fileName1 = "/usr/IntelliJ IDEA/Projects/checksystem/src/main/resources/excel/testA.xls";
+        String fileName = "D:\\FTP\\IntelliJ IDEA\\Projects\\checksystem\\src\\main\\resources\\excel\\test.xlsx";
+        String fileName1 = "D:\\FTP\\IntelliJ IDEA\\Projects\\checksystem\\src\\main\\resources\\excel\\testA.xls";
+        //String fileName = "/usr/IntelliJ IDEA/Projects/checksystem/src/main/resources/excel/test.xlsx";
+        //String fileName1 = "/usr/IntelliJ IDEA/Projects/checksystem/src/main/resources/excel/testA.xls";
         ExcelUtil<User> students = new ExcelUtil<>(User.class);
         ExcelUtil<User> teachers = new ExcelUtil<>(User.class);
         try {

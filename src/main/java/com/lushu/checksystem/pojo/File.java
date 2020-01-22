@@ -3,7 +3,6 @@ package com.lushu.checksystem.pojo;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 
 @Data
 public class File implements Serializable {
@@ -17,7 +16,7 @@ public class File implements Serializable {
    * 文件真实物理路径
    */
   private String path;
-  private BigInteger size;
+  private Long size;
   private String updateTime;
   /**
    * 文件类型，dir或doc、docx
