@@ -66,16 +66,7 @@
 </div>
 <script src="../layui/layui.js"></script>
 <script th:inline="none">
-    var url = '/list';
-    var path = [];
-    var breadArray = [];
-    var j = {"name": "root"};
-    breadArray.push(j);
-    var breadData = {
-        "bread": breadArray
-    };
-    var getTpl = bread.innerHTML
-        , view = document.getElementById('view');
+
 
 
     //layui官方方法
@@ -85,6 +76,18 @@
             , layer = layui.layer
             , element = layui.element
             , laytpl = layui.laytpl;
+        let url = '/list';
+        //用于与后端交互，异步更新url
+        let path = [];
+        //面包屑导航多一个root元素以便返回根目录
+        let breadArray = [];
+        let j = {"name": "root"};
+        breadArray.push(j);
+        let breadData = {
+            "bread": breadArray
+        };
+        let getTpl = bread.innerHTML
+            , view = document.getElementById('view');
 
 
         //layui数据表格
@@ -111,20 +114,23 @@
                 if (data.type === 'file') {
                     layer.alert("暂不支持打开文件");
                 } else {
+                    //点击表格文件夹时，向path后放文件夹名字
                     path.push(data.name);
                     var j = {};
+                    //path栈顶元素放{'name':'这里'}，然后放到breadArray中
                     j.name = path[path.length - 1];
                     breadArray.push(j);
                     breadData = {
                         "bread": breadArray
                     };
+                    //layui模板引擎，此处用于把breadArray遍历成面包屑导航
                     laytpl(getTpl).render(breadData, function (html) {
                         view.innerHTML = html;
                     });
-
+                    //layui表格重载，根据新的path
                     table.reload('test', {
                         where: { //设定异步数据接口的额外参数，任意设
-                            path: ('/' + path.join('/') + '/' + this.name).replace(/\/\//, '/')
+                            "path": ('/' + path.join('/') + '/').replace(/\/\//, '/')
                         }
                     });
                 }
@@ -142,14 +148,16 @@
             if (breadName === 'root') {
                 path = [];
             } else {
-                //否则
+                //否则i为点击的breadArray在path中的索引
                 var i = path.indexOf(breadName);
+                //如果点的是root后第1个，path清剩那1个，breadArray清剩root
                 if (i === 0) {
                     path = [breadName];
                     j = {};
                     j.name = path[0];
                     breadArray.push(j);
                 } else {
+                    //否则裁剪数组path，[0,i+1)；breadArray
                     path = path.slice(0, i + 1);
                     for (var x = 0; x < i + 1; x++) {
                         j = {};
@@ -167,7 +175,7 @@
 
             table.reload('test', {
                 where: { //设定异步数据接口的额外参数，任意设
-                    path: ('/' + path.join('/') + '/' + this.name).replace(/\/\//, '/')
+                    "path": ('/' + path.join('/') + '/' ).replace(/\/\//, '/')
                 }
             });
         };
@@ -190,13 +198,17 @@
                     layer.msg("未知错误，请联系管理员")
                 }
             }
-            ,data:{
-                path:('/' + path.join('/') + '/' + this.name).replace(/\/\//, '/')
+            ,data:{//上传文件到当前文件夹附带path
+                "path":function () {
+                    return ('/' + path.join('/') + '/').replace(/\/\//, '/');
+                }
             }
             ,accept: 'file'
             ,multiple:'true'
             ,size: 10240
         });
+
+        console.log('path：'+path);
 
         //初始化面包屑导航
         laytpl(getTpl).render(breadData, function (html) {

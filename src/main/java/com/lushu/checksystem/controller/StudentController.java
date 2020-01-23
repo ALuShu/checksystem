@@ -11,7 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -40,12 +39,18 @@ public class StudentController {
         this.fileService = fileService;
     }
 
+    /**
+     * 学生主页的跳转
+     */
     @RequestMapping("/student")
     public ModelAndView studentIndex(ModelAndView modelAndView){
         modelAndView.setViewName("/index");
         return modelAndView;
     }
 
+    /**
+     * 上传页面的跳转
+     */
     @RequestMapping("/upload")
     public String upload(){
         return "/upload";
@@ -61,26 +66,15 @@ public class StudentController {
             , @RequestParam(required = false) String path) throws ServletException, JSONException {
         long star = System.currentTimeMillis();
         Map<String, Object> res = new HashMap<>();
-        log.info("path参数是否为空："+ (path));
         if (path == null){
             path = "/";
-        }else {
-            int index = path.indexOf("undefined");
-            if (index == -1){
-                path = path.substring(0, path.length()-1);
-            }else {
-                path = path.substring(0, index);
-            }
         }
-        log.info("当前页数:"+page+";每页记录数:"+limit);
 
         try {
-
             // 返回的结果集
             List<Map<String, Object>> fileItems = new ArrayList<>();
 
             try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(root, path))) {
-
                 String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
                 SimpleDateFormat dt = new SimpleDateFormat(DATE_FORMAT);
                 for (Path pathObj : directoryStream) {
@@ -107,7 +101,7 @@ public class StudentController {
             return res;
         } catch (Exception e) {
             log.error("递归文件出错:"+e);
-            res.put("code",0);
+            res.put("code",-1);
             res.put("msg","数据获取错误");
             res.put("count",0);
             res.put("data","");
@@ -115,11 +109,12 @@ public class StudentController {
         }
     }
 
+    /**
+     * 上传文件方法
+     */
     @PostMapping("/uploadFile")
     @ResponseBody
-    public Map uploadres(@RequestParam("file")MultipartFile file
-            , @RequestParam("path") String path
-            , HttpServletRequest request){
+    public Map uploadres(@RequestParam("file")MultipartFile file, @RequestParam("path") String path){
         Map<String, Object> json = new HashMap<>();
         com.lushu.checksystem.pojo.File daoDest = new com.lushu.checksystem.pojo.File();
         if (file.isEmpty()) {
@@ -129,9 +124,9 @@ public class StudentController {
             return json;
         }
         File rootPath = new File("src/main/resources/root"+path);
-        if (!rootPath.exists()){
+        /*if (!rootPath.exists()){
             rootPath.mkdir();
-        }
+        }*/
         String fileName = file.getOriginalFilename();
         String filePath = rootPath.getAbsolutePath();
         daoDest.setName(fileName);
@@ -161,8 +156,9 @@ public class StudentController {
         return json;
     }
 
-
-
+    /**
+     * 个人中心的跳转
+     */
     @RequestMapping("/personal")
     public ModelAndView personal(ModelAndView modelAndView){
         modelAndView.setViewName("/private");
