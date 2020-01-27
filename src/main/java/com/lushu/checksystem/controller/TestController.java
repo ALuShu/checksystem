@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class TestController {
 
-    @GetMapping("sayhello")
+    @GetMapping("/sayhello")
     public String say(Model model){
         model.addAttribute("msg","你好啊");
-        return "sayhello";
+        return "/sayhello";
     }
 }

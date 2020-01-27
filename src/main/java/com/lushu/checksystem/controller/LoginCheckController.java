@@ -2,6 +2,7 @@ package com.lushu.checksystem.controller;
 
 import com.lushu.checksystem.service.UserService;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * @author ALuShu
@@ -17,5 +18,11 @@ public class LoginCheckController {
 
     public void setUserService(UserService userService) {
         this.userService = userService;
+    }
+
+
+    @RequestMapping("/login")
+    public String login(){
+        return "/login";
     }
 }
