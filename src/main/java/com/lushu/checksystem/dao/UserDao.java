@@ -27,11 +27,18 @@ public interface UserDao {
     List<User> selectAllUser();
 
     /**
+     * 根据用户名搜索用户
+     * @param username
+     * @return
+     */
+    User selectUserByUsername(String username);
+
+    /**
      * 根据学号或工号群，查询用户群
      * @param username
      * @return
      */
-    List<User> selectUserByUsername(List<String> username);
+    List<User> selectUsersByUsername(List<String> username);
 
     /**
      * id搜索用户（测试用）

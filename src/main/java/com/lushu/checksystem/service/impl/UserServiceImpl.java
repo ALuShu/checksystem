@@ -6,8 +6,13 @@ import com.lushu.checksystem.pojo.Role;
 import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.UserService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -33,7 +38,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> selectUserByUsername(List<String> username) {
-        return userDao.selectUserByUsername(username);
+        return userDao.selectUsersByUsername(username);
     }
 
     @Override
@@ -59,6 +64,25 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> selectUserByRole(Integer role) {
         return userDao.selectUserByRole(role);
+    }
+
+
+    @Override
+    public UserDetails loadUserByUsername(String var1) throws UsernameNotFoundException {
+        //先根据用户名查用户
+        User user = userDao.selectUserByUsername(var1);
+        //再根据用户名查权限
+        List<Authority> authorities = userDao.selectAuthoritiesByUsername(var1);
+
+        List<GrantedAuthority> authorityList = new ArrayList<>();
+        for (Authority authority : authorities){
+            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(authority.getTag());
+            authorityList.add(grantedAuthority);
+        }
+
+        //把该用户的所有权限放User对象
+        user.setAuthorities(authorityList);
+        return user;
     }
 
     @Override

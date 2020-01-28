@@ -1,5 +1,6 @@
 package com.lushu.checksystem.config;
 
+import com.lushu.checksystem.service.impl.UserServiceImpl;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,14 +20,22 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @EnableWebSecurity
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
+
+    private UserServiceImpl userService;
+
+    public SpringSecurityConfig(UserServiceImpl userService) {
+        this.userService = userService;
+    }
+
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.
-                inMemoryAuthentication()
+        auth.userDetailsService(userService).passwordEncoder(new BCryptPasswordEncoder());
+                /*inMemoryAuthentication()
                 .passwordEncoder(new BCryptPasswordEncoder())
                 .withUser("root")
                 .password(new BCryptPasswordEncoder().encode("root"))
-                .roles("ADMIN");
+                .roles("ADMIN")*/;
     }
 
     @Override

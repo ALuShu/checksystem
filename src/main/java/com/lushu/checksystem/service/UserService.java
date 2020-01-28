@@ -3,6 +3,9 @@ package com.lushu.checksystem.service;
 import com.lushu.checksystem.pojo.Authority;
 import com.lushu.checksystem.pojo.Role;
 import com.lushu.checksystem.pojo.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import java.util.List;
 
@@ -13,7 +16,7 @@ import java.util.List;
  * @throws
  * @since
  */
-public interface UserService {
+public interface UserService extends UserDetailsService {
     List<User> selectAllUser();
     List<User> selectUserByUsername(List<String> username);
     User selectById(Integer id);
@@ -21,6 +24,13 @@ public interface UserService {
     Role selectRoleByUsername(String username);
     List<Authority> selectAuthoritiesByUsername(String username);
     List<User> selectUserByRole(Integer role);
+
+    /**
+     * 继承UserDetailsService的方法
+     */
+    @Override
+    UserDetails loadUserByUsername(String var1) throws UsernameNotFoundException;
+
     int countUsers();
     int addUsers(List<User> users);
     int deleteUsers(List<Integer> ids);

@@ -11,7 +11,7 @@
  Target Server Version : 80018
  File Encoding         : 65001
 
- Date: 22/01/2020 21:23:57
+ Date: 28/01/2020 20:05:34
 */
 
 SET NAMES utf8mb4;
@@ -26,20 +26,20 @@ CREATE TABLE `sys_authority`  (
   `name` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `tag` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_authority
 -- ----------------------------
-INSERT INTO `sys_authority` VALUES (1, '增加用户', 'USER_ADD');
-INSERT INTO `sys_authority` VALUES (2, '更新用户', 'USER_UPDATE');
-INSERT INTO `sys_authority` VALUES (3, '删除用户', 'USER_DELETE');
-INSERT INTO `sys_authority` VALUES (4, '查询用户', 'USER_SELECT');
-INSERT INTO `sys_authority` VALUES (5, '上传文件', 'FILE_UPLOAD');
-INSERT INTO `sys_authority` VALUES (6, '更新文件', 'FILE_UPDATE');
-INSERT INTO `sys_authority` VALUES (7, '删除文件', 'FILE_DELETE');
-INSERT INTO `sys_authority` VALUES (8, '搜索文件', 'FILE_SELECT');
-INSERT INTO `sys_authority` VALUES (9, '查重', 'FILE_CHECK');
+INSERT INTO `sys_authority` VALUES (1, '增加用户', 'ROLE_USER_ADD');
+INSERT INTO `sys_authority` VALUES (2, '更新用户', 'ROLE_USER_UPDATE');
+INSERT INTO `sys_authority` VALUES (3, '删除用户', 'ROLE_USER_DELETE');
+INSERT INTO `sys_authority` VALUES (4, '查询用户', 'ROLE_USER_SELECT');
+INSERT INTO `sys_authority` VALUES (5, '上传文件', 'ROLE_FILE_UPLOAD');
+INSERT INTO `sys_authority` VALUES (6, '更新文件', 'ROLE_FILE_UPDATE');
+INSERT INTO `sys_authority` VALUES (7, '删除文件', 'ROLE_FILE_DELETE');
+INSERT INTO `sys_authority` VALUES (8, '搜索文件', 'ROLE_FILE_SELECT');
+INSERT INTO `sys_authority` VALUES (9, '查重', 'ROLE_FILE_CHECK');
 INSERT INTO `sys_authority` VALUES (10, '角色增加', 'ROLE_ADD');
 INSERT INTO `sys_authority` VALUES (11, '角色更新', 'ROLE_UPDATE');
 INSERT INTO `sys_authority` VALUES (12, '角色删除', 'ROLE_DELETE');
@@ -61,7 +61,7 @@ CREATE TABLE `sys_file`  (
   `status` int(2) NULL DEFAULT NULL COMMENT '作业文件状态;0表示未查；2表示已查；1表示通过；-1表示未通过',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `owner_index`(`owner`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for sys_inform
@@ -85,7 +85,7 @@ CREATE TABLE `sys_role`  (
   `name` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `detail` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_role
@@ -103,7 +103,7 @@ CREATE TABLE `sys_role_authority`  (
   `role_id` int(1) NOT NULL,
   `authority_id` int(2) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 20 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_role_authority
@@ -148,7 +148,7 @@ CREATE TABLE `sys_user`  (
   `enabled` tinyint(1) NOT NULL COMMENT '账户是否可用',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `username_index`(`username`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_user
@@ -165,7 +165,7 @@ CREATE TABLE `sys_user_role`  (
   `role_id` int(1) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `user_id_index`(`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_user_role
