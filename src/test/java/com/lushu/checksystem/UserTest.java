@@ -8,6 +8,7 @@ import com.lushu.checksystem.service.UserService;
 import com.lushu.checksystem.util.ExcelUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -102,11 +103,13 @@ class UserTest extends ChecksystemApplicationTests{
             List<User> teacherList = teachers.explain(fileName1);
             for(User s : studentList){
                 studentUsername.add(s.getUsername());
+                s.setPassword(new BCryptPasswordEncoder().encode("111111"));
                 s.setCreateTime(df.format(new Date()));
                 System.out.println(s.toString());
             }
             for(User s : teacherList){
                 teacherUsername.add(s.getUsername());
+                s.setPassword(new BCryptPasswordEncoder().encode("111111"));
                 s.setCreateTime(df.format(new Date()));
                 System.out.println(s.toString());
             }

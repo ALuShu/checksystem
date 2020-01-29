@@ -82,7 +82,7 @@
         values
         <foreach collection="list" item="item" separator=",">
             (#{item.username},
-            111111,
+            #{item.password},
             #{item.realname},
             #{item.department},
             #{item.major},

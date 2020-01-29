@@ -1,14 +1,16 @@
 package com.lushu.checksystem.controller;
 
+import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.ServletException;
 import java.io.File;
@@ -43,16 +45,22 @@ public class StudentController {
      * 学生主页的跳转
      */
     @RequestMapping("/student")
-    public ModelAndView studentIndex(ModelAndView modelAndView){
-        modelAndView.setViewName("/index");
-        return modelAndView;
+    public String studentIndex(){
+        return "/index";
     }
 
     /**
      * 上传页面的跳转
      */
     @RequestMapping("/upload")
-    public String upload(){
+    public String upload(Model model){
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal != null){
+            if (principal instanceof User){
+                User currentUser = (User)principal;
+                model.addAttribute("current",currentUser);
+            }
+        }
         return "/upload";
     }
 
@@ -159,9 +167,8 @@ public class StudentController {
     /**
      * 个人中心的跳转
      */
-    @RequestMapping("/personal")
-    public ModelAndView personal(ModelAndView modelAndView){
-        modelAndView.setViewName("/private");
-        return modelAndView;
+    @RequestMapping("/STUpersonal")
+    public String personal(){
+        return "/private";
     }
 }

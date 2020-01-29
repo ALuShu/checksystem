@@ -25,4 +25,9 @@ public class LoginCheckController {
     public String login(){
         return "/login";
     }
+
+    @RequestMapping("/loginError")
+    public String error(){
+        return "/loginError";
+    }
 }

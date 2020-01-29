@@ -16,7 +16,7 @@
             <li class="layui-nav-item">
                 <a href="javascript:;" style="color: #393D49">
                     <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
-                    贤心
+                    <span th:text="${current.realname}"></span>
                 </a>
             </li>
             <li class="layui-nav-item"><a href="" style="color: #393D49">退了</a></li>
@@ -41,6 +41,12 @@
                                     {{# }); }}
                                 </script>
                             </span>
+                        </div>
+
+                        <div class="layui-btn-group demoTable">
+                            <button class="layui-btn" data-type="getCheckData">获取选中行数据</button>
+                            <button class="layui-btn" data-type="getCheckLength">获取选中数目</button>
+                            <button class="layui-btn" data-type="isAll">验证是否全选</button>
                         </div>
 
                         <!-- 列表 -->
@@ -208,7 +214,28 @@
             ,size: 10240
         });
 
-        console.log('path：'+path);
+
+        var $ = layui.$, active = {
+            getCheckData: function(){ //获取选中数据
+                var checkStatus = table.checkStatus('test')
+                    ,data = checkStatus.data;
+                layer.alert(JSON.stringify(data));
+            }
+            ,getCheckLength: function(){ //获取选中数目
+                var checkStatus = table.checkStatus('test')
+                    ,data = checkStatus.data;
+                layer.msg('选中了：'+ data.length + ' 个');
+            }
+            ,isAll: function(){ //验证是否全选
+                var checkStatus = table.checkStatus('test');
+                layer.msg(checkStatus.isAll ? '全选': '未全选')
+            }
+        };
+        $('.demoTable .layui-btn').on('click', function(){
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+
 
         //初始化面包屑导航
         laytpl(getTpl).render(breadData, function (html) {
