@@ -33,8 +33,9 @@ public class StudentController {
 
     @Value("${checksystem.root}")
     private String root;
-    private final UserService userService;
-    private final FileService fileService;
+    private UserService userService;
+    private FileService fileService;
+    private User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     public StudentController(UserService userService, FileService fileService) {
         this.userService = userService;
@@ -42,39 +43,34 @@ public class StudentController {
     }
 
     /**
-     * 学生主页的跳转
+     * 学生主页跳转
      */
     @RequestMapping("/student")
-    public String studentIndex(){
+    public String studentIndex(Model model) {
+        model.addAttribute("current", user);
         return "/index";
     }
 
     /**
-     * 上传页面的跳转
+     * 上传页面跳转
      */
     @RequestMapping("/upload")
-    public String upload(Model model){
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal != null){
-            if (principal instanceof User){
-                User currentUser = (User)principal;
-                model.addAttribute("current",currentUser);
-            }
-        }
+    public String upload(String teacher) {
+        root = root + "\\" + teacher;
         return "/upload";
     }
 
     /**
-     * 展示文件列表
+     * 学生端展示文件列表
      */
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/studentList", method = RequestMethod.GET)
     @ResponseBody
     public Map list(@RequestParam(required = false) String page
             , @RequestParam(required = false) String limit
             , @RequestParam(required = false) String path) throws ServletException, JSONException {
         long star = System.currentTimeMillis();
         Map<String, Object> res = new HashMap<>();
-        if (path == null){
+        if (path == null) {
             path = "/";
         }
 
@@ -98,40 +94,41 @@ public class StudentController {
                     fileItems.add(fileItem);
                 }
             } catch (IOException e) {
-                log.error("递归文件出错:",e);
+                log.error("递归文件出错:", e);
             }
-            res.put("code",0);
-            res.put("msg","");
-            res.put("count",fileItems.size());
-            res.put("data",fileItems);
+            res.put("code", 0);
+            res.put("msg", "");
+            res.put("count", fileItems.size());
+            res.put("data", fileItems);
             long end = System.currentTimeMillis();
-            log.info("花费时间："+(end-star)+"ms");
+            log.info("花费时间：" + (end - star) + "ms");
             return res;
         } catch (Exception e) {
-            log.error("递归文件出错:"+e);
-            res.put("code",-1);
-            res.put("msg","数据获取错误");
-            res.put("count",0);
-            res.put("data","");
+            log.error("递归文件出错:" + e);
+            res.put("code", -1);
+            res.put("msg", "数据获取错误");
+            res.put("count", 0);
+            res.put("data", "");
             return res;
         }
     }
 
+
     /**
-     * 上传文件方法
+     * 学生端上传文件方法
      */
     @PostMapping("/uploadFile")
     @ResponseBody
-    public Map uploadres(@RequestParam("file")MultipartFile file, @RequestParam("path") String path){
+    public Map uploadres(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) {
         Map<String, Object> json = new HashMap<>();
         com.lushu.checksystem.pojo.File daoDest = new com.lushu.checksystem.pojo.File();
         if (file.isEmpty()) {
-            json.put("code",1);
-            json.put("msg","请选择作业文件!");
-            json.put("data","{'file':'"+file.getOriginalFilename()+"'}");
+            json.put("code", 1);
+            json.put("msg", "请选择作业文件!");
+            json.put("data", "{'file':'" + file.getOriginalFilename() + "'}");
             return json;
         }
-        File rootPath = new File("src/main/resources/root"+path);
+        File rootPath = new File("src/main/resources/root" + path);
         /*if (!rootPath.exists()){
             rootPath.mkdir();
         }*/
@@ -149,7 +146,7 @@ public class StudentController {
                 json.put("msg", "上传成功！");
                 json.put("data", "{'file':'" + file.getOriginalFilename() + "'}");
                 return json;
-            }else {
+            } else {
                 json.put("code", 2);
                 json.put("msg", "上传失败，有同名文件");
                 json.put("data", "{'file':'" + file.getOriginalFilename() + "'}");
@@ -158,9 +155,9 @@ public class StudentController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        json.put("code",-1);
-        json.put("msg","上传失败");
-        json.put("data","{'file':'"+file.getOriginalFilename()+"'}");
+        json.put("code", -1);
+        json.put("msg", "上传失败");
+        json.put("data", "{'file':'" + file.getOriginalFilename() + "'}");
         return json;
     }
 
@@ -168,7 +165,31 @@ public class StudentController {
      * 个人中心的跳转
      */
     @RequestMapping("/STUpersonal")
-    public String personal(){
+    public String personal() {
         return "/private";
     }
+
+    /**
+     * 学生端展示教师列表
+     */
+
+
+
+    /**
+     * 学生端搜索教师
+     */
+
+
+
+    /**
+     * 学生端展示通知列表
+     */
+
+
+
+    /**
+     * 学生端展示以往作业列表
+     */
+
+
 }

@@ -61,7 +61,7 @@
     </select>
 
     <!-- selectUserByRole：根据角色搜索用户群（用户与角色n:1）；return：List<User> -->
-    <select id="selectUserByRole" parameterType="Integer" resultType="User">
+    <select id="selectUsersByRole" parameterType="Integer" resultType="User">
         SELECT *
         FROM sys_user
         WHERE id IN

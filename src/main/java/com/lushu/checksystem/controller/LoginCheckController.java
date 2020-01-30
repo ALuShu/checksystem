@@ -20,14 +20,28 @@ public class LoginCheckController {
         this.userService = userService;
     }
 
-
+    /**
+     * 登录跳转
+     */
     @RequestMapping("/login")
     public String login(){
         return "/login";
     }
 
+    /**
+     * 登陆失败/权限不足 跳转
+     */
     @RequestMapping("/loginError")
     public String error(){
         return "/loginError";
     }
+
+    /**
+     * 修改密码跳转
+     */
+
+
+    /**
+     * 修改密码
+     */
 }

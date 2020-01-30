@@ -73,7 +73,7 @@ public interface UserDao {
      * @param role
      * @return
      */
-    List<User> selectUserByRole(Integer role);
+    List<User> selectUsersByRole(Integer role);
 
     /**
      * 搜索总记录数

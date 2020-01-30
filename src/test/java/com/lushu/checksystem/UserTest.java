@@ -74,7 +74,7 @@ class UserTest extends ChecksystemApplicationTests{
 
     @Test
     void selectUserByRoleTest(){
-        users = userService.selectUserByRole(1);
+        users = userService.selectUsersByRole(1);
         for (User user : users){
             System.out.println(user);
         }
@@ -115,10 +115,10 @@ class UserTest extends ChecksystemApplicationTests{
             }
             userService.addUsers(studentList);
             userService.addUsers(teacherList);
-            for (User s : userService.selectUserByUsername(studentUsername)){
+            for (User s : userService.selectUsersByUsername(studentUsername)){
                 studentUserId.add(s.getId());
             }
-            for (User s : userService.selectUserByUsername(teacherUsername)){
+            for (User s : userService.selectUsersByUsername(teacherUsername)){
                 fileService.newTeacherFile(s);
                 teacherUserId.add(s.getId());
             }

@@ -148,12 +148,7 @@ CREATE TABLE `sys_user`  (
   `enabled` tinyint(1) NOT NULL COMMENT '账户是否可用',
   PRIMARY KEY (`id`) USING BTREE,
   UNIQUE INDEX `username_index`(`username`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
-
--- ----------------------------
--- Records of sys_user
--- ----------------------------
-INSERT INTO `sys_user` VALUES (1, 'root', 'root', '系统管理员', '', NULL, '2020-01-10 11:46:20', '2020-01-10 11:46:20', 1, 1, 1, 1);
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for sys_user_role

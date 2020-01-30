@@ -1,4 +1,4 @@
-package com.lushu.checksystem.config;
+package com.lushu.checksystem.security;
 
 import com.lushu.checksystem.service.impl.UserServiceImpl;
 import org.springframework.context.annotation.Configuration;
@@ -20,8 +20,13 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @EnableWebSecurity
 public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserServiceImpl userService;
-    public SpringSecurityConfig(UserServiceImpl userService) {
+    private MyAuthenticationSuccessHandler successHandler;
+    private MyAuthenticationFailureHandler failureHandler;
+    private UserServiceImpl userService;
+
+    public SpringSecurityConfig(MyAuthenticationSuccessHandler successHandler, MyAuthenticationFailureHandler failureHandler, UserServiceImpl userService) {
+        this.successHandler = successHandler;
+        this.failureHandler = failureHandler;
         this.userService = userService;
     }
 
@@ -33,26 +38,23 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
          * 注册：密码在数据库里都是使用 SHA-256+随机盐+密钥 把用户输入的密码进行hash处理得到密码的hash值，且不可逆
          * 登录：由于不可逆，会把输入的密码串再用相同的加密算法得到hash值，对比数据库的hash值
          */
-        auth.userDetailsService(userService)
-                .passwordEncoder(new BCryptPasswordEncoder())
-                .and()
-            .inMemoryAuthentication()
-                .passwordEncoder(new BCryptPasswordEncoder())
-                .withUser("root")
-                .password(new BCryptPasswordEncoder().encode("root"))
-                .roles("ADMIN");
+        auth.userDetailsService(userService).passwordEncoder(new BCryptPasswordEncoder());
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-                .antMatchers("/uploadFile").hasRole("ADMIN")
-                .antMatchers("/sayhello").permitAll()
-            .anyRequest().authenticated()
-                .and()
-            .formLogin().loginPage("/login").failureUrl("/loginError").permitAll()
-                .and()
-            .csrf().disable();
+                .antMatchers("/sayhello","/uploadFile")
+                .permitAll()
+                .anyRequest().authenticated()
+            .and()
+                .formLogin()
+                .loginPage("/login")
+                .failureHandler(failureHandler)
+                .successHandler(successHandler)
+                .permitAll()
+            .and()
+                .csrf().disable();
     }
 
     @Override

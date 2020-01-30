@@ -1,10 +1,13 @@
 package com.lushu.checksystem.controller;
 
+import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.FileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -30,20 +33,25 @@ public class TeacherController {
 
     @Value("${checksystem.root}")
     private String root;
+    private User user =(User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     private FileService fileService;
     public void setFileService(FileService fileService) {
         this.fileService = fileService;
     }
 
+    /**
+     * 教师主页跳转
+     */
     @RequestMapping("/teacher")
     public String teacherIndex(){
+        root = root + "\\" + user.getUsername() + "_" + user.getRealname();
         return "/teacherindex";
     }
 
     /**
-     * 教师首页展示文件列表
+     * 教师端展示文件列表
      */
-    @RequestMapping(value = "/list", method = RequestMethod.GET)
+    @RequestMapping(value = "/teacherList", method = RequestMethod.GET)
     @ResponseBody
     public Map list(@RequestParam(required = false) String page
             , @RequestParam(required = false) String limit
@@ -93,9 +101,48 @@ public class TeacherController {
         }
     }
 
+    /**
+     * 教师端展示最近批改作业列表
+     */
+
+
+    /**
+     * 教师个人中心跳转
+     */
     @RequestMapping("/TEApersonal")
-    public String personal(){
+    public String personal(Model model){
+        model.addAttribute("current",user);
         return "/teacherprivate";
     }
+
+    /**
+     * 教师端作业查重
+     */
+
+
+
+    /**
+     * 教师端作业文件更新
+     */
+
+
+
+
+    /**
+     * 教师端文件夹管理
+     */
+
+
+
+    /**
+     * 教师端通知编辑跳转
+     */
+
+
+
+    /**
+     * 教师端通知发布
+     */
+
 
 }

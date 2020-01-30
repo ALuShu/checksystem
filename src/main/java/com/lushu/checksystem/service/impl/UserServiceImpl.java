@@ -37,7 +37,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> selectUserByUsername(List<String> username) {
+    public List<User> selectUsersByUsername(List<String> username) {
         return userDao.selectUsersByUsername(username);
     }
 
@@ -62,8 +62,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> selectUserByRole(Integer role) {
-        return userDao.selectUserByRole(role);
+    public List<User> selectUsersByRole(Integer role) {
+        return userDao.selectUsersByRole(role);
     }
 
 

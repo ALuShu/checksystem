@@ -18,12 +18,12 @@ import java.util.List;
  */
 public interface UserService extends UserDetailsService {
     List<User> selectAllUser();
-    List<User> selectUserByUsername(List<String> username);
+    List<User> selectUsersByUsername(List<String> username);
     User selectById(Integer id);
     User selectUser(String username);
     Role selectRoleByUsername(String username);
     List<Authority> selectAuthoritiesByUsername(String username);
-    List<User> selectUserByRole(Integer role);
+    List<User> selectUsersByRole(Integer role);
 
     /**
      * 继承UserDetailsService的方法
