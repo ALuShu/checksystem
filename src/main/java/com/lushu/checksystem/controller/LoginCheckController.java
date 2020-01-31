@@ -3,6 +3,7 @@ package com.lushu.checksystem.controller;
 import com.lushu.checksystem.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * @author ALuShu
@@ -33,15 +34,18 @@ public class LoginCheckController {
      */
     @RequestMapping("/loginError")
     public String error(){
-        return "/loginError";
+        return "/error";
     }
 
     /**
      * 修改密码跳转
      */
-
+    @RequestMapping("/update")
+    public void update(){}
 
     /**
      * 修改密码
      */
+    @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
+    public void updatePassword(){}
 }

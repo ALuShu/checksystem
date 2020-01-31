@@ -43,10 +43,16 @@ public class TeacherController {
      * 教师主页跳转
      */
     @RequestMapping("/teacher")
-    public String teacherIndex(){
+    public String index(){
         root = root + "\\" + user.getUsername() + "_" + user.getRealname();
         return "/teacherindex";
     }
+
+    /**
+     * 教师端通知编辑跳转
+     */
+    @RequestMapping("/inform")
+    public void inform(){}
 
     /**
      * 教师端展示文件列表
@@ -104,6 +110,8 @@ public class TeacherController {
     /**
      * 教师端展示最近批改作业列表
      */
+    @RequestMapping(value = "/recentWorks", method = RequestMethod.GET)
+    public void recentWorks(){}
 
 
     /**
@@ -118,31 +126,28 @@ public class TeacherController {
     /**
      * 教师端作业查重
      */
-
+    @RequestMapping(value = "/check", method = RequestMethod.POST)
+    public void checkWorks(){}
 
 
     /**
      * 教师端作业文件更新
      */
-
-
+    @RequestMapping(value = "/updateWork", method = RequestMethod.POST)
+    public void updateWork(){}
 
 
     /**
      * 教师端文件夹管理
      */
-
-
-
-    /**
-     * 教师端通知编辑跳转
-     */
-
+    @RequestMapping(value = "/manageFile", method = RequestMethod.POST)
+    public void manageFile(){}
 
 
     /**
      * 教师端通知发布
      */
-
+    @RequestMapping(value = "/push", method = RequestMethod.POST)
+    public void pushInform(){}
 
 }

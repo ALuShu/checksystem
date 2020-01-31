@@ -46,7 +46,7 @@ public class StudentController {
      * 学生主页跳转
      */
     @RequestMapping("/student")
-    public String studentIndex(Model model) {
+    public String index(Model model) {
         model.addAttribute("current", user);
         return "/index";
     }
@@ -119,7 +119,7 @@ public class StudentController {
      */
     @PostMapping("/uploadFile")
     @ResponseBody
-    public Map uploadres(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) {
+    public Map upload(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) {
         Map<String, Object> json = new HashMap<>();
         com.lushu.checksystem.pojo.File daoDest = new com.lushu.checksystem.pojo.File();
         if (file.isEmpty()) {
@@ -172,24 +172,24 @@ public class StudentController {
     /**
      * 学生端展示教师列表
      */
-
-
+    @RequestMapping(value = "/showTeachers", method = RequestMethod.GET)
+    public void showTeachers(){}
 
     /**
      * 学生端搜索教师
      */
-
-
+    @RequestMapping(value = "/searchTeacher", method = RequestMethod.POST)
+    public void searchTeacher(){}
 
     /**
      * 学生端展示通知列表
      */
-
-
+    @RequestMapping(value = "/showInforms", method = RequestMethod.GET)
+    public void showInforms(){}
 
     /**
      * 学生端展示以往作业列表
      */
-
-
+    @RequestMapping(value = "/showOldWorks", method = RequestMethod.GET)
+    public void showOldWorks(){}
 }

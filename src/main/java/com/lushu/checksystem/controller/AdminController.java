@@ -51,9 +51,9 @@ public class AdminController {
      * 管理员主页跳转
      */
     @RequestMapping("/manager")
-    public String supervise(Model model){
+    public String index(Model model){
         model.addAttribute("current",user);
-        return "/manage";
+        return "/manager";
     }
 
 
@@ -113,29 +113,46 @@ public class AdminController {
     /**
      * 管理员端展示用户列表
      */
-
+    @RequestMapping(value = "/users", method = RequestMethod.GET)
+    @ResponseBody
+    public HashMap users(@RequestParam(required = false) String page
+            , @RequestParam(required = false) String limit) throws ServletException, JSONException {
+        HashMap<String, Object> memberMap = new HashMap<>();
+        memberMap.put("userMap",userService.selectAllUser());
+        return memberMap;
+    }
 
 
     /**
-     * 管理员端搜索用户
+     * 管理员端搜索用户（待优化）
      */
+    @RequestMapping(value = "/searchUser", method = RequestMethod.POST)
+    public HashMap user(@RequestParam String type, @RequestParam String keyword) throws ServletException, JSONException {
+        HashMap<String, Object> memberMap = new HashMap<>();
+        memberMap.put("user",userService.selectUser(keyword));
+        return memberMap;
+    }
 
 
 
     /**
      * 管理员端展示角色列表
      */
-
+    @RequestMapping(value = "/roles",method = RequestMethod.GET)
+    public void roles(){}
 
 
     /**
      * 管理员端批量管理用户
      */
-
+    @RequestMapping(value = "/manageUsers", method = RequestMethod.POST)
+    public void manageUsers(){}
 
 
     /**
      * 管理员端管理角色
      */
+    @RequestMapping(value = "/manageRoles", method = RequestMethod.POST)
+    public void manageRoles(){}
 
 }
