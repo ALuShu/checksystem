@@ -119,7 +119,7 @@ class UserTest extends ChecksystemApplicationTests{
                 studentUserId.add(s.getId());
             }
             for (User s : userService.selectUsersByUsername(teacherUsername)){
-                fileService.newTeacherFile(s);
+                fileService.newTeacherFile(s);/*教师要新增一个根目录*/
                 teacherUserId.add(s.getId());
             }
             userService.addUserRole(studentUserId, studentRoleId);

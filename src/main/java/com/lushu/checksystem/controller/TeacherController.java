@@ -52,7 +52,10 @@ public class TeacherController {
      * 教师端通知编辑跳转
      */
     @RequestMapping("/inform")
-    public void inform(){}
+    public String inform(Model model){
+        model.addAttribute("current",user);
+        return "/editInform";
+    }
 
     /**
      * 教师端展示文件列表

@@ -1,21 +1,28 @@
 package com.lushu.checksystem.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.service.UserService;
+import com.lushu.checksystem.util.ExcelUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -37,6 +44,7 @@ public class AdminController {
     private String root;
     private UserService userService;
     private FileService fileService;
+    private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
     public void setUserService(UserService userService) {
@@ -115,9 +123,9 @@ public class AdminController {
      */
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     @ResponseBody
-    public HashMap users(@RequestParam(required = false) String page
+    public Map users(@RequestParam(required = false) String page
             , @RequestParam(required = false) String limit) throws ServletException, JSONException {
-        HashMap<String, Object> memberMap = new HashMap<>();
+        Map<String, Object> memberMap = new HashMap<>();
         memberMap.put("userMap",userService.selectAllUser());
         return memberMap;
     }
@@ -127,8 +135,9 @@ public class AdminController {
      * 管理员端搜索用户（待优化）
      */
     @RequestMapping(value = "/searchUser", method = RequestMethod.POST)
-    public HashMap user(@RequestParam String type, @RequestParam String keyword) throws ServletException, JSONException {
-        HashMap<String, Object> memberMap = new HashMap<>();
+    @ResponseBody
+    public Map user(@RequestParam String type, @RequestParam String keyword) throws ServletException, JSONException {
+        Map<String, Object> memberMap = new HashMap<>();
         memberMap.put("user",userService.selectUser(keyword));
         return memberMap;
     }
@@ -139,20 +148,116 @@ public class AdminController {
      * 管理员端展示角色列表
      */
     @RequestMapping(value = "/roles",method = RequestMethod.GET)
-    public void roles(){}
+    @ResponseBody
+    public Map roles(){
+        Map<String, Object> roleMap = new HashMap<>();
+        //roleMap.put("roles",userService.selectUsersByRole());
+        return roleMap;
+    }
 
 
     /**
-     * 管理员端批量管理用户
+     * 管理员端批量管理用户（暂时支持学生）
      */
     @RequestMapping(value = "/manageUsers", method = RequestMethod.POST)
-    public void manageUsers(){}
+    @ResponseBody
+    public Map addUsers(@RequestParam(required = false) MultipartFile file
+            ,@RequestParam(required = false) String jsonUsers){
+        Map<String, Object> res = new HashMap<>();
+        if (file != null){
+
+            ExcelUtil<User> students = new ExcelUtil<>(User.class);
+            List<String> studentUsername = new ArrayList<>();
+            List<Integer> studentUserId = new ArrayList<>();
+            try {
+                List<User> studentList = students.explain(file.getOriginalFilename());
+                int addRes = studentList.size() * 2;
+                for(User s : studentList){
+                    studentUsername.add(s.getUsername());
+                    s.setPassword(new BCryptPasswordEncoder().encode("111111"));
+                    s.setCreateTime(df.format(new Date()));
+                }
+                int a = userService.addUsers(studentList);
+                for (User s : userService.selectUsersByUsername(studentUsername)){
+                    studentUserId.add(s.getId());
+                }
+                int b = userService.addUserRole(studentUserId, 3);
+                if (addRes == (a+b)) {
+                    res.put("code", 1);
+                    res.put("msg", "添加成功");
+                    return res;
+                }else {
+                    res.put("code", 0);
+                    res.put("msg","添加失败");
+                    return res;
+                }
+            } catch (IOException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                log.error("error", e);
+                res.put("code", -1);
+                res.put("msg","发生错误");
+                return res;
+            }
+
+        }else {
+
+            ObjectMapper mapper = new ObjectMapper();
+            List<String> studentUsername = new ArrayList<>();
+            List<Integer> studentUserId = new ArrayList<>();
+            try {
+                List<User> studentList = mapper.readValue(jsonUsers, new TypeReference<List<User>>() {});
+                int addRes = studentList.size() * 2;
+                for(User s : studentList){
+                    studentUsername.add(s.getUsername());
+                    s.setPassword(new BCryptPasswordEncoder().encode("111111"));
+                    s.setCreateTime(df.format(new Date()));
+                }
+                int a = userService.addUsers(studentList);
+                for (User s : userService.selectUsersByUsername(studentUsername)){
+                    studentUserId.add(s.getId());
+                }
+                int b = userService.addUserRole(studentUserId, 3);
+                if (addRes == (a+b)) {
+                    res.put("code", 1);
+                    res.put("msg", "添加成功");
+                    return res;
+                }else {
+                    res.put("code", 0);
+                    res.put("msg","添加失败");
+                    return res;
+                }
+            } catch (JsonProcessingException e) {
+                log.error("error", e);
+                res.put("code", -1);
+                res.put("msg","发生错误");
+                return res;
+            }
+        }
+    }
+
+    @RequestMapping(value = "/deleteUsers", method = RequestMethod.POST)
+    @ResponseBody
+    public Map deleteUsers(@RequestParam String jsonUsers){
+        Map<String, Object> res = new HashMap<>();
+        return res;
+    }
+
+    @RequestMapping(value = "/updateUsers", method = RequestMethod.POST)
+    @ResponseBody
+    public Map updateUsers(@RequestParam String jsonUsers){
+        Map<String, Object> res = new HashMap<>();
+        return res;
+    }
 
 
     /**
-     * 管理员端管理角色
+     * 管理员端管理角色（未完成）
      */
-    @RequestMapping(value = "/manageRoles", method = RequestMethod.POST)
-    public void manageRoles(){}
+    @RequestMapping(value = "/addRole", method = RequestMethod.POST)
+    @ResponseBody
+    public Map addRole(@RequestParam String jsonUsers){
+        Map<String, Object> res = new HashMap<>();
+        return res;
+    }
+
 
 }
