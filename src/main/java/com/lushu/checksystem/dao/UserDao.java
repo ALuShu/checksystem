@@ -21,10 +21,23 @@ import java.util.List;
 public interface UserDao {
 
     /**
+     * 用户名搜索用户
+     * @param username
+     * @return
+     */
+    User selectUser(String username);
+
+    /**
      * 查询用户列表
      * @return
      */
     List<User> selectAllUser();
+
+    /**
+     * 查询最后一个用户的id
+     * @return
+     */
+    Integer selectLastId();
 
     /**
      * 根据用户名搜索用户
@@ -46,13 +59,6 @@ public interface UserDao {
      * @return
      */
     User selectById(Integer id);
-
-    /**
-     * 用户名搜索用户
-     * @param username
-     * @return
-     */
-    User selectUser(String username);
 
     /**
      * 用户名搜索用户的角色

@@ -6,9 +6,9 @@ import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.service.UserService;
 import com.lushu.checksystem.util.ExcelUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -21,6 +21,7 @@ import java.util.List;
  * @author lushu
  * @date 19-11-11 下午10:08
  **/
+@Slf4j
 class UserTest extends ChecksystemApplicationTests{
 
     @Autowired
@@ -87,7 +88,7 @@ class UserTest extends ChecksystemApplicationTests{
         user.setRealname("系统管理员");
         user.setCreateTime(df.format(new Date()));
         users.add(user);
-        userService.addUsers(users);
+        userService.addUsersByExcel(users, 1);
     }
 
     @Test
@@ -101,31 +102,10 @@ class UserTest extends ChecksystemApplicationTests{
         try {
             List<User> studentList = students.explain(fileName);
             List<User> teacherList = teachers.explain(fileName1);
-            for(User s : studentList){
-                studentUsername.add(s.getUsername());
-                s.setPassword(new BCryptPasswordEncoder().encode("111111"));
-                s.setCreateTime(df.format(new Date()));
-                System.out.println(s.toString());
-            }
-            for(User s : teacherList){
-                teacherUsername.add(s.getUsername());
-                s.setPassword(new BCryptPasswordEncoder().encode("111111"));
-                s.setCreateTime(df.format(new Date()));
-                System.out.println(s.toString());
-            }
-            userService.addUsers(studentList);
-            userService.addUsers(teacherList);
-            for (User s : userService.selectUsersByUsername(studentUsername)){
-                studentUserId.add(s.getId());
-            }
-            for (User s : userService.selectUsersByUsername(teacherUsername)){
-                fileService.newTeacherFile(s);/*教师要新增一个根目录*/
-                teacherUserId.add(s.getId());
-            }
-            userService.addUserRole(studentUserId, studentRoleId);
-            userService.addUserRole(teacherUserId, teacherRoleId);
-        } catch (IOException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-            e.printStackTrace();
+            userService.addUsersByExcel(studentList, 3);
+            userService.addUsersByExcel(teacherList, 2);
+        }catch (IOException | InstantiationException |InvocationTargetException|IllegalAccessException e){
+            log.error("错误", e);
         }
     }
 

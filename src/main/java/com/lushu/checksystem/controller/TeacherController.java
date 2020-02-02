@@ -33,7 +33,7 @@ public class TeacherController {
 
     @Value("${checksystem.root}")
     private String root;
-    private User user =(User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    private User user = new User();
     private FileService fileService;
     public void setFileService(FileService fileService) {
         this.fileService = fileService;
@@ -44,6 +44,7 @@ public class TeacherController {
      */
     @RequestMapping("/teacher")
     public String index(){
+        user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         root = root + "\\" + user.getUsername() + "_" + user.getRealname();
         return "/teacherindex";
     }
@@ -53,6 +54,7 @@ public class TeacherController {
      */
     @RequestMapping("/inform")
     public String inform(Model model){
+        user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("current",user);
         return "/editInform";
     }
@@ -122,6 +124,7 @@ public class TeacherController {
      */
     @RequestMapping("/TEApersonal")
     public String personal(Model model){
+        user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("current",user);
         return "/teacherprivate";
     }

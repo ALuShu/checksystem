@@ -6,11 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @SpringBootApplication
@@ -26,17 +23,11 @@ public class ChecksystemApplication {
     public static void init() {
         User tmp = userService.selectUser("root");
         if (null == tmp){
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             List<User> users = new ArrayList<>(1);
             User user = new User();
-            user.setId(1);
-            user.setUsername("root");
-            user.setPassword(new BCryptPasswordEncoder().encode("root"));
-            user.setRealname("系统管理员");
-            user.setCreateTime(dateFormat.format(new Date()));
             users.add(user);
-            int res = userService.addUsers(users);
-            if (res == 1) {
+            int res = userService.addUsersByExcel(users, 1);
+            if (res == 2) {
                 log.info("初始化成功");
             } else {
                 log.info("初始化失败");

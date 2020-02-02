@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,7 +44,7 @@ public class AdminController {
     private UserService userService;
     private FileService fileService;
     private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    private User user = new User();
 
     public void setUserService(UserService userService) {
         this.userService = userService;
@@ -60,6 +59,7 @@ public class AdminController {
      */
     @RequestMapping("/manager")
     public String index(Model model){
+        user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("current",user);
         return "/manager";
     }
@@ -157,94 +157,51 @@ public class AdminController {
 
 
     /**
-     * 管理员端批量管理用户（暂时支持学生）
+     * 管理员端批量管理用户
      */
     @RequestMapping(value = "/manageUsers", method = RequestMethod.POST)
     @ResponseBody
     public Map addUsers(@RequestParam(required = false) MultipartFile file
-            ,@RequestParam(required = false) String jsonUsers){
+            ,@RequestParam(required = false) String jsonUsers
+            ,@RequestParam Integer roleId) throws InvocationTargetException, InstantiationException, IllegalAccessException, IOException {
         Map<String, Object> res = new HashMap<>();
+        List<User> userList = new ArrayList<>();
         if (file != null){
-
-            ExcelUtil<User> students = new ExcelUtil<>(User.class);
-            List<String> studentUsername = new ArrayList<>();
-            List<Integer> studentUserId = new ArrayList<>();
-            try {
-                List<User> studentList = students.explain(file.getOriginalFilename());
-                int addRes = studentList.size() * 2;
-                for(User s : studentList){
-                    studentUsername.add(s.getUsername());
-                    s.setPassword(new BCryptPasswordEncoder().encode("111111"));
-                    s.setCreateTime(df.format(new Date()));
-                }
-                int a = userService.addUsers(studentList);
-                for (User s : userService.selectUsersByUsername(studentUsername)){
-                    studentUserId.add(s.getId());
-                }
-                int b = userService.addUserRole(studentUserId, 3);
-                if (addRes == (a+b)) {
-                    res.put("code", 1);
-                    res.put("msg", "添加成功");
-                    return res;
-                }else {
-                    res.put("code", 0);
-                    res.put("msg","添加失败");
-                    return res;
-                }
-            } catch (IOException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-                log.error("error", e);
-                res.put("code", -1);
-                res.put("msg","发生错误");
-                return res;
-            }
-
+            ExcelUtil<User> users = new ExcelUtil<>(User.class);
+            userList = users.explain(file.getOriginalFilename());
         }else {
-
             ObjectMapper mapper = new ObjectMapper();
-            List<String> studentUsername = new ArrayList<>();
-            List<Integer> studentUserId = new ArrayList<>();
-            try {
-                List<User> studentList = mapper.readValue(jsonUsers, new TypeReference<List<User>>() {});
-                int addRes = studentList.size() * 2;
-                for(User s : studentList){
-                    studentUsername.add(s.getUsername());
-                    s.setPassword(new BCryptPasswordEncoder().encode("111111"));
-                    s.setCreateTime(df.format(new Date()));
-                }
-                int a = userService.addUsers(studentList);
-                for (User s : userService.selectUsersByUsername(studentUsername)){
-                    studentUserId.add(s.getId());
-                }
-                int b = userService.addUserRole(studentUserId, 3);
-                if (addRes == (a+b)) {
-                    res.put("code", 1);
-                    res.put("msg", "添加成功");
-                    return res;
-                }else {
-                    res.put("code", 0);
-                    res.put("msg","添加失败");
-                    return res;
-                }
-            } catch (JsonProcessingException e) {
-                log.error("error", e);
-                res.put("code", -1);
-                res.put("msg","发生错误");
-                return res;
-            }
+            userList = mapper.readValue(jsonUsers, new TypeReference<ArrayList<User>>() {});
         }
+        int addRes = userService.addUsersByExcel(userList, roleId);
+        if (addRes == (userList.size() * 2)){
+            res.put("code", 1);
+            res.put("msg","添加成功");
+        }else {
+            log.info("录入数据与数据库影响条数不一致");
+            res.put("code", 0);
+            res.put("msg","发生错误");
+        }
+        return res;
     }
 
     @RequestMapping(value = "/deleteUsers", method = RequestMethod.POST)
     @ResponseBody
-    public Map deleteUsers(@RequestParam String jsonUsers){
+    public Map deleteUsers(@RequestParam String jsonIds) throws JsonProcessingException {
         Map<String, Object> res = new HashMap<>();
+        ObjectMapper mapper = new ObjectMapper();
+        List<Integer> idList = mapper.readValue(jsonIds, new TypeReference<ArrayList<Integer>>() {});
+        userService.deleteUsers(idList);
         return res;
     }
 
     @RequestMapping(value = "/updateUsers", method = RequestMethod.POST)
     @ResponseBody
-    public Map updateUsers(@RequestParam String jsonUsers){
+    public Map updateUsers(@RequestParam String jsonUsers) throws JsonProcessingException {
         Map<String, Object> res = new HashMap<>();
+        ObjectMapper mapper = new ObjectMapper();
+        List<User> userList = mapper.readValue(jsonUsers, new TypeReference<ArrayList<User>>() {});
+        userService.updateUsers(userList);
         return res;
     }
 

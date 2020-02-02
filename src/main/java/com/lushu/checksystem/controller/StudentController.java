@@ -35,7 +35,7 @@ public class StudentController {
     private String root;
     private UserService userService;
     private FileService fileService;
-    private User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    private User user = new User();
 
     public StudentController(UserService userService, FileService fileService) {
         this.userService = userService;
@@ -47,6 +47,7 @@ public class StudentController {
      */
     @RequestMapping("/student")
     public String index(Model model) {
+        user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("current", user);
         return "/index";
     }

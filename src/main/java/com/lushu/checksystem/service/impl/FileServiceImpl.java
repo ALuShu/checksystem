@@ -2,7 +2,6 @@ package com.lushu.checksystem.service.impl;
 
 import com.lushu.checksystem.dao.FileDao;
 import com.lushu.checksystem.pojo.File;
-import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.FileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -36,12 +35,12 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public int newTeacherFile(User user) {
+    public int newTeacherFile(String username, String realname, Integer id) {
         File teacherFile = new File();
         /*教师文件夹名字由工号+姓名组成*/
-        String teacherRoot = user.getUsername() +"_"+ user.getRealname();
+        String teacherRoot = username +"_"+ realname;
         teacherFile.setName(teacherRoot);
-        teacherFile.setOwner(user.getId());
+        teacherFile.setOwner(id);
         teacherFile.setPath(root);
         teacherFile.setPermission("-rw--rwx-rwx");
         teacherFile.setType(0);
@@ -56,7 +55,7 @@ public class FileServiceImpl implements FileService {
             Files.createDirectory(Paths.get(root+teacherRoot));
             return fileDao.addFile(teacherFile);
         }catch (IOException e){
-            log.error("教师:"+user.getRealname()+"创建文件夹失败!", e);
+            log.error("教师:"+username+"创建文件夹失败!", e);
         }
         return -1;
     }

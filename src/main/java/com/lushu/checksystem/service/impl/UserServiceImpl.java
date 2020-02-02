@@ -4,15 +4,19 @@ import com.lushu.checksystem.dao.UserDao;
 import com.lushu.checksystem.pojo.Authority;
 import com.lushu.checksystem.pojo.Role;
 import com.lushu.checksystem.pojo.User;
+import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -26,9 +30,13 @@ import java.util.List;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private UserDao userDao;
-    public UserServiceImpl(UserDao userDao) {
+    private FileService fileService;
+
+    public UserServiceImpl(UserDao userDao, FileService fileService) {
         this.userDao = userDao;
+        this.fileService = fileService;
     }
 
     @Override
@@ -91,33 +99,77 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int addUsers(List<User> users) {
-        return userDao.addUsers(users);
+    public int addUsersByExcel(List<User> users, Integer roleId) {
+        if (users.size() == 0){
+            log.error("用户集合为空,请检查参数是否正确输入");
+            return users.size();
+        }else {
+            int firstId;
+            if (null != userDao.selectLastId()){
+                firstId = userDao.selectLastId() + 1;
+            }else {
+                firstId = 1;
+            }
+            List<Integer> ids = new ArrayList<>();
+            if (roleId == 2){
+                for (User user : users){
+                    int fileRes = fileService.newTeacherFile(user.getUsername(), user.getRealname(), firstId);
+                    if (fileRes != 1){
+                        log.error("教师-"+user.getRealname()+"-文件夹创建出错");
+                        throw new RuntimeException("教师文件夹创建出错");
+                    }
+                    ids.add(firstId);
+                    firstId++;
+                    user.setPassword(new BCryptPasswordEncoder().encode("111111"));
+                    user.setCreateTime(dateFormat.format(new Date()));
+                }
+                int userRes = userDao.addUsers(users);
+                int midRes = userDao.addUserRole(ids, roleId);
+                return (userRes + midRes);
+            }else if (roleId == 3){
+                for (User user : users){
+                    ids.add(firstId);
+                    firstId++;
+                    user.setPassword(new BCryptPasswordEncoder().encode("111111"));
+                    user.setCreateTime(dateFormat.format(new Date()));
+                }
+                int userRes = userDao.addUsers(users);
+                int midRes = userDao.addUserRole(ids, roleId);
+                return (userRes + midRes);
+            }else {
+                for (User user : users){
+                    ids.add(firstId);
+                    user.setUsername("root");
+                    user.setPassword(new BCryptPasswordEncoder().encode("root"));
+                    user.setRealname("系统管理员");
+                    user.setCreateTime(dateFormat.format(new Date()));
+                }
+                int userRes = userDao.addUsers(users);
+                int midRes = userDao.addUserRole(ids, roleId);
+                return (userRes + midRes);
+            }
+        }
     }
 
     @Override
     public int deleteUsers(List<Integer> ids) {
-        return userDao.deleteUsers(ids);
+        int delUserRes = userDao.deleteUsers(ids);
+        int delRoleRes = userDao.deleteUserRole(ids);
+        return (delUserRes + delRoleRes);
     }
 
     @Override
     public int updateUsers(List<User> users) {
+        for(User user : users){
+
+        }
+
         return userDao.updateUsers(users);
     }
 
     @Override
     public int updatePassword(User user) {
         return userDao.updatePassword(user);
-    }
-
-    @Override
-    public int addUserRole(List<Integer> userId, Integer roleId) {
-        return userDao.addUserRole(userId,roleId);
-    }
-
-    @Override
-    public int deleteUserRole(List<Integer> userIds) {
-        return userDao.deleteUserRole(userIds);
     }
 
     @Override
