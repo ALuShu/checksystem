@@ -67,6 +67,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Role selectRoleByUsername(String username) {
+        return userDao.selectRoleByUsername(username);
+    }
+
+    @Override
     public HashMap<String, Object> selectUser(String username) {
         User user = userDao.selectUserByUsername(username);
         Role role = userDao.selectRoleByUsername(username);
@@ -124,6 +129,10 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    @Override
+    public int countUsers() {
+        return userDao.countUsers();
+    }
 
     @Override
     public int addUsersByExcel(List<User> users, Integer roleId) {

@@ -2,6 +2,7 @@ package com.lushu.checksystem.service;
 
 import com.lushu.checksystem.pojo.Authority;
 import com.lushu.checksystem.pojo.PageBean;
+import com.lushu.checksystem.pojo.Role;
 import com.lushu.checksystem.pojo.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,6 +21,7 @@ import java.util.List;
 public interface UserService extends UserDetailsService {
     PageBean<User> selectAllUser(Integer currentPage, Integer pageSize);
     User selectById(Integer id);
+    Role selectRoleByUsername(String username);
     HashMap<String, Object> selectUser(String username);
     HashMap<String, Object> selectUserByRealname(String realname);
     List<Authority> selectAuthoritiesByUsername(String username);
@@ -33,6 +35,7 @@ public interface UserService extends UserDetailsService {
     @Override
     UserDetails loadUserByUsername(String var1) throws UsernameNotFoundException;
 
+    int countUsers();
     int addUsersByExcel(List<User> users, Integer roleId);
     int deleteUsers(List<Integer> ids);
     int updateUsers(List<User> users);

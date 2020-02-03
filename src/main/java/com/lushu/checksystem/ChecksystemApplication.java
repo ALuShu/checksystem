@@ -21,8 +21,7 @@ public class ChecksystemApplication {
     }
 
     public static void init() {
-        User tmp = userService.selectUser("root");
-        if (null == tmp){
+        if (userService.countUsers() == 0){
             List<User> users = new ArrayList<>(1);
             User user = new User();
             users.add(user);
