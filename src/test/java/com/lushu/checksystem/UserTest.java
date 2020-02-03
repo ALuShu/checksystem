@@ -39,21 +39,6 @@ class UserTest extends ChecksystemApplicationTests{
     private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
 
     @Test
-    void selectAllUserTest(){
-        users = userService.selectAllUser();
-        System.out.println(users);
-    }
-
-    @Test
-    void selectUserTest(){
-        User user = userService.selectUser("张三");
-        if (user == null){
-            System.out.println("查无此人");
-        }
-        System.out.println(user);
-    }
-
-    @Test
     void selectRoleByUsernameTest(){
         Role role = userService.selectRoleByUsername("系统管理员");
         if (role == null){
@@ -106,27 +91,6 @@ class UserTest extends ChecksystemApplicationTests{
             userService.addUsersByExcel(teacherList, 2);
         }catch (IOException | InstantiationException |InvocationTargetException|IllegalAccessException e){
             log.error("错误", e);
-        }
-    }
-
-    @Test
-    void deleteUsersTest(){
-        boolean flag = true;
-        if (flag) {
-            ids.add(2);
-            ids.add(4);
-            ids.add(6);
-            ids.add(8);
-            ids.add(9);
-            int res = userService.deleteUsers(ids);
-            System.out.println((res==ids.size())?"删除成功，影响"+res+"条数据" : "删除失败");
-        }else {
-            List<User> users = userService.selectAllUser();
-            for (User user : users){
-                ids.add(user.getId());
-            }
-            int res = userService.deleteUsers(ids);
-            System.out.println((res==ids.size())?"删除成功，影响"+res+"条数据" : "删除失败");
         }
     }
 
