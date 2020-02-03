@@ -124,34 +124,42 @@ public class AdminController {
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     @ResponseBody
     public Map users(@RequestParam(required = false) String page
-            , @RequestParam(required = false) String limit) throws ServletException, JSONException {
-        Map<String, Object> memberMap = new HashMap<>();
-        memberMap.put("userMap",userService.selectAllUser());
+            , @RequestParam(required = false) String limit){
+        Map<String, Object> memberMap = new HashMap<>(1);
+        memberMap.put("userMap",userService.selectAllUser(Integer.valueOf(page), Integer.valueOf(limit)));
         return memberMap;
     }
 
-
     /**
-     * 管理员端搜索用户（待优化）
+     * 管理员端搜索用户
      */
     @RequestMapping(value = "/searchUser", method = RequestMethod.POST)
     @ResponseBody
     public Map user(@RequestParam String type, @RequestParam String keyword) throws ServletException, JSONException {
-        Map<String, Object> memberMap = new HashMap<>();
-        memberMap.put("user",userService.selectUser(keyword));
+        Map<String, Object> memberMap;
+        if ("username".equals(type)){
+            memberMap = userService.selectUser(keyword);
+        } else if ("realname".equals(type)) {
+            memberMap = userService.selectUserByRealname(keyword);
+        }else if ("department".equals(type)){
+            memberMap = new HashMap<>();
+            memberMap.put("user", userService.selectUsersByDepartment(keyword));
+        }else {//major
+            memberMap = new HashMap<>();
+            memberMap.put("user", userService.selectUsersByMajor(keyword));
+        }
         return memberMap;
     }
 
 
 
     /**
-     * 管理员端展示角色列表
+     * 管理员端展示角色列表（未完成）
      */
     @RequestMapping(value = "/roles",method = RequestMethod.GET)
     @ResponseBody
     public Map roles(){
         Map<String, Object> roleMap = new HashMap<>();
-        //roleMap.put("roles",userService.selectUsersByRole());
         return roleMap;
     }
 

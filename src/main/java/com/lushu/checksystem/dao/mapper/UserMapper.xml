@@ -2,17 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.lushu.checksystem.dao.UserDao">
 
-    <!-- selectUser：用户名搜索用户；return：User -->
-    <select id="selectUser" parameterType="String" resultType="User">
+    <!-- selectAllUser：查询用户列表；return：List<User> -->
+    <select id="selectAllUser" parameterType="Map" resultType="List">
         select *
         from sys_user
-        where username = #{username}
-    </select>
-
-    <!-- selectAllUser：查询用户列表，分页(未做)；return：List<User> -->
-    <select id="selectAllUser" resultType="User">
-        select *
-        from sys_user
+        <if test="start != null and limit != null">
+            limit #{start},#{limit}
+        </if>
     </select>
 
     <!-- selectLastId：查询最后用户的id；return：Integer -->
@@ -31,14 +27,26 @@
         limit 1
     </select>
 
-    <!-- selectUserByUsername：根据学号或工号群，查询用户群；return：List<User> -->
-    <select id="selectUsersByUsername" parameterType="java.util.List" resultType="User">
+    <!-- selectUserByRealname：根据姓名查询用户（模糊查询）；return：User-->
+    <select id="selectUserByRealname" parameterType="String" resultType="User">
         select *
         from sys_user
-        where username in
-        <foreach collection="list" item="username" open="(" close=")" separator="," index="index">
-            #{username}
-        </foreach>
+        where realname like #{realname}
+        limit 1
+    </select>
+
+    <!-- selectUsersByDepartment：根据系别搜索用户；return：List<User> -->
+    <select id="selectUsersByDepartment" parameterType="String" resultType="List">
+        select *
+        from sys_user
+        where department=#{department}
+    </select>
+
+    <!-- selectUsersByMajor：根据系别搜索用户；return：List<User> -->
+    <select id="selectUsersByMajor" parameterType="String" resultType="List">
+        select *
+        from sys_user
+        where major=#{major}
     </select>
 
     <!-- selectById：id搜索用户（测试用）；return：User -->

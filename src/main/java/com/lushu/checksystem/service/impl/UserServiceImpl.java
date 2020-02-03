@@ -2,6 +2,7 @@ package com.lushu.checksystem.service.impl;
 
 import com.lushu.checksystem.dao.UserDao;
 import com.lushu.checksystem.pojo.Authority;
+import com.lushu.checksystem.pojo.PageBean;
 import com.lushu.checksystem.pojo.Role;
 import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.FileService;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -40,14 +42,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> selectAllUser() {
-        return userDao.selectAllUser();
+    public PageBean<User> selectAllUser(Integer currentPage, Integer pageSize) {
+        HashMap<String, Object> pageMap = new HashMap<>(2);
+        PageBean<User> pageBean = new PageBean<>();
+        pageBean.setCurrentPage(currentPage);
+        pageBean.setPageSize(pageSize);
+        int count = userDao.countUsers();
+        pageBean.setTotalRecord(count);
+        if (count % pageSize == 0){
+            pageBean.setTotalPage(count/pageSize);
+        }else {
+            pageBean.setTotalPage((count/pageSize) + 1);
+        }
+        pageMap.put("start", (currentPage-1) * pageSize);
+        pageMap.put("limit", pageBean.getPageSize());
+        pageBean.setList(userDao.selectAllUser(pageMap));
+        return pageBean;
     }
 
-    @Override
-    public List<User> selectUsersByUsername(List<String> username) {
-        return userDao.selectUsersByUsername(username);
-    }
 
     @Override
     public User selectById(Integer id) {
@@ -55,13 +67,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User selectUser(String username) {
-        return userDao.selectUser(username);
+    public HashMap<String, Object> selectUser(String username) {
+        User user = userDao.selectUserByUsername(username);
+        Role role = userDao.selectRoleByUsername(username);
+        HashMap<String, Object> res = new HashMap<>(2);
+        res.put("user", user);
+        res.put("role", role);
+        return res;
     }
 
     @Override
-    public Role selectRoleByUsername(String username) {
-        return userDao.selectRoleByUsername(username);
+    public HashMap<String, Object> selectUserByRealname(String realname) {
+        User user = userDao.selectUserByRealname("%"+realname+"%");
+        Role role = userDao.selectRoleByUsername(user.getUsername());
+        HashMap<String, Object> res = new HashMap<>(2);
+        res.put("user", user);
+        res.put("role", role);
+        return res;
     }
 
     @Override
@@ -74,6 +96,15 @@ public class UserServiceImpl implements UserService {
         return userDao.selectUsersByRole(role);
     }
 
+    @Override
+    public List<User> selectUsersByDepartment(String department) {
+        return userDao.selectUsersByDepartment(department);
+    }
+
+    @Override
+    public List<User> selectUsersByMajor(String major) {
+        return userDao.selectUsersByMajor(major);
+    }
 
     @Override
     public UserDetails loadUserByUsername(String var1) throws UsernameNotFoundException {
@@ -93,10 +124,6 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
-    @Override
-    public int countUsers() {
-        return userDao.countUsers();
-    }
 
     @Override
     public int addUsersByExcel(List<User> users, Integer roleId) {

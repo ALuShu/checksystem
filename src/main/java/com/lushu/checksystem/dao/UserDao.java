@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -21,17 +22,11 @@ import java.util.List;
 public interface UserDao {
 
     /**
-     * 用户名搜索用户
-     * @param username
-     * @return
-     */
-    User selectUser(String username);
-
-    /**
      * 查询用户列表
+     * @para param
      * @return
      */
-    List<User> selectAllUser();
+    List<User> selectAllUser(HashMap<String, Object> param);
 
     /**
      * 查询最后一个用户的id
@@ -47,11 +42,25 @@ public interface UserDao {
     User selectUserByUsername(String username);
 
     /**
-     * 根据学号或工号群，查询用户群
-     * @param username
+     * 根据姓名查询用户（模糊查询）
+     * @param realname
      * @return
      */
-    List<User> selectUsersByUsername(List<String> username);
+    User selectUserByRealname(String realname);
+
+    /**
+     * 根据系别搜索用户
+     * @param department
+     * @return
+     */
+    List<User> selectUsersByDepartment(String department);
+
+    /**
+     * 根据专业搜索用户(教师无专业字段)
+     * @param major
+     * @return
+     */
+    List<User> selectUsersByMajor(String major);
 
     /**
      * id搜索用户（测试用）

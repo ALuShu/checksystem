@@ -1,12 +1,13 @@
 package com.lushu.checksystem.service;
 
 import com.lushu.checksystem.pojo.Authority;
-import com.lushu.checksystem.pojo.Role;
+import com.lushu.checksystem.pojo.PageBean;
 import com.lushu.checksystem.pojo.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -17,13 +18,14 @@ import java.util.List;
  * @since
  */
 public interface UserService extends UserDetailsService {
-    List<User> selectAllUser();
-    List<User> selectUsersByUsername(List<String> username);
+    PageBean<User> selectAllUser(Integer currentPage, Integer pageSize);
     User selectById(Integer id);
-    User selectUser(String username);
-    Role selectRoleByUsername(String username);
+    HashMap<String, Object> selectUser(String username);
+    HashMap<String, Object> selectUserByRealname(String realname);
     List<Authority> selectAuthoritiesByUsername(String username);
     List<User> selectUsersByRole(Integer role);
+    List<User> selectUsersByDepartment(String department);
+    List<User> selectUsersByMajor(String major);
 
     /**
      * 继承UserDetailsService的方法
@@ -31,7 +33,6 @@ public interface UserService extends UserDetailsService {
     @Override
     UserDetails loadUserByUsername(String var1) throws UsernameNotFoundException;
 
-    int countUsers();
     int addUsersByExcel(List<User> users, Integer roleId);
     int deleteUsers(List<Integer> ids);
     int updateUsers(List<User> users);
