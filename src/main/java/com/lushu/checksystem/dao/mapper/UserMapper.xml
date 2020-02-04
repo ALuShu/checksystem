@@ -3,12 +3,18 @@
 <mapper namespace="com.lushu.checksystem.dao.UserDao">
 
     <!-- selectAllUser：查询用户列表；return：List<User> -->
-    <select id="selectAllUser" parameterType="Map" resultType="List">
+    <select id="selectAllUser" parameterType="Map" resultType="User">
         select *
         from sys_user
         <if test="start != null and limit != null">
             limit #{start},#{limit}
         </if>
+    </select>
+
+    <!-- checkUsernames：搜索出数据库里所有账号进行判断操作；return：List<String>-->
+    <select id="checkUsernames" resultType="String">
+        select username
+        from sys_user
     </select>
 
     <!-- selectLastId：查询最后用户的id；return：Integer -->
@@ -21,7 +27,7 @@
 
     <!-- selectUserByUsername：根据用户名搜索用户；return：User -->
     <select id="selectUserByUsername" parameterType="String" resultType="User">
-        select *
+        select 1
         from sys_user
         where username=#{username}
         limit 1
@@ -29,21 +35,21 @@
 
     <!-- selectUserByRealname：根据姓名查询用户（模糊查询）；return：User-->
     <select id="selectUserByRealname" parameterType="String" resultType="User">
-        select *
+        select 1
         from sys_user
         where realname like #{realname}
         limit 1
     </select>
 
     <!-- selectUsersByDepartment：根据系别搜索用户；return：List<User> -->
-    <select id="selectUsersByDepartment" parameterType="String" resultType="List">
+    <select id="selectUsersByDepartment" parameterType="String" resultType="User">
         select *
         from sys_user
         where department=#{department}
     </select>
 
     <!-- selectUsersByMajor：根据系别搜索用户；return：List<User> -->
-    <select id="selectUsersByMajor" parameterType="String" resultType="List">
+    <select id="selectUsersByMajor" parameterType="String" resultType="User">
         select *
         from sys_user
         where major=#{major}

@@ -16,10 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author ALuShu
@@ -135,54 +132,89 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int addUsersByExcel(List<User> users, Integer roleId) {
+    public HashMap<String, Object> addUsersByExcel(List<User> users, Integer roleId) {
+        HashMap<String, Object> res = new HashMap<>(2);
         if (users.size() == 0){
             log.error("用户集合为空,请检查参数是否正确输入");
-            return users.size();
+            return res;
         }else {
-            int firstId;
-            if (null != userDao.selectLastId()){
-                firstId = userDao.selectLastId() + 1;
-            }else {
-                firstId = 1;
+            Iterator<User> userIterator = users.iterator();
+            List<String> oldRecord = userDao.checkUsernames();
+            List<User> existUsers = new ArrayList<>();
+            while (userIterator.hasNext()) {
+                User tmp = userIterator.next();
+                int isExist = Collections.binarySearch(oldRecord, tmp.getUsername());
+                if (isExist >= 0) {
+                    existUsers.add(tmp);
+                    userIterator.remove();
+                }
             }
-            List<Integer> ids = new ArrayList<>();
-            if (roleId == 2){
-                for (User user : users){
-                    int fileRes = fileService.newTeacherFile(user.getUsername(), user.getRealname(), firstId);
-                    if (fileRes != 1){
-                        log.error("教师-"+user.getRealname()+"-文件夹创建出错");
-                        throw new RuntimeException("教师文件夹创建出错");
+            if (users.size() == 0) {
+                res.put("exist",existUsers);
+                return res;
+            } else {
+                int firstId;
+                if (null != userDao.selectLastId()) {
+                    firstId = userDao.selectLastId() + 1;
+                } else {
+                    firstId = 1;
+                }
+                List<Integer> ids = new ArrayList<>();
+                if (roleId == 2) {
+                    for (User user : users) {
+                        int fileRes = fileService.newTeacherFile(user.getUsername(), user.getRealname(), firstId);
+                        if (fileRes != 1) {
+                            log.error("教师-" + user.getRealname() + "-文件夹已存在");
+                        }
+                        ids.add(firstId);
+                        firstId++;
+                        user.setPassword(new BCryptPasswordEncoder().encode("111111"));
+                        user.setCreateTime(dateFormat.format(new Date()));
                     }
-                    ids.add(firstId);
-                    firstId++;
-                    user.setPassword(new BCryptPasswordEncoder().encode("111111"));
-                    user.setCreateTime(dateFormat.format(new Date()));
+                    int userRes = userDao.addUsers(users);
+                    int midRes = userDao.addUserRole(ids, roleId);
+                    res.put("res", (userRes + midRes));
+                    if (existUsers.size() == 0) {
+                        return res;
+                    } else {
+                        res.put("exist", existUsers);
+                        for (User user : existUsers) {
+                            log.error("教师-" + user.getRealname() + "-注册失败，已有相同记录");
+                        }
+                        return res;
+                    }
+                } else if (roleId == 3) {
+                    for (User user : users) {
+                        ids.add(firstId);
+                        firstId++;
+                        user.setPassword(new BCryptPasswordEncoder().encode("111111"));
+                        user.setCreateTime(dateFormat.format(new Date()));
+                    }
+                    int userRes = userDao.addUsers(users);
+                    int midRes = userDao.addUserRole(ids, roleId);
+                    res.put("res", (userRes + midRes));
+                    if (existUsers.size() == 0) {
+                        return res;
+                    } else {
+                        res.put("exist", existUsers);
+                        for (User user : existUsers) {
+                            log.error("学生-" + user.getRealname() + "-注册失败，已有相同记录");
+                        }
+                        return res;
+                    }
+                } else {
+                    for (User user : users) {
+                        ids.add(firstId);
+                        user.setUsername("root");
+                        user.setPassword(new BCryptPasswordEncoder().encode("root"));
+                        user.setRealname("系统管理员");
+                        user.setCreateTime(dateFormat.format(new Date()));
+                    }
+                    int userRes = userDao.addUsers(users);
+                    int midRes = userDao.addUserRole(ids, roleId);
+                    res.put("res", (userRes + midRes));
+                    return res;
                 }
-                int userRes = userDao.addUsers(users);
-                int midRes = userDao.addUserRole(ids, roleId);
-                return (userRes + midRes);
-            }else if (roleId == 3){
-                for (User user : users){
-                    ids.add(firstId);
-                    firstId++;
-                    user.setPassword(new BCryptPasswordEncoder().encode("111111"));
-                    user.setCreateTime(dateFormat.format(new Date()));
-                }
-                int userRes = userDao.addUsers(users);
-                int midRes = userDao.addUserRole(ids, roleId);
-                return (userRes + midRes);
-            }else {
-                for (User user : users){
-                    ids.add(firstId);
-                    user.setUsername("root");
-                    user.setPassword(new BCryptPasswordEncoder().encode("root"));
-                    user.setRealname("系统管理员");
-                    user.setCreateTime(dateFormat.format(new Date()));
-                }
-                int userRes = userDao.addUsers(users);
-                int midRes = userDao.addUserRole(ids, roleId);
-                return (userRes + midRes);
             }
         }
     }
@@ -205,6 +237,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int updatePassword(User user) {
+        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         return userDao.updatePassword(user);
     }
 

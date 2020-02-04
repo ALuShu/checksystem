@@ -29,6 +29,12 @@ public interface UserDao {
     List<User> selectAllUser(HashMap<String, Object> param);
 
     /**
+     * 搜索出数据库里所有账号进行判断操作
+     * @return
+     */
+    List<String> checkUsernames();
+
+    /**
      * 查询最后一个用户的id
      * @return
      */

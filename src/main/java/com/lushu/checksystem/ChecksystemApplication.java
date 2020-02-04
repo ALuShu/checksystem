@@ -8,6 +8,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @SpringBootApplication
@@ -25,11 +26,9 @@ public class ChecksystemApplication {
             List<User> users = new ArrayList<>(1);
             User user = new User();
             users.add(user);
-            int res = userService.addUsersByExcel(users, 1);
-            if (res == 2) {
+            HashMap<String, Object> res = userService.addUsersByExcel(users, 1);
+            if (!res.containsKey("exist")) {
                 log.info("初始化成功");
-            } else {
-                log.info("初始化失败");
             }
         }else {
             log.info("初始化成功");

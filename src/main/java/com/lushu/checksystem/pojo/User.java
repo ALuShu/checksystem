@@ -16,7 +16,7 @@ import java.util.List;
  * @Description 用户实体类，包含spring security的一些字段
  */
 @Data
-public class User implements UserDetails, Serializable {
+public class User implements UserDetails, Serializable, Comparable<User> {
 
     private Integer id;
     private String username;
@@ -35,4 +35,9 @@ public class User implements UserDetails, Serializable {
     private boolean enabled;
 
     private List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+
+    @Override
+    public int compareTo(User o) {
+        return id - o.getId();
+    }
 }

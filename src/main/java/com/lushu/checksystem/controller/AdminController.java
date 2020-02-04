@@ -181,13 +181,14 @@ public class AdminController {
             ObjectMapper mapper = new ObjectMapper();
             userList = mapper.readValue(jsonUsers, new TypeReference<ArrayList<User>>() {});
         }
-        int addRes = userService.addUsersByExcel(userList, roleId);
-        if (addRes == (userList.size() * 2)){
+        Map<String, Object> addRes = userService.addUsersByExcel(userList, roleId);
+        if (!addRes.containsKey("exist")){
             res.put("code", 1);
             res.put("msg","添加成功");
         }else {
-            log.info("录入数据与数据库影响条数不一致");
+            log.info("部分数据录入失败");
             res.put("code", 0);
+            res.put("exist", addRes.get("exist"));
             res.put("msg","发生错误");
         }
         return res;

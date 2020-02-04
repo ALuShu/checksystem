@@ -33,6 +33,7 @@ public class StudentController {
 
     @Value("${checksystem.root}")
     private String root;
+    private String current;
     private UserService userService;
     private FileService fileService;
     private User user = new User();
@@ -56,8 +57,8 @@ public class StudentController {
      * 上传页面跳转
      */
     @RequestMapping("/upload")
-    public String upload(String teacher) {
-        root = root + "\\" + teacher;
+    public String upload(String path) {
+        current = root + "\\" + path;
         return "/upload";
     }
 
@@ -69,7 +70,6 @@ public class StudentController {
     public Map list(@RequestParam(required = false) String page
             , @RequestParam(required = false) String limit
             , @RequestParam(required = false) String path) throws ServletException, JSONException {
-        long star = System.currentTimeMillis();
         Map<String, Object> res = new HashMap<>();
         if (path == null) {
             path = "/";
@@ -79,7 +79,7 @@ public class StudentController {
             // 返回的结果集
             List<Map<String, Object>> fileItems = new ArrayList<>();
 
-            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(root, path))) {
+            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(current, path))) {
                 String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
                 SimpleDateFormat dt = new SimpleDateFormat(DATE_FORMAT);
                 for (Path pathObj : directoryStream) {
@@ -101,8 +101,6 @@ public class StudentController {
             res.put("msg", "");
             res.put("count", fileItems.size());
             res.put("data", fileItems);
-            long end = System.currentTimeMillis();
-            log.info("花费时间：" + (end - star) + "ms");
             return res;
         } catch (Exception e) {
             log.error("递归文件出错:" + e);

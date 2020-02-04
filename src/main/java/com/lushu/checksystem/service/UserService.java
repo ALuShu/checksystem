@@ -36,7 +36,8 @@ public interface UserService extends UserDetailsService {
     UserDetails loadUserByUsername(String var1) throws UsernameNotFoundException;
 
     int countUsers();
-    int addUsersByExcel(List<User> users, Integer roleId);
+    /*待优化，如一个表中有一个学生或教师已存在，录入其他人信息，返回已存在的人的信息不录入*/
+    HashMap<String, Object> addUsersByExcel(List<User> users, Integer roleId);
     int deleteUsers(List<Integer> ids);
     int updateUsers(List<User> users);
     int updatePassword(User user);
