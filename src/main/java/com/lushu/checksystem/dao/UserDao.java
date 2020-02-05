@@ -22,7 +22,7 @@ import java.util.List;
 public interface UserDao {
 
     /**
-     * 查询用户列表
+     * 查询用户列表，分页
      * @para param
      * @return
      */
@@ -69,11 +69,11 @@ public interface UserDao {
     List<User> selectUsersByMajor(String major);
 
     /**
-     * id搜索用户（测试用）
+     * id搜索用户
      * @param id
      * @return
      */
-    User selectById(Integer id);
+    List<User> selectByIds(List<Integer> id);
 
     /**
      * 用户名搜索用户的角色

@@ -9,8 +9,9 @@ public class Inform implements Serializable {
 
   private Integer id;
   private Integer sendId;
-  private Integer receiveId;
   private String content;
-
+  private String date;
+  private String path;
+  private boolean type;
 
 }

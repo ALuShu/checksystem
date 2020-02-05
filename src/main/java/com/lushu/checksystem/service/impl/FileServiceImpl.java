@@ -62,12 +62,6 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public int addFile(File file) {
-        file.setUpdateTime(dateFormat.format(new Date()));
-        file.setType(1);
-        file.setPermission("-r---rwx-rwx");
-        //file.setOwner();
-        file.setOwner(1);
-        file.setStatus(0);
         return fileDao.addFile(file);
     }
 

@@ -172,13 +172,36 @@ public class StudentController {
      * 学生端展示教师列表
      */
     @RequestMapping(value = "/showTeachers", method = RequestMethod.GET)
-    public void showTeachers(){}
+    @ResponseBody
+    public Map showTeachers(){
+        Map<String, Object> map = new HashMap<>(1);
+        map.put("teachers",userService.selectUsersByRole(2));
+        map.put("code", 1);
+        map.put("msg", "查询成功");
+        return map;
+    }
 
     /**
      * 学生端搜索教师
      */
     @RequestMapping(value = "/searchTeacher", method = RequestMethod.POST)
-    public void searchTeacher(){}
+    public Map searchTeacher(@RequestParam String key, @RequestParam String keyword){
+        HashMap<String, Object> des;
+        if ("username".equals(key)){
+            des = userService.selectUser(keyword);
+        }else {
+            des = userService.selectUserByRealname(keyword);
+        }
+        if (des.get("user") == null){
+            des.put("code", 0);
+            des.put("msg", "not found teacher");
+        }else {
+
+            des.put("code", 0);
+            des.put("msg", "success");
+        }
+        return des;
+    }
 
     /**
      * 学生端展示通知列表

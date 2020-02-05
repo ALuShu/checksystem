@@ -94,41 +94,6 @@ class UserTest extends ChecksystemApplicationTests{
         }
     }
 
-    @Test
-    void updateUsersTest(){
-        User user1 = userService.selectById(2);
-        User user2 = userService.selectById(3);
-        User user3 = userService.selectById(4);
-        User user4 = userService.selectById(5);
-        User user5 = userService.selectById(6);
-        User user6 = userService.selectById(7);
-        User user7 = userService.selectById(8);
-        User user8 = userService.selectById(9);
-        User user9 = userService.selectById(10);
-        User user10 = userService.selectById(11);
-        user1.setUsername("10001");
-        user2.setPassword("123456");
-        user3.setRealname("测试人员");
-        user4.setDepartment("数码媒体");
-        user5.setMajor("大数据工程");
-        user6.setLastLoginTime(df.format(new Date()));
-        user7.setAccountNonExpired(false);
-        user8.setAccountNonLocked(false);
-        user9.setCredentialsNonExpired(false);
-        user10.setEnabled(false);
-        users.add(user1);
-        users.add(user2);
-        users.add(user3);
-        users.add(user4);
-        users.add(user5);
-        users.add(user6);
-        users.add(user7);
-        users.add(user8);
-        users.add(user9);
-        users.add(user10);
-        int res = userService.updateUsers(users);
-        System.out.println((res==users.size())?"更新成功，影响"+res+"条数据" : "更新失败");
-    }
 
     @Test
     void updatePasswordTest(){

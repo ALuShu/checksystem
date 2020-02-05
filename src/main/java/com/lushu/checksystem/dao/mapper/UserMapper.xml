@@ -55,11 +55,14 @@
         where major=#{major}
     </select>
 
-    <!-- selectById：id搜索用户（测试用）；return：User -->
-    <select id="selectById" parameterType="Integer" resultType="User">
+    <!-- selectByIds：id搜索用户；return：User -->
+    <select id="selectByIds" parameterType="java.util.List" resultType="User">
         select *
         from sys_user
-        where id = #{id}
+        where id in
+        <foreach collection="list" open="(" separator="," close=")" item="item" index="index">
+            #{item}
+        </foreach>
     </select>
 
     <!-- selectRoleByUsername：用户名搜索用户的角色；return：Role -->

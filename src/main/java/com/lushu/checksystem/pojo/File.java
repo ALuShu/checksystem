@@ -24,6 +24,7 @@ public class File implements Serializable {
   private Integer type;
   private String permission;
   private Integer owner;
+  private Integer submitter;
   private Integer status;
 
 

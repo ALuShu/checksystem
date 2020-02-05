@@ -2,24 +2,66 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.lushu.checksystem.dao.InformDao">
 
+    <!-- selectInform：查询通知；return：List<Inform> -->
+    <select id="selectInforms" parameterType="Integer" resultType="Inform">
+        select *
+        from sys_inform
+        where send_id = #{sendId}
+    </select>
+
+    <!-- selectAllInforms：查询所有通知，分页，按日期排序；return：List<Inform> -->
+    <select id="selectAllInforms" parameterType="Map" resultType="Inform">
+        select *
+        from sys_inform
+        limit #{start},#{limit}
+    </select>
+
+    <!-- selectInformsByType：根据必修或选修查询通知；return：List<Inform> -->
+    <select id="selectInformsByType" parameterType="boolean" resultType="Inform">
+        select *
+        from sys_inform
+        where type=#{type}
+    </select>
+
     <!-- addInform：批量发布通知；return：int -->
-    <insert id="addInform" parameterType="java.util.List">
-        insert into sys_inform (send_id, receive_id, content)
+    <insert id="addInforms" parameterType="java.util.List">
+        insert into sys_inform (send_id, content, type, date, path)
         values
         <foreach collection="list" item="item" index="index" separator=",">
             (#{item.sendId},
-            #{item.receiveId},
-            #{item.content})
+            #{item.content},
+            #{item.type},
+            #{item.date},
+            #{item.path})
         </foreach>
     </insert>
 
+    <!-- updateInform：修改通知；return：Integer-->
+    <update id="updateInform" parameterType="Inform">
+        update sys_inform
+        <set>
+            <if test="content != null and content != ''">
+                content=#{content},
+            </if>
+            <if test="date != null and date != ''">
+                date=#{date},
+            </if>
+            <if test="path != null and path != ''">
+                path=#{path},
+            </if>
+            <if test="type != null and type != ''">
+                type=#{type}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
 
-    <!-- selectInform：查询通知；return：List<Inform> -->
-    <select id="selectInform" parameterType="Integer" resultType="Inform">
-        select *
-        from sys_inform
-        where receive_id = #{receiveId}
-    </select>
-
+    <!-- deleteInforms：批量删除通知；return：Integer-->
+    <delete id="deleteInforms" parameterType="java.util.List">
+        delete from sys_inform where id in 
+        <foreach collection="list" item="item" open="(" close=")" separator="," index="index">
+            #{item}
+        </foreach>
+    </delete>
 
 </mapper>

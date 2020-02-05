@@ -1,9 +1,5 @@
 package com.lushu.checksystem.service;
 
-import com.lushu.checksystem.pojo.Inform;
-
-import java.util.List;
-
 /**
  * @author ALuShu
  * @Description
@@ -12,6 +8,5 @@ import java.util.List;
  * @since
  */
 public interface InformService {
-    int addInform(List<Inform> list);
-    List<Inform> selectInform(Integer receiveId);
+
 }

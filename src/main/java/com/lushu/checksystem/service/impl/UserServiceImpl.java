@@ -57,22 +57,11 @@ public class UserServiceImpl implements UserService {
         return pageBean;
     }
 
-
-    @Override
-    public User selectById(Integer id) {
-        return userDao.selectById(id);
-    }
-
-    @Override
-    public Role selectRoleByUsername(String username) {
-        return userDao.selectRoleByUsername(username);
-    }
-
     @Override
     public HashMap<String, Object> selectUser(String username) {
         User user = userDao.selectUserByUsername(username);
         Role role = userDao.selectRoleByUsername(username);
-        HashMap<String, Object> res = new HashMap<>(2);
+        HashMap<String, Object> res = new HashMap<>(4);
         res.put("user", user);
         res.put("role", role);
         return res;
@@ -82,7 +71,7 @@ public class UserServiceImpl implements UserService {
     public HashMap<String, Object> selectUserByRealname(String realname) {
         User user = userDao.selectUserByRealname("%"+realname+"%");
         Role role = userDao.selectRoleByUsername(user.getUsername());
-        HashMap<String, Object> res = new HashMap<>(2);
+        HashMap<String, Object> res = new HashMap<>(4);
         res.put("user", user);
         res.put("role", role);
         return res;
@@ -91,6 +80,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Authority> selectAuthoritiesByUsername(String username) {
         return userDao.selectAuthoritiesByUsername(username);
+    }
+
+    @Override
+    public Role selectRoleByUsername(String username) {
+        return userDao.selectRoleByUsername(username);
     }
 
     @Override
@@ -221,6 +215,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int deleteUsers(List<Integer> ids) {
+        List<User> users = userDao.selectByIds(ids);
+        for (User user : users){
+            if (user.getMajor() == null){
+                //删除对应的文件和数据库文件记录
+            }
+        }
         int delUserRes = userDao.deleteUsers(ids);
         int delRoleRes = userDao.deleteUserRole(ids);
         return (delUserRes + delRoleRes);
@@ -228,10 +228,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int updateUsers(List<User> users) {
-        for(User user : users){
-
-        }
-
         return userDao.updateUsers(users);
     }
 
@@ -239,10 +235,5 @@ public class UserServiceImpl implements UserService {
     public int updatePassword(User user) {
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         return userDao.updatePassword(user);
-    }
-
-    @Override
-    public int updateUserRole(Integer userId, Integer roleId) {
-        return userDao.updateUserRole(userId, roleId);
     }
 }

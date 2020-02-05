@@ -10,8 +10,7 @@ import com.lushu.checksystem.pojo.File;
  * @since
  */
 public interface FileService {
-    //List<File> selectWorkFile(Integer owner);
-    //List<File> selectDirFile(Integer id, Integer owner, Integer type);
+
     int newTeacherFile(String username, String realname, Integer id);
 
     int addFile(File file);

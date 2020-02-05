@@ -1,12 +1,9 @@
 package com.lushu.checksystem.service.impl;
 
 import com.lushu.checksystem.dao.InformDao;
-import com.lushu.checksystem.pojo.Inform;
 import com.lushu.checksystem.service.InformService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * @author ALuShu
@@ -24,13 +21,4 @@ public class InformServiceImpl implements InformService {
         this.informDao = informDao;
     }
 
-    @Override
-    public int addInform(List<Inform> list) {
-        return informDao.addInform(list);
-    }
-
-    @Override
-    public List<Inform> selectInform(Integer receiveId) {
-        return informDao.selectInform(receiveId);
-    }
 }

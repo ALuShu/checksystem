@@ -11,7 +11,7 @@
  Target Server Version : 80018
  File Encoding         : 65001
 
- Date: 29/01/2020 16:35:09
+ Date: 05/02/2020 22:19:55
 */
 
 SET NAMES utf8mb4;
@@ -52,15 +52,17 @@ DROP TABLE IF EXISTS `sys_file`;
 CREATE TABLE `sys_file`  (
   `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '文件id',
   `name` varchar(60) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '文件命名',
-  `path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '真实物理路径',
+  `path` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '真实物理路径',
   `size` bigint(12) NULL DEFAULT NULL COMMENT '文件大小',
   `update_time` datetime(0) NOT NULL COMMENT '最后修改时间',
   `type` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '文件类型，0表示dir或1表示file',
   `permission` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '-所有人-拥有者-管理员：如文件夹：-rw--rw--rw-;\r\n-rwx-rwx-rwx',
   `owner` int(10) NOT NULL COMMENT '拥有者id',
+  `submitter` int(10) NULL DEFAULT NULL COMMENT '提交人id，文件夹为null',
   `status` int(2) NULL DEFAULT NULL COMMENT '作业文件状态;0表示未查；2表示已查；1表示通过；-1表示未通过',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `owner_index`(`owner`) USING BTREE
+  INDEX `owner_index`(`owner`) USING BTREE,
+  INDEX `submitter_index`(`submitter`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -68,12 +70,14 @@ CREATE TABLE `sys_file`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_inform`;
 CREATE TABLE `sys_inform`  (
-  `id` int(10) NOT NULL AUTO_INCREMENT,
-  `send_id` int(10) NOT NULL,
-  `receive_id` int(10) NOT NULL,
-  `content` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '通知id',
+  `send_id` int(10) NOT NULL COMMENT '发布者',
+  `content` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '通知内容',
+  `type` tinyint(1) NOT NULL COMMENT '0为选修，1为必修',
+  `date` datetime(0) NOT NULL COMMENT '发布时间',
+  `path` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '该通知所要提交到的目录的物理地址',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `recieve_index`(`receive_id`) USING BTREE
+  INDEX `send_id_index`(`send_id`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -136,7 +140,7 @@ DROP TABLE IF EXISTS `sys_user`;
 CREATE TABLE `sys_user`  (
   `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '用户id，唯一',
   `username` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户账号，常为学号或工号，管理员为root',
-  `password` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户密码，限制6到15位',
+  `password` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户密码，限制6到15位',
   `realname` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '用户真实姓名',
   `department` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '学生和教师的系别',
   `major` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '学生的专业',
@@ -161,6 +165,5 @@ CREATE TABLE `sys_user_role`  (
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `user_id_index`(`user_id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
-
 
 SET FOREIGN_KEY_CHECKS = 1;
