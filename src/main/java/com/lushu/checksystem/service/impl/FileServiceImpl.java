@@ -6,6 +6,7 @@ import com.lushu.checksystem.service.FileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
@@ -13,7 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 
 /**
  * @author ALuShu
@@ -35,7 +36,13 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public int newTeacherFile(String username, String realname, Integer id) {
+    public List<File> selectOldSubmitted(Integer submitter) {
+        List<File> oldFiles = fileDao.selectFileBySubmitter(submitter);
+        return oldFiles;
+    }
+
+    @Override
+    public Integer newTeacherFile(String username, String realname, Integer id) {
         File teacherFile = new File();
         /*教师文件夹名字由工号+姓名组成*/
         String teacherRoot = username +"_"+ realname;
@@ -60,18 +67,31 @@ public class FileServiceImpl implements FileService {
         return -1;
     }
 
+
+
     @Override
-    public int addFile(File file) {
-        return fileDao.addFile(file);
+    public Integer addFiles(Collection<MultipartFile> files, String path) {
+        Integer addRes = 0;
+        Iterator<MultipartFile> fileIterator = files.iterator();
+
+        if (files.size() == 1){
+            MultipartFile file = fileIterator.next();
+            File preFile = new File();
+
+        }else {
+
+            List<File> preFiles = new ArrayList<>();
+        }
+        return addRes;
     }
 
     @Override
-    public int updateFile(File file) {
-        return fileDao.updateFile(file);
+    public Integer updateFiles(List<File> files) {
+        return 0;
     }
 
     @Override
-    public int deleteFile(Integer id) {
-        return fileDao.deleteFile(id);
+    public Integer deleteFiles(HashMap<String, Object> param) {
+        return 0;
     }
 }

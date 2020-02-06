@@ -11,9 +11,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.ServletException;
-import java.io.File;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
@@ -118,28 +119,36 @@ public class StudentController {
      */
     @PostMapping("/uploadFile")
     @ResponseBody
-    public Map upload(@RequestParam("file") MultipartFile file, @RequestParam("path") String path) {
+    public Map upload(HttpServletRequest request, @RequestParam("path") String path) {
         Map<String, Object> json = new HashMap<>();
-        com.lushu.checksystem.pojo.File daoDest = new com.lushu.checksystem.pojo.File();
-        if (file.isEmpty()) {
+        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+        Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
+        if(fileMap == null || fileMap.size() == 0){
+        }
+        Collection<MultipartFile> files = fileMap.values();
+        for(MultipartFile file:files){
+
+        }
+        //com.lushu.checksystem.pojo.File daoDest = new com.lushu.checksystem.pojo.File();
+        /*if (file.isEmpty()) {
             json.put("code", 1);
             json.put("msg", "请选择作业文件!");
             json.put("data", "{'file':'" + file.getOriginalFilename() + "'}");
             return json;
         }
-        File rootPath = new File("src/main/resources/root" + path);
+        File rootPath = new File("src/main/resources/root" + path);*/
         /*if (!rootPath.exists()){
             rootPath.mkdir();
         }*/
-        String fileName = file.getOriginalFilename();
-        String filePath = rootPath.getAbsolutePath();
-        daoDest.setName(fileName);
+        //String fileName = file.getOriginalFilename();
+        //String filePath = rootPath.getAbsolutePath();
+        /*daoDest.setName(fileName);
         daoDest.setPath(filePath);
-        daoDest.setSize(file.getSize());
-        File dest = new File(filePath, fileName);
-        try {
+        daoDest.setSize(file.getSize());*/
+        //File dest = new File(filePath, fileName);
+        /*try {
             if (!dest.exists()) {
-                fileService.addFile(daoDest);
+                //fileService.addFiles(daoDest);
                 file.transferTo(dest);
                 json.put("code", 0);
                 json.put("msg", "上传成功！");
@@ -156,7 +165,7 @@ public class StudentController {
         }
         json.put("code", -1);
         json.put("msg", "上传失败");
-        json.put("data", "{'file':'" + file.getOriginalFilename() + "'}");
+        json.put("data", "{'file':'" + file.getOriginalFilename() + "'}");*/
         return json;
     }
 
