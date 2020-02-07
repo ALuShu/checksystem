@@ -56,7 +56,7 @@ CREATE TABLE `sys_file`  (
   `size` bigint(12) NULL DEFAULT NULL COMMENT '文件大小',
   `update_time` datetime(0) NOT NULL COMMENT '最后修改时间',
   `type` varchar(5) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '文件类型，0表示dir或1表示file',
-  `permission` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '-所有人-拥有者-管理员：如文件夹：-rw--rw--rw-;\r\n-rwx-rwx-rwx',
+  `permission` char(12) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '-拥有人-管理员-所有人：如文件夹：-rw--rw--rw-;\r\n-rwx-rwx-rwx',
   `owner` int(10) NOT NULL COMMENT '拥有者id',
   `submitter` int(10) NULL DEFAULT NULL COMMENT '提交人id，文件夹为null',
   `status` int(2) NULL DEFAULT NULL COMMENT '作业文件状态;0表示未查；2表示已查；1表示通过；-1表示未通过',

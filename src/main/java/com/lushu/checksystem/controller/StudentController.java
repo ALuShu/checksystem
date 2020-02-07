@@ -126,9 +126,7 @@ public class StudentController {
         if(fileMap == null || fileMap.size() == 0){
         }
         Collection<MultipartFile> files = fileMap.values();
-        for(MultipartFile file:files){
 
-        }
         //com.lushu.checksystem.pojo.File daoDest = new com.lushu.checksystem.pojo.File();
         /*if (file.isEmpty()) {
             json.put("code", 1);

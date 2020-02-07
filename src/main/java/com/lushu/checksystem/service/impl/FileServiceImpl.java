@@ -29,7 +29,7 @@ public class FileServiceImpl implements FileService {
 
     @Value("${checksystem.root}")
     private String root;
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private FileDao fileDao;
     public FileServiceImpl(FileDao fileDao) {
         this.fileDao = fileDao;
@@ -67,26 +67,61 @@ public class FileServiceImpl implements FileService {
         return -1;
     }
 
-
-
     @Override
-    public Integer addFiles(Collection<MultipartFile> files, String path) {
-        Integer addRes = 0;
+    public Integer addFiles(Collection<MultipartFile> files, String path, Integer owner, Integer submitter) throws IOException {
         Iterator<MultipartFile> fileIterator = files.iterator();
-
         if (files.size() == 1){
-            MultipartFile file = fileIterator.next();
-            File preFile = new File();
+
+            File preFile = addMethod(fileIterator.next(), new File(), path, owner, submitter);
+            return fileDao.addFile(preFile);
 
         }else {
 
             List<File> preFiles = new ArrayList<>();
+            while (fileIterator.hasNext()){
+                preFiles.add(addMethod(fileIterator.next(), new File(), path, owner, submitter));
+            }
+            return fileDao.addFiles(preFiles);
+
         }
-        return addRes;
+    }
+
+    /**
+     * 在磁盘添加文件或文件夹，然后生成一个File对象
+     */
+    private static File addMethod(MultipartFile paramFile, File destFile, String path, Integer owner, Integer submitter) throws IOException {
+        String fileName = paramFile.getOriginalFilename();
+        destFile.setName(fileName);
+        destFile.setPath(path);
+        destFile.setSize(paramFile.getSize());
+        destFile.setUpdateTime(dateFormat.format(new Date()));
+        destFile.setOwner(owner);
+        java.io.File dest = new java.io.File(path, fileName);
+        if (dest.isFile()){
+            destFile.setType(1);
+            destFile.setPermission("-rwx-rwx-r-x");
+            destFile.setSubmitter(submitter);
+            if (dest.exists()){
+                log.info("覆盖操作");
+                dest.delete();
+            }
+            paramFile.transferTo(dest);
+        }else {
+            destFile.setType(0);
+            destFile.setPermission("-rwx-rwx-rw-");
+            if (dest.exists()){
+                log.info("覆盖操作");
+                dest.delete();
+            }
+            Files.createDirectory(Paths.get(path, fileName));
+        }
+        return destFile;
     }
 
     @Override
-    public Integer updateFiles(List<File> files) {
+    public Integer updateFiles(HashMap<String, Object> updateParam) {
+        //name必可选（重命名），path可选（移动），size可选（覆盖）
+
         return 0;
     }
 
