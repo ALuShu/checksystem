@@ -1,7 +1,5 @@
 package com.lushu.checksystem;
 
-import com.lushu.checksystem.pojo.Authority;
-import com.lushu.checksystem.pojo.Role;
 import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.service.UserService;
@@ -14,7 +12,6 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,45 +36,7 @@ class UserTest extends ChecksystemApplicationTests{
     private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
 
     @Test
-    void selectRoleByUsernameTest(){
-        Role role = userService.selectRoleByUsername("系统管理员");
-        if (role == null){
-            System.out.println("查无此人");
-        }
-        System.out.println(role);
-    }
-
-    @Test
-    void selectAuthoritiesByUsernameTest(){
-        List<Authority> authorities = userService.selectAuthoritiesByUsername("系统管理员");
-        if (authorities.size() < 1){
-            System.out.println("查无此人");
-        }
-        for (Authority authority: authorities){
-            System.out.println(authority.getTag());
-        }
-    }
-
-    @Test
-    void selectUserByRoleTest(){
-        users = userService.selectUsersByRole(1);
-        for (User user : users){
-            System.out.println(user);
-        }
-    }
-
-    @Test
-    void addUsersTest(){
-        User user = new User();
-        user.setUsername("root");
-        user.setRealname("系统管理员");
-        user.setCreateTime(df.format(new Date()));
-        users.add(user);
-        userService.addUsersByExcel(users, 1);
-    }
-
-    @Test
-    void addUsersTest2() {
+    void addUsersTest() {
         String fileName = "D:\\FTP\\IntelliJ IDEA\\Projects\\checksystem\\src\\main\\resources\\excel\\test.xlsx";
         String fileName1 = "D:\\FTP\\IntelliJ IDEA\\Projects\\checksystem\\src\\main\\resources\\excel\\testA.xls";
         //String fileName = "/usr/IntelliJ IDEA/Projects/checksystem/src/main/resources/excel/test.xlsx";
@@ -92,15 +51,6 @@ class UserTest extends ChecksystemApplicationTests{
         }catch (IOException | InstantiationException |InvocationTargetException|IllegalAccessException e){
             log.error("错误", e);
         }
-    }
-
-
-    @Test
-    void updatePasswordTest(){
-        User user = new User();
-        user.setId(1);
-        user.setPassword("root");
-        userService.updatePassword(user);
     }
 
 
