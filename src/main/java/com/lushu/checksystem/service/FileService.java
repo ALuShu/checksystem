@@ -37,10 +37,10 @@ public interface FileService {
      * 动态更新
      * 更新后的name文件名；path物理路径；size文件大小；updateTime修改时间；status文件状态
      */
-    Integer updateFiles(HashMap<String, Object> updateParam);
+    Integer updateFiles(HashMap<String, Object> updateParam, String action) ;
 
     /**
      * 删除文件时，要删除对应记录，支持批量操作
      */
-    Integer deleteFiles(HashMap<String, Object> param);
+    Integer deleteFiles(HashMap<String, Object> param) throws IOException;
 }
