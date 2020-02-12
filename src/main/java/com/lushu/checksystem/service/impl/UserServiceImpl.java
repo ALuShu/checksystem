@@ -1,5 +1,7 @@
 package com.lushu.checksystem.service.impl;
 
+import com.lushu.checksystem.constant.DatabaseConstant;
+import com.lushu.checksystem.constant.OtherConstant;
 import com.lushu.checksystem.dao.UserDao;
 import com.lushu.checksystem.pojo.Authority;
 import com.lushu.checksystem.pojo.PageBean;
@@ -15,7 +17,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -29,7 +30,6 @@ import java.util.*;
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private UserDao userDao;
     private FileService fileService;
 
@@ -154,7 +154,7 @@ public class UserServiceImpl implements UserService {
                     firstId = 1;
                 }
                 List<Integer> ids = new ArrayList<>();
-                if (roleId == 2) {
+                if (roleId == DatabaseConstant.Role.TEACHER.ordinal()+1) {
                     for (User user : users) {
                         int fileRes = fileService.newTeacherFile(user.getUsername(), user.getRealname(), firstId);
                         if (fileRes != 1) {
@@ -163,7 +163,7 @@ public class UserServiceImpl implements UserService {
                         ids.add(firstId);
                         firstId++;
                         user.setPassword(new BCryptPasswordEncoder().encode("111111"));
-                        user.setCreateTime(dateFormat.format(new Date()));
+                        user.setCreateTime(OtherConstant.DATE_FORMAT.format(new Date()));
                     }
                     int userRes = userDao.addUsers(users);
                     int midRes = userDao.addUserRole(ids, roleId);
@@ -177,12 +177,12 @@ public class UserServiceImpl implements UserService {
                         }
                         return res;
                     }
-                } else if (roleId == 3) {
+                } else if (roleId == DatabaseConstant.Role.STUDENT.ordinal()+1) {
                     for (User user : users) {
                         ids.add(firstId);
                         firstId++;
                         user.setPassword(new BCryptPasswordEncoder().encode("111111"));
-                        user.setCreateTime(dateFormat.format(new Date()));
+                        user.setCreateTime(OtherConstant.DATE_FORMAT.format(new Date()));
                     }
                     int userRes = userDao.addUsers(users);
                     int midRes = userDao.addUserRole(ids, roleId);
@@ -202,7 +202,7 @@ public class UserServiceImpl implements UserService {
                         user.setUsername("root");
                         user.setPassword(new BCryptPasswordEncoder().encode("root"));
                         user.setRealname("系统管理员");
-                        user.setCreateTime(dateFormat.format(new Date()));
+                        user.setCreateTime(OtherConstant.DATE_FORMAT.format(new Date()));
                     }
                     int userRes = userDao.addUsers(users);
                     int midRes = userDao.addUserRole(ids, roleId);

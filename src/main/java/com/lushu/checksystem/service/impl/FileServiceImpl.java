@@ -1,5 +1,8 @@
 package com.lushu.checksystem.service.impl;
 
+import com.lushu.checksystem.constant.BasicConstant;
+import com.lushu.checksystem.constant.DatabaseConstant;
+import com.lushu.checksystem.constant.OtherConstant;
 import com.lushu.checksystem.dao.FileDao;
 import com.lushu.checksystem.pojo.File;
 import com.lushu.checksystem.service.FileService;
@@ -11,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.FileTime;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -27,7 +29,6 @@ public class FileServiceImpl implements FileService {
 
     @Value("${checksystem.root}")
     private String root;
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private FileDao fileDao;
     public FileServiceImpl(FileDao fileDao) {
         this.fileDao = fileDao;
@@ -48,8 +49,8 @@ public class FileServiceImpl implements FileService {
         teacherFile.setOwner(id);
         teacherFile.setPath(root);
         teacherFile.setPermission("-rw--rwx-rwx");
-        teacherFile.setType(0);
-        teacherFile.setUpdateTime(dateFormat.format(new Date()));
+        teacherFile.setType(DatabaseConstant.File.DIRECTORY_FILE.getFlag());
+        teacherFile.setUpdateTime(OtherConstant.DATE_FORMAT.format(new Date()));
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(root, "/"))) {
             for(Path pathObject : directoryStream){
                 if (pathObject.getFileName().toString().equals(teacherRoot)){
@@ -100,7 +101,7 @@ public class FileServiceImpl implements FileService {
                     return null;
                 }
             }
-            destFile.setType(1);
+            destFile.setType(DatabaseConstant.File.WORD_FILE.getFlag());
             destFile.setPermission("-rwx-rwx-r-x");
             destFile.setSubmitter(submitter);
             try {
@@ -110,7 +111,7 @@ public class FileServiceImpl implements FileService {
                 return null;
             }
         }else {
-            destFile.setType(0);
+            destFile.setType(DatabaseConstant.File.DIRECTORY_FILE.getFlag());
             destFile.setPermission("-rwx-rwx-rw-");
             if (dest.exists()){
                 log.info("添加覆盖操作");
@@ -130,21 +131,21 @@ public class FileServiceImpl implements FileService {
         destFile.setName(fileName);
         destFile.setPath(path);
         destFile.setSize(paramFile.getSize());
-        destFile.setUpdateTime(dateFormat.format(new Date()));
+        destFile.setUpdateTime(OtherConstant.DATE_FORMAT.format(new Date()));
         destFile.setOwner(owner);
         return destFile;
     }
 
     @Override
     public Integer updateFiles(HashMap<String, Object> updateParam, String action){
-        if ("RENAME".equals(action)){
+        if (BasicConstant.FileAction.RENAME.getString().equals(action)){
             Path resource = (Path) updateParam.get("resource");
             String newName = (String) updateParam.get("newName");
             try {
                 if (Files.exists(resource)) {
                     Files.move(resource, resource.resolveSibling(newName));
                     File newFile = new File();
-                    newFile.setUpdateTime(dateFormat.format(new Date()));
+                    newFile.setUpdateTime(OtherConstant.DATE_FORMAT.format(new Date()));
                     newFile.setName(newName);
                     return fileDao.updateFile(newFile);
                 }
@@ -153,7 +154,7 @@ public class FileServiceImpl implements FileService {
                 return -1;
             }
 
-        }else if ("MOVE".equals(action)){
+        }else if (BasicConstant.FileAction.MOVE.getString().equals(action)){
             Path newDir = (Path) updateParam.get("newDir");
             if (updateParam.get("resource") instanceof List<?>){
                 List<Path> resources = (List<Path>) updateParam.get("resource");
@@ -175,7 +176,7 @@ public class FileServiceImpl implements FileService {
                 return (newObject != null) ? fileDao.updateFile(newObject) : -1;
             }
 
-        }else if ("CORRECT".equals(action)){
+        }else if (BasicConstant.FileAction.CORRECT.getString().equals(action)){
             Integer status = (Integer) updateParam.get("status");
             long time = System.currentTimeMillis();
             FileTime fileTime = FileTime.fromMillis(time);
@@ -191,7 +192,7 @@ public class FileServiceImpl implements FileService {
                         break;
                     }
                     File file = new File();
-                    file.setUpdateTime(dateFormat.format(new Date(fileTime.toMillis())));
+                    file.setUpdateTime(OtherConstant.DATE_FORMAT.format(new Date(fileTime.toMillis())));
                     file.setStatus(status);
                     files.add(file);
                 }
@@ -205,7 +206,7 @@ public class FileServiceImpl implements FileService {
                     return -1;
                 }
                 File file = new File();
-                file.setUpdateTime(dateFormat.format(new Date(fileTime.toMillis())));
+                file.setUpdateTime(OtherConstant.DATE_FORMAT.format(new Date(fileTime.toMillis())));
                 file.setStatus(status);
                 return fileDao.updateFile(file);
             }
@@ -234,7 +235,7 @@ public class FileServiceImpl implements FileService {
                 //path，updateTime
                 file.setPath(newDir.getParent().toString());
                 FileTime ft = (FileTime) Files.getAttribute(current, "basic:lastModifiedTime");
-                file.setUpdateTime(dateFormat.format(new Date(ft.toMillis())));
+                file.setUpdateTime(OtherConstant.DATE_FORMAT.format(new Date(ft.toMillis())));
             }
         }catch (IOException e){
             log.error("移动失败",e);

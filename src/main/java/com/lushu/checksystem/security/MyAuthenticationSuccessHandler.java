@@ -1,5 +1,6 @@
 package com.lushu.checksystem.security;
 
+import com.lushu.checksystem.constant.DatabaseConstant;
 import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,11 +30,11 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         User user = (User) authentication.getPrincipal();
         String role = userService.selectRoleByUsername(user.getUsername()).getName();
-        if ("ADMIN".equals(role)) {
+        if (DatabaseConstant.Role.ADMIN.getRole().equals(role)) {
             response.sendRedirect("/upload");
-        } else if ("TEACHER".equals(role)) {
+        } else if (DatabaseConstant.Role.TEACHER.getRole().equals(role)) {
             response.sendRedirect("/teacher");
-        } else if ("STUDENT".equals(role)) {
+        } else if (DatabaseConstant.Role.STUDENT.getRole().equals(role)) {
             response.sendRedirect("/student");
         }
     }

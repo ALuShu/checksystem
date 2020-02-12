@@ -1,5 +1,6 @@
 package com.lushu.checksystem.controller;
 
+import com.lushu.checksystem.constant.OtherConstant;
 import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.FileService;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -78,8 +78,7 @@ public class TeacherController {
             List<Map<String, Object>> fileItems = new ArrayList<>();
 
             try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(root, path))) {
-                String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-                SimpleDateFormat dt = new SimpleDateFormat(DATE_FORMAT);
+
                 for (Path pathObj : directoryStream) {
                     // 获取文件基本属性
                     BasicFileAttributes attrs = Files.readAttributes(pathObj, BasicFileAttributes.class);
@@ -87,7 +86,7 @@ public class TeacherController {
                     // 封装返回JSON数据
                     Map<String, Object> fileItem = new HashMap<>();
                     fileItem.put("name", pathObj.getFileName().toString());
-                    fileItem.put("date", dt.format(new Date(attrs.lastModifiedTime().toMillis())));
+                    fileItem.put("date", OtherConstant.DATE_FORMAT.format(new Date(attrs.lastModifiedTime().toMillis())));
                     fileItem.put("size", attrs.size());
                     fileItem.put("type", attrs.isDirectory() ? "dir" : "file");
                     fileItems.add(fileItem);

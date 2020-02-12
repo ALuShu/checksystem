@@ -1,5 +1,6 @@
 package com.lushu.checksystem.util;
 
+import com.lushu.checksystem.constant.OtherConstant;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.CellType;
@@ -57,7 +58,7 @@ public class ExcelUtil<T> {
                     Map<String, Object> tmpBeanMap = new HashMap<>();
                     for (int c = 0; c < row.getLastCellNum(); c++){
                         HSSFCell cell = row.getCell(c);
-                        name = TranslationField.getSheetHead().get(firstRow.getCell(c).getStringCellValue());
+                        name = OtherConstant.SHEET_HEAD.get(firstRow.getCell(c).getStringCellValue());
                         if (name != null){
                             cell.setCellType(CellType.STRING);
                             tmpBeanMap.put(name, cell.toString());
@@ -79,7 +80,7 @@ public class ExcelUtil<T> {
                     Map<String, Object> tmpBeanMap = new HashMap<>();
                     for (int c = 0; c < row.getLastCellNum(); c++){
                         XSSFCell cell = row.getCell(c);
-                        name = TranslationField.getSheetHead().get(firstRow.getCell(c).getStringCellValue());
+                        name = OtherConstant.SHEET_HEAD.get(firstRow.getCell(c).getStringCellValue());
                         if (name != null){
                             cell.setCellType(CellType.STRING);
                             tmpBeanMap.put(name, cell.toString());

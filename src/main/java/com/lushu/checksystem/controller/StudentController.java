@@ -1,5 +1,8 @@
 package com.lushu.checksystem.controller;
 
+import com.lushu.checksystem.constant.BasicConstant;
+import com.lushu.checksystem.constant.DatabaseConstant;
+import com.lushu.checksystem.constant.OtherConstant;
 import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.service.UserService;
@@ -21,7 +24,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -81,8 +83,6 @@ public class StudentController {
             List<Map<String, Object>> fileItems = new ArrayList<>();
 
             try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(current, path))) {
-                String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-                SimpleDateFormat dt = new SimpleDateFormat(DATE_FORMAT);
                 for (Path pathObj : directoryStream) {
                     // 获取文件基本属性
                     BasicFileAttributes attrs = Files.readAttributes(pathObj, BasicFileAttributes.class);
@@ -90,7 +90,7 @@ public class StudentController {
                     // 封装返回JSON数据
                     Map<String, Object> fileItem = new HashMap<>();
                     fileItem.put("name", pathObj.getFileName().toString());
-                    fileItem.put("date", dt.format(new Date(attrs.lastModifiedTime().toMillis())));
+                    fileItem.put("date", OtherConstant.DATE_FORMAT.format(new Date(attrs.lastModifiedTime().toMillis())));
                     fileItem.put("size", attrs.size());
                     fileItem.put("type", attrs.isDirectory() ? "dir" : "file");
                     fileItems.add(fileItem);
@@ -182,7 +182,7 @@ public class StudentController {
     @ResponseBody
     public Map showTeachers(){
         Map<String, Object> map = new HashMap<>(1);
-        map.put("teachers",userService.selectUsersByRole(2));
+        map.put("teachers",userService.selectUsersByRole(DatabaseConstant.Role.TEACHER.ordinal()+1));
         map.put("code", 1);
         map.put("msg", "查询成功");
         return map;
@@ -194,7 +194,7 @@ public class StudentController {
     @RequestMapping(value = "/searchTeacher", method = RequestMethod.POST)
     public Map searchTeacher(@RequestParam String key, @RequestParam String keyword){
         HashMap<String, Object> des;
-        if ("username".equals(key)){
+        if (BasicConstant.User.USERNAME.getString().equals(key)){
             des = userService.selectUser(keyword);
         }else {
             des = userService.selectUserByRealname(keyword);

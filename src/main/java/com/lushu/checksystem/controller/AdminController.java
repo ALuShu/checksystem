@@ -3,6 +3,8 @@ package com.lushu.checksystem.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lushu.checksystem.constant.BasicConstant;
+import com.lushu.checksystem.constant.OtherConstant;
 import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.service.UserService;
@@ -27,7 +29,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -43,7 +44,6 @@ public class AdminController {
     private String root;
     private UserService userService;
     private FileService fileService;
-    private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private User user = new User();
 
     public void setUserService(UserService userService) {
@@ -73,7 +73,6 @@ public class AdminController {
     public Map list(@RequestParam(required = false) String page
             , @RequestParam(required = false) String limit
             , @RequestParam(required = false) String path) throws ServletException, JSONException {
-        long star = System.currentTimeMillis();
         Map<String, Object> res = new HashMap<>();
         if (path == null) {
             path = "/";
@@ -84,8 +83,6 @@ public class AdminController {
             List<Map<String, Object>> fileItems = new ArrayList<>();
 
             try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(root, path))) {
-                String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-                SimpleDateFormat dt = new SimpleDateFormat(DATE_FORMAT);
                 for (Path pathObj : directoryStream) {
                     // 获取文件基本属性
                     BasicFileAttributes attrs = Files.readAttributes(pathObj, BasicFileAttributes.class);
@@ -93,7 +90,7 @@ public class AdminController {
                     // 封装返回JSON数据
                     Map<String, Object> fileItem = new HashMap<>();
                     fileItem.put("name", pathObj.getFileName().toString());
-                    fileItem.put("date", dt.format(new Date(attrs.lastModifiedTime().toMillis())));
+                    fileItem.put("date", OtherConstant.DATE_FORMAT.format(new Date(attrs.lastModifiedTime().toMillis())));
                     fileItem.put("size", attrs.size());
                     fileItem.put("type", attrs.isDirectory() ? "dir" : "file");
                     fileItems.add(fileItem);
@@ -105,8 +102,6 @@ public class AdminController {
             res.put("msg", "");
             res.put("count", fileItems.size());
             res.put("data", fileItems);
-            long end = System.currentTimeMillis();
-            log.info("花费时间：" + (end - star) + "ms");
             return res;
         } catch (Exception e) {
             log.error("递归文件出错:" + e);
@@ -137,11 +132,11 @@ public class AdminController {
     @ResponseBody
     public Map user(@RequestParam String type, @RequestParam String keyword) throws ServletException, JSONException {
         Map<String, Object> memberMap;
-        if ("username".equals(type)){
+        if (BasicConstant.User.USERNAME.getString().equals(type)){
             memberMap = userService.selectUser(keyword);
-        } else if ("realname".equals(type)) {
+        } else if (BasicConstant.User.REAL_NAME.getString().equals(type)) {
             memberMap = userService.selectUserByRealname(keyword);
-        }else if ("department".equals(type)){
+        }else if (BasicConstant.User.DEPARTMENT.getString().equals(type)){
             memberMap = new HashMap<>();
             memberMap.put("user", userService.selectUsersByDepartment(keyword));
         }else {//major
