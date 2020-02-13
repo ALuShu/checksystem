@@ -27,7 +27,7 @@
 
     <!-- selectUserByUsername：根据用户名搜索用户；return：User -->
     <select id="selectUserByUsername" parameterType="String" resultType="User">
-        select 1
+        select *
         from sys_user
         where username=#{username}
         limit 1
@@ -35,7 +35,7 @@
 
     <!-- selectUserByRealname：根据姓名查询用户（模糊查询）；return：User-->
     <select id="selectUserByRealname" parameterType="String" resultType="User">
-        select 1
+        select *
         from sys_user
         where realname like #{realname}
         limit 1

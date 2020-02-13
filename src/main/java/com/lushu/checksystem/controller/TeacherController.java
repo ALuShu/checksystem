@@ -40,23 +40,26 @@ public class TeacherController {
     }
 
     /**
-     * 教师主页跳转
+     * 教师页面跳转
      */
     @RequestMapping("/teacher")
-    public String index(){
+    public String index(Model model){
         user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("current", user);
         root = root + "\\" + user.getUsername() + "_" + user.getRealname();
-        return "/teacherindex";
+        return "/teacher/index";
     }
-
-    /**
-     * 教师端通知编辑跳转
-     */
-    @RequestMapping("/inform")
+    @RequestMapping("/edit")
     public String inform(Model model){
         user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("current",user);
-        return "/editInform";
+        return "/teacher/edit";
+    }
+    @RequestMapping("/TeacherPersonal")
+    public String personal(Model model){
+        user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("current",user);
+        return "/teacher/personal";
     }
 
     /**
@@ -118,15 +121,7 @@ public class TeacherController {
     public void recentWorks(){}
 
 
-    /**
-     * 教师个人中心跳转
-     */
-    @RequestMapping("/TEApersonal")
-    public String personal(Model model){
-        user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("current",user);
-        return "/teacherprivate";
-    }
+
 
     /**
      * 教师端作业查重

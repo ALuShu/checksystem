@@ -68,22 +68,6 @@
         </where>
     </update>
 
-    <!-- deleteFile：删除文件；return：Integer -->
-    <delete id="deleteFile" parameterType="Integer">
-        delete
-        from sys_file
-        <where>
-            <if test="id != null and id != ''">
-                id=#{id}
-            </if>
-            <if test="owner != null and owner != ''">
-                and owner=#{owner}
-            </if>
-            <if test="submitter != null and submitter != ''">
-                and submitter=#{submitter}
-            </if>
-        </where>
-    </delete>
 
     <!-- addFiles：批量增加文件；return：Integer -->
     <insert id="addFiles" parameterType="java.util.List">
@@ -145,20 +129,26 @@
         </foreach>
     </update>
 
-    <!-- deleteFilesByOwner：批量删除文件（根据owner）；return：Integer -->
-    <delete id="deleteFilesByOwner" parameterType="java.util.List">
-        delete from sys_file
-        where owner in
-        <foreach collection="list" open="(" close=")" separator="," item="item" index="index">
-            #{item}
-        </foreach>
+    <!-- deleteFile：删除文件；return：Integer -->
+    <delete id="deleteFile" parameterType="File">
+        delete
+        from sys_file
+        where name = #{name}
+          and path = #{path}
     </delete>
 
-    <!-- deleteFilesByStatus：批量删除文件（根据owner和status）；return：Integer -->
-    <delete id="deleteFilesByStatus">
+    <!-- deleteFileByOwner：删除文件（根据owner）；return：Integer -->
+    <delete id="deleteFileByOwner" parameterType="Integer">
         delete
         from sys_file
         where owner = #{owner}
+    </delete>
+
+    <!-- deleteFilesByStatus：删除文件（根据submitter和status）；return：Integer -->
+    <delete id="deleteFilesByStatus">
+        delete
+        from sys_file
+        where submitter = #{submitter}
           and status = #{status}
     </delete>
 

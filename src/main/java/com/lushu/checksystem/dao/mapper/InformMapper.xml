@@ -23,6 +23,12 @@
         where type=#{type}
     </select>
 
+    <!---->
+    <select id="count">
+        select count(id)
+        from sys_inform
+    </select>
+
     <!-- addInform：批量发布通知；return：int -->
     <insert id="addInforms" parameterType="java.util.List">
         insert into sys_inform (send_id, content, type, date, path)

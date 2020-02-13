@@ -20,11 +20,10 @@ import java.util.*;
  * @author ALuShu
  * @Description
  * @date 2020/1/10
- * @throws
- * @since
  */
 @Service
 @Slf4j
+@SuppressWarnings("unchecked")
 public class FileServiceImpl implements FileService {
 
     @Value("${checksystem.root}")
@@ -36,12 +35,11 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public List<File> selectOldSubmitted(Integer submitter) {
-        List<File> oldFiles = fileDao.selectFileBySubmitter(submitter);
-        return oldFiles;
+        return fileDao.selectFileBySubmitter(submitter);
     }
 
     @Override
-    public Integer newTeacherFile(String username, String realname, Integer id) {
+    public int newTeacherFile(String username, String realname, Integer id) {
         File teacherFile = new File();
         /*教师文件夹名字由工号+姓名组成*/
         String teacherRoot = username +"_"+ realname;
@@ -67,7 +65,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public Integer addFiles(Collection<MultipartFile> files, String path, Integer owner, Integer submitter) throws IOException {
+    public int addFiles(Collection<MultipartFile> files, String path, Integer owner, Integer submitter) {
         Iterator<MultipartFile> fileIterator = files.iterator();
         if (files.size() == 1){
             File preFile = addMethod(fileIterator.next(), new File(), path, owner, submitter);
@@ -91,41 +89,43 @@ public class FileServiceImpl implements FileService {
      */
     private static File addMethod(MultipartFile paramFile, File destFile, String path, Integer owner, Integer submitter) {
         String fileName = paramFile.getOriginalFilename();
-        java.io.File dest = new java.io.File(path, fileName);
-        if (dest.isFile()){
-            if (dest.exists()){
-                log.info("添加覆盖操作");
-                boolean res = dest.delete();
-                if (!res){
-                    log.error("覆盖失败，请检查文件夹是否非空");
+        if (fileName != null) {
+            java.io.File dest = new java.io.File(path, fileName);
+            if (dest.isFile()) {
+                if (dest.exists()) {
+                    log.info("添加覆盖操作");
+                    boolean res = dest.delete();
+                    if (!res) {
+                        log.error("覆盖失败，请检查文件夹是否非空");
+                        return null;
+                    }
+                }
+                destFile.setType(DatabaseConstant.File.WORD_FILE.getFlag());
+                destFile.setPermission("-rwx-rwx-r-x");
+                destFile.setSubmitter(submitter);
+                try {
+                    paramFile.transferTo(dest);
+                } catch (IOException e) {
+                    log.error("添加保存失败", e);
                     return null;
                 }
-            }
-            destFile.setType(DatabaseConstant.File.WORD_FILE.getFlag());
-            destFile.setPermission("-rwx-rwx-r-x");
-            destFile.setSubmitter(submitter);
-            try {
-                paramFile.transferTo(dest);
-            } catch (IOException e) {
-                log.error("添加保存失败",e);
-                return null;
-            }
-        }else {
-            destFile.setType(DatabaseConstant.File.DIRECTORY_FILE.getFlag());
-            destFile.setPermission("-rwx-rwx-rw-");
-            if (dest.exists()){
-                log.info("添加覆盖操作");
-                boolean res = dest.delete();
-                if (!res){
-                    log.error("覆盖失败，请检查文件夹是否非空");
+            } else {
+                destFile.setType(DatabaseConstant.File.DIRECTORY_FILE.getFlag());
+                destFile.setPermission("-rwx-rwx-rw-");
+                if (dest.exists()) {
+                    log.info("添加覆盖操作");
+                    boolean res = dest.delete();
+                    if (!res) {
+                        log.error("覆盖失败，请检查文件夹是否非空");
+                        return null;
+                    }
+                }
+                try {
+                    Files.createDirectory(Paths.get(path, fileName));
+                } catch (IOException e) {
+                    log.error("创建新文件夹失败", e);
                     return null;
                 }
-            }
-            try {
-                Files.createDirectory(Paths.get(path, fileName));
-            } catch (IOException e) {
-                log.error("创建新文件夹失败",e);
-                return null;
             }
         }
         destFile.setName(fileName);
@@ -137,7 +137,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public Integer updateFiles(HashMap<String, Object> updateParam, String action){
+    public int updateFiles(HashMap<String, Object> updateParam, String action){
         if (BasicConstant.FileAction.RENAME.getString().equals(action)){
             Path resource = (Path) updateParam.get("resource");
             String newName = (String) updateParam.get("newName");
@@ -156,8 +156,8 @@ public class FileServiceImpl implements FileService {
 
         }else if (BasicConstant.FileAction.MOVE.getString().equals(action)){
             Path newDir = (Path) updateParam.get("newDir");
-            if (updateParam.get("resource") instanceof List<?>){
-                List<Path> resources = (List<Path>) updateParam.get("resource");
+            if (updateParam.get("resource") instanceof ArrayList<?>){
+                List<Path> resources = (ArrayList<Path>) updateParam.get("resource");
                 List<File> files = new ArrayList<>();
                 for (Path current : resources){
                     String fileName = current.getFileName().toString();
@@ -180,9 +180,9 @@ public class FileServiceImpl implements FileService {
             Integer status = (Integer) updateParam.get("status");
             long time = System.currentTimeMillis();
             FileTime fileTime = FileTime.fromMillis(time);
-            if (updateParam.get("resource") instanceof List<?>){
+            if (updateParam.get("resource") instanceof ArrayList<?>){
                 List<File> files = new ArrayList<>();
-                List<Path> resources = (List<Path>) updateParam.get("resource");
+                List<Path> resources = (ArrayList<Path>) updateParam.get("resource");
                 for (Path resource : resources){
                     try {
                         Files.setAttribute(resource, "basic:lastModifiedTime", fileTime);
@@ -211,7 +211,7 @@ public class FileServiceImpl implements FileService {
                 return fileDao.updateFile(file);
             }
         }
-        return null;
+        return 0;
     }
 
     /**
@@ -246,7 +246,50 @@ public class FileServiceImpl implements FileService {
 
 
     @Override
-    public Integer deleteFiles(HashMap<String, Object> param) throws IOException {
-        return 0;
+    public int deleteFile(HashMap<String, Object> param) {
+        //dir or file;null dir;name and path
+        String path = (String)param.get("path");
+        int delRes = 0;
+        if (param.get("fileName") instanceof ArrayList<?>){
+            List<String> nameList = (ArrayList<String>) param.get("fileName");
+            for (String fileName : nameList){
+                File current = deleteMethod(path, fileName);
+                if (current != null) {
+                    delRes += fileDao.deleteFile(current);
+                }
+            }
+        }else {
+            String fileName = (String) param.get("fileName");
+            File current = deleteMethod(path, fileName);
+            delRes = fileDao.deleteFile(current);
+        }
+        return delRes;
+    }
+
+    /**
+     * 删除文件
+     */
+    private static File deleteMethod(String path, String fileName){
+        Path current = Paths.get(path, fileName);
+        File file = new File();
+        try {
+            Files.delete(current);
+        }catch (IOException e){
+            log.error("删除文件"+fileName+"失败", e);
+            return null;
+        }
+        file.setName(fileName);
+        file.setPath(path);
+        return file;
+    }
+
+    @Override
+    public int deleteTeacherFiles(Integer owner) {
+        return fileDao.deleteFileByOwner(owner);
+    }
+
+    @Override
+    public int deleteUnPassedFiles(Integer submitter, Integer status) {
+        return fileDao.deleteFilesByStatus(submitter, status);
     }
 }

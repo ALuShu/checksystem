@@ -32,6 +32,7 @@ class UserTest extends ChecksystemApplicationTests{
     void addAdminTest() {
         List<User> root = new ArrayList<>(1);
         User user = new User();
+        user.setUsername("root");
         root.add(user);
         userService.addUsersByExcel(root, adminRoleId);
     }

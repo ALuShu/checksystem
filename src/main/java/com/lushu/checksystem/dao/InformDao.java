@@ -20,10 +20,10 @@ public interface InformDao {
 
     /**
      * 查询通知
-     * @param receiveId
+     * @param sendId
      * @return
      */
-    List<Inform> selectInforms(Integer receiveId);
+    List<Inform> selectInforms(Integer sendId);
 
     /**
      * 查询所有通知，分页，按日期排序
@@ -38,6 +38,12 @@ public interface InformDao {
      * @return
      */
     List<Inform> selectInformsByType(boolean type);
+
+    /**
+     * 统计
+     * @return
+     */
+    Integer count();
 
     /**
      * 批量发布通知

@@ -31,15 +31,15 @@ CREATE TABLE `sys_authority`  (
 -- ----------------------------
 -- Records of sys_authority
 -- ----------------------------
-INSERT INTO `sys_authority` VALUES (1, '增加用户', 'ROLE_USER_ADD');
-INSERT INTO `sys_authority` VALUES (2, '更新用户', 'ROLE_USER_UPDATE');
-INSERT INTO `sys_authority` VALUES (3, '删除用户', 'ROLE_USER_DELETE');
-INSERT INTO `sys_authority` VALUES (4, '查询用户', 'ROLE_USER_SELECT');
-INSERT INTO `sys_authority` VALUES (5, '上传文件', 'ROLE_FILE_UPLOAD');
-INSERT INTO `sys_authority` VALUES (6, '更新文件', 'ROLE_FILE_UPDATE');
-INSERT INTO `sys_authority` VALUES (7, '删除文件', 'ROLE_FILE_DELETE');
-INSERT INTO `sys_authority` VALUES (8, '搜索文件', 'ROLE_FILE_SELECT');
-INSERT INTO `sys_authority` VALUES (9, '查重', 'ROLE_FILE_CHECK');
+INSERT INTO `sys_authority` VALUES (1, '增加用户', 'USER_ADD');
+INSERT INTO `sys_authority` VALUES (2, '更新用户', 'USER_UPDATE');
+INSERT INTO `sys_authority` VALUES (3, '删除用户', 'USER_DELETE');
+INSERT INTO `sys_authority` VALUES (4, '查询用户', 'USER_SELECT');
+INSERT INTO `sys_authority` VALUES (5, '上传文件', 'FILE_UPLOAD');
+INSERT INTO `sys_authority` VALUES (6, '更新文件', 'FILE_UPDATE');
+INSERT INTO `sys_authority` VALUES (7, '删除文件', 'FILE_DELETE');
+INSERT INTO `sys_authority` VALUES (8, '搜索文件', 'FILE_SELECT');
+INSERT INTO `sys_authority` VALUES (9, '查重', 'FILE_CHECK');
 INSERT INTO `sys_authority` VALUES (10, '角色增加', 'ROLE_ADD');
 INSERT INTO `sys_authority` VALUES (11, '角色更新', 'ROLE_UPDATE');
 INSERT INTO `sys_authority` VALUES (12, '角色删除', 'ROLE_DELETE');
@@ -94,9 +94,9 @@ CREATE TABLE `sys_role`  (
 -- ----------------------------
 -- Records of sys_role
 -- ----------------------------
-INSERT INTO `sys_role` VALUES (1, 'ADMIN', '超级管理');
-INSERT INTO `sys_role` VALUES (2, 'TEACHER', '教师');
-INSERT INTO `sys_role` VALUES (3, 'STUDENT', '学生');
+INSERT INTO `sys_role` VALUES (1, 'ROLE_ADMIN', '超级管理');
+INSERT INTO `sys_role` VALUES (2, 'ROLE_TEACHER', '教师');
+INSERT INTO `sys_role` VALUES (3, 'ROLE_STUDENT', '学生');
 
 -- ----------------------------
 -- Table structure for sys_role_authority

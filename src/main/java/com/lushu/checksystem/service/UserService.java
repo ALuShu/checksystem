@@ -66,7 +66,7 @@ public interface UserService extends UserDetailsService {
     HashMap<String, Object> addUsersByExcel(List<User> users, Integer roleId);
 
     /**
-     * 批量删除用户，并删除中间表记录，若是教师，还要删除其文件夹
+     * 批量删除用户
      */
     int deleteUsers(List<Integer> ids);
 

@@ -53,16 +53,20 @@ public class StudentController {
     public String index(Model model) {
         user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("current", user);
-        return "/index";
+        return "/student/index";
     }
-
-    /**
-     * 上传页面跳转
-     */
     @RequestMapping("/upload")
-    public String upload(String path) {
+    public String upload(String path, Model model) {
+        user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("current", user);
         current = root + "\\" + path;
-        return "/upload";
+        return "/student/upload";
+    }
+    @RequestMapping("/personal")
+    public String personal(Model model) {
+        user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("current", user);
+        return "/student/personal";
     }
 
     /**
@@ -167,13 +171,7 @@ public class StudentController {
         return json;
     }
 
-    /**
-     * 个人中心的跳转
-     */
-    @RequestMapping("/STUpersonal")
-    public String personal() {
-        return "/private";
-    }
+
 
     /**
      * 学生端展示教师列表

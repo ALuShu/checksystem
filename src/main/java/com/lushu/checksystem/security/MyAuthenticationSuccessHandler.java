@@ -31,7 +31,7 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
         User user = (User) authentication.getPrincipal();
         String role = userService.selectRoleByUsername(user.getUsername()).getName();
         if (DatabaseConstant.Role.ADMIN.getRole().equals(role)) {
-            response.sendRedirect("/upload");
+            response.sendRedirect("/admin");
         } else if (DatabaseConstant.Role.TEACHER.getRole().equals(role)) {
             response.sendRedirect("/teacher");
         } else if (DatabaseConstant.Role.STUDENT.getRole().equals(role)) {

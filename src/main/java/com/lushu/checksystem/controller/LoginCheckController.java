@@ -4,11 +4,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.UserService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +39,7 @@ public class LoginCheckController {
     /**
      * 登陆失败/权限不足 跳转
      */
-    @RequestMapping("/loginError")
+    @RequestMapping("/errorPage")
     public String error(){
         return "/error";
     }
@@ -49,8 +48,19 @@ public class LoginCheckController {
      * 修改密码跳转
      */
     @RequestMapping("/update")
-    public String update(){
+    public String update(Model model){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("current", user);
         return "/update";
+    }
+
+    /**
+     * 测试
+     */
+    @GetMapping("/sayhello")
+    public String say(Model model){
+        model.addAttribute("msg","你好啊");
+        return "/sayhello";
     }
 
     /**

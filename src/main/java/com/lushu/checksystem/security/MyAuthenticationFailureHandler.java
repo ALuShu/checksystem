@@ -23,6 +23,7 @@ public class MyAuthenticationFailureHandler implements AuthenticationFailureHand
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
         log.error("错误处理器:",e);
-        response.sendRedirect("/loginError");
+        response.setContentType("text/html;charset=UTF-8");
+        response.sendRedirect("/errorPage");
     }
 }

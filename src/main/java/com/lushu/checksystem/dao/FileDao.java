@@ -54,13 +54,6 @@ public interface FileDao {
     Integer updateFile(File file);
 
     /**
-     * 删除文件
-     * @param id
-     * @return
-     */
-    Integer deleteFile(Integer id);
-
-    /**
      * 批量增加文件
      * @param file
      * @return
@@ -75,17 +68,24 @@ public interface FileDao {
     Integer updateFiles(List<File> file);
 
     /**
-     * 批量删除文件（根据owner）
+     * 删除文件
+     * @param file
+     * @return
+     */
+    Integer deleteFile(File file);
+
+    /**
+     * 删除文件（根据owner）
      * @param owner
      * @return
      */
-    Integer deleteFilesByOwner(List<Integer> owner);
+    Integer deleteFileByOwner(Integer owner);
 
     /**
-     * 批量删除文件（根据owner和status）
-     * @param owner
+     * 删除文件（根据submitter和status）
+     * @param submitter
      * @param status
      * @return
      */
-    Integer deleteFilesByStatus(@Param("owner")Integer owner, @Param("status")Integer status);
+    Integer deleteFilesByStatus(@Param("submitter")Integer submitter, @Param("status")Integer status);
 }

@@ -199,7 +199,6 @@ public class UserServiceImpl implements UserService {
                 } else {
                     for (User user : users) {
                         ids.add(firstId);
-                        user.setUsername("root");
                         user.setPassword(new BCryptPasswordEncoder().encode("root"));
                         user.setRealname("系统管理员");
                         user.setCreateTime(OtherConstant.DATE_FORMAT.format(new Date()));
@@ -215,12 +214,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public int deleteUsers(List<Integer> ids) {
-        List<User> users = userDao.selectByIds(ids);
-        for (User user : users){
-            if (user.getMajor() == null){
-                //删除对应的文件和数据库文件记录
-            }
-        }
         int delUserRes = userDao.deleteUsers(ids);
         int delRoleRes = userDao.deleteUserRole(ids);
         return (delUserRes + delRoleRes);
