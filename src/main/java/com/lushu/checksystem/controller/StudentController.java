@@ -32,6 +32,7 @@ import java.util.*;
  **/
 @Controller
 @Slf4j
+@RequestMapping("/student")
 public class StudentController {
 
     @Value("${checksystem.root}")
@@ -49,7 +50,7 @@ public class StudentController {
     /**
      * 学生主页跳转
      */
-    @RequestMapping("/student")
+    @RequestMapping("/index")
     public String index(Model model) {
         user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("current", user);
@@ -67,6 +68,12 @@ public class StudentController {
         user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("current", user);
         return "/student/personal";
+    }
+    @RequestMapping("/update")
+    public String update(Model model){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("current", user);
+        return "/update";
     }
 
     /**
@@ -180,7 +187,7 @@ public class StudentController {
     @ResponseBody
     public Map showTeachers(){
         Map<String, Object> map = new HashMap<>(1);
-        map.put("teachers",userService.selectUsersByRole(DatabaseConstant.Role.TEACHER.ordinal()+1));
+        map.put("teachers",userService.selectUsersByRole(DatabaseConstant.Role.ROLE_TEACHER.ordinal()+1));
         map.put("code", 1);
         map.put("msg", "查询成功");
         return map;

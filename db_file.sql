@@ -26,24 +26,15 @@ CREATE TABLE `sys_authority`  (
   `name` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `tag` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 14 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_authority
 -- ----------------------------
-INSERT INTO `sys_authority` VALUES (1, '增加用户', 'USER_ADD');
-INSERT INTO `sys_authority` VALUES (2, '更新用户', 'USER_UPDATE');
-INSERT INTO `sys_authority` VALUES (3, '删除用户', 'USER_DELETE');
-INSERT INTO `sys_authority` VALUES (4, '查询用户', 'USER_SELECT');
-INSERT INTO `sys_authority` VALUES (5, '上传文件', 'FILE_UPLOAD');
-INSERT INTO `sys_authority` VALUES (6, '更新文件', 'FILE_UPDATE');
-INSERT INTO `sys_authority` VALUES (7, '删除文件', 'FILE_DELETE');
-INSERT INTO `sys_authority` VALUES (8, '搜索文件', 'FILE_SELECT');
-INSERT INTO `sys_authority` VALUES (9, '查重', 'FILE_CHECK');
-INSERT INTO `sys_authority` VALUES (10, '角色增加', 'ROLE_ADD');
-INSERT INTO `sys_authority` VALUES (11, '角色更新', 'ROLE_UPDATE');
-INSERT INTO `sys_authority` VALUES (12, '角色删除', 'ROLE_DELETE');
-INSERT INTO `sys_authority` VALUES (13, '角色查询', 'ROLE_SELECT');
+INSERT INTO `sys_authority` VALUES (1, '用户管理', 'MANAGE_USER');
+INSERT INTO `sys_authority` VALUES (2, '文件管理', 'MANAGE_FILE');
+INSERT INTO `sys_authority` VALUES (3, '角色管理', 'MANAGE_ROLE');
+INSERT INTO `sys_authority` VALUES (4, '基础权限', 'BASIC');
 
 -- ----------------------------
 -- Table structure for sys_file
@@ -78,7 +69,7 @@ CREATE TABLE `sys_inform`  (
   `path` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '该通知所要提交到的目录的物理地址',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `send_id_index`(`send_id`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Table structure for sys_role
@@ -89,7 +80,7 @@ CREATE TABLE `sys_role`  (
   `name` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `detail` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_role
@@ -107,7 +98,7 @@ CREATE TABLE `sys_role_authority`  (
   `role_id` int(1) NOT NULL,
   `authority_id` int(2) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 21 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_role_authority
@@ -116,22 +107,9 @@ INSERT INTO `sys_role_authority` VALUES (1, 1, 1);
 INSERT INTO `sys_role_authority` VALUES (2, 1, 2);
 INSERT INTO `sys_role_authority` VALUES (3, 1, 3);
 INSERT INTO `sys_role_authority` VALUES (4, 1, 4);
-INSERT INTO `sys_role_authority` VALUES (5, 2, 5);
-INSERT INTO `sys_role_authority` VALUES (6, 2, 6);
-INSERT INTO `sys_role_authority` VALUES (7, 2, 7);
-INSERT INTO `sys_role_authority` VALUES (8, 2, 8);
-INSERT INTO `sys_role_authority` VALUES (9, 2, 9);
-INSERT INTO `sys_role_authority` VALUES (10, 3, 4);
-INSERT INTO `sys_role_authority` VALUES (11, 3, 5);
-INSERT INTO `sys_role_authority` VALUES (12, 1, 5);
-INSERT INTO `sys_role_authority` VALUES (13, 1, 6);
-INSERT INTO `sys_role_authority` VALUES (14, 1, 7);
-INSERT INTO `sys_role_authority` VALUES (15, 1, 8);
-INSERT INTO `sys_role_authority` VALUES (16, 1, 9);
-INSERT INTO `sys_role_authority` VALUES (17, 1, 10);
-INSERT INTO `sys_role_authority` VALUES (18, 1, 11);
-INSERT INTO `sys_role_authority` VALUES (19, 1, 12);
-INSERT INTO `sys_role_authority` VALUES (20, 1, 13);
+INSERT INTO `sys_role_authority` VALUES (5, 2, 2);
+INSERT INTO `sys_role_authority` VALUES (6, 2, 4);
+INSERT INTO `sys_role_authority` VALUES (7, 3, 4);
 
 -- ----------------------------
 -- Table structure for sys_user

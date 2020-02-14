@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.UserService;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +19,7 @@ import java.util.Map;
  * @Description a controller about checking identity
  */
 @Controller
+@RequestMapping("/public")
 public class LoginCheckController {
 
     private UserService userService;
@@ -29,34 +29,24 @@ public class LoginCheckController {
     }
 
     /**
-     * 登录跳转
+     * 公开页面跳转
      */
     @RequestMapping("/login")
     public String login(){
         return "/login";
     }
-
-    /**
-     * 登陆失败/权限不足 跳转
-     */
-    @RequestMapping("/errorPage")
+    @RequestMapping("/perError")
+    public String perError(){
+        return "/permissionerror";
+    }
+    @RequestMapping("/serError")
+    public String serError(){
+        return "/servererror";
+    }
+    @RequestMapping("/norError")
     public String error(){
         return "/error";
     }
-
-    /**
-     * 修改密码跳转
-     */
-    @RequestMapping("/update")
-    public String update(Model model){
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("current", user);
-        return "/update";
-    }
-
-    /**
-     * 测试
-     */
     @GetMapping("/sayhello")
     public String say(Model model){
         model.addAttribute("msg","你好啊");

@@ -13,9 +13,9 @@ public interface DatabaseConstant {
      */
     enum Role implements DatabaseConstant{
         //三个角色
-        ADMIN("ROLE_ADMIN"),
-        TEACHER("ROLE_TEACHER"),
-        STUDENT("ROLE_STUDENT");
+        ROLE_ADMIN("ROLE_ADMIN"),
+        ROLE_TEACHER("ROLE_TEACHER"),
+        ROLE_STUDENT("ROLE_STUDENT");
         private String role;
 
         Role(String role) {
@@ -28,24 +28,11 @@ public interface DatabaseConstant {
     }
 
     enum Authority implements DatabaseConstant{
-        //用户增/改/删/查
-        ROLE_USER_ADD("USER_ADD"),
-        ROLE_USER_UPDATE("USER_UPDATE"),
-        ROLE_USER_DELETE("USER_DELETE"),
-        ROLE_USER_SELECT("USER_SELECT"),
-
-        //文件上传/更新/删除/查询/查重
-        ROLE_FILE_UPLOAD("FILE_UPLOAD"),
-        ROLE_FILE_UPDATE("FILE_UPDATE"),
-        ROLE_FILE_DELETE("FILE_DELETE"),
-        ROLE_FILE_SELECT("FILE_SELECT"),
-        ROLE_FILE_CHECK("FILE_CHECK"),
-
-        //角色增/改/删/查
-        ROLE_ADD("ROLE_ADD"),
-        ROLE_UPDATE("ROLE_UPDATE"),
-        ROLE_DELETE("ROLE_DELETE"),
-        ROLE_SELECT("ROLE_SELECT");
+        //角色权限
+        MANAGE_USER("MANAGE_USER"),
+        MANAGE_FILE("MANAGE_FILE"),
+        MANAGE_ROLE("MANAGE_ROLE"),
+        BASIC("BASIC");
         private String authority;
 
         Authority(String authority) {

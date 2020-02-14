@@ -3,6 +3,7 @@ package com.lushu.checksystem.pojo;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * @author ALuShu
@@ -17,4 +18,6 @@ public class Role implements Serializable {
     private Integer id;
     private String name;
     private String detail;
+
+    private List<Authority> authorityList;
 }

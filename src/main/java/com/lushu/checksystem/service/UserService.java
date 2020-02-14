@@ -37,7 +37,6 @@ public interface UserService extends UserDetailsService {
 
     /**
      * 返回用户的权限，为框架服务
-     * 根据用户名返回角色，为框架服务
      */
     List<Authority> selectAuthoritiesByUsername(String username);
     Role selectRoleByUsername(String username);

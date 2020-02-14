@@ -1,7 +1,6 @@
 package com.lushu.checksystem.dao;
 
 import com.lushu.checksystem.pojo.Authority;
-import com.lushu.checksystem.pojo.Role;
 import com.lushu.checksystem.pojo.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -74,13 +73,6 @@ public interface UserDao {
      * @return
      */
     List<User> selectByIds(List<Integer> id);
-
-    /**
-     * 用户名搜索用户的角色
-     * @param username
-     * @return
-     */
-    Role selectRoleByUsername(String username);
 
     /**
      * 用户名搜索用户的全部权限，用于登录认证

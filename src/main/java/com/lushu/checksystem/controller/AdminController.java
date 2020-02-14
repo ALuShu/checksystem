@@ -38,6 +38,7 @@ import java.util.*;
  **/
 @Controller
 @Slf4j
+@RequestMapping("/admin")
 public class AdminController {
 
     @Value("${checksystem.root}")
@@ -57,7 +58,7 @@ public class AdminController {
     /**
      * 管理员的页面跳转
      */
-    @RequestMapping("/admin")
+    @RequestMapping("/index")
     public String index(Model model){
         user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("current",user);

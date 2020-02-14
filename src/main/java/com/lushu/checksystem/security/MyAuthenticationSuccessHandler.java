@@ -30,12 +30,12 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         User user = (User) authentication.getPrincipal();
         String role = userService.selectRoleByUsername(user.getUsername()).getName();
-        if (DatabaseConstant.Role.ADMIN.getRole().equals(role)) {
-            response.sendRedirect("/admin");
-        } else if (DatabaseConstant.Role.TEACHER.getRole().equals(role)) {
-            response.sendRedirect("/teacher");
-        } else if (DatabaseConstant.Role.STUDENT.getRole().equals(role)) {
-            response.sendRedirect("/student");
+        if (DatabaseConstant.Role.ROLE_ADMIN.getRole().equals(role)) {
+            response.sendRedirect("/admin/index");
+        } else if (DatabaseConstant.Role.ROLE_TEACHER.getRole().equals(role)) {
+            response.sendRedirect("/teacher/index");
+        } else if (DatabaseConstant.Role.ROLE_STUDENT.getRole().equals(role)) {
+            response.sendRedirect("/student/index");
         }
     }
 }

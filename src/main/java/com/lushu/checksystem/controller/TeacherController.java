@@ -29,6 +29,7 @@ import java.util.*;
  **/
 @Controller
 @Slf4j
+@RequestMapping("/teacher")
 public class TeacherController {
 
     @Value("${checksystem.root}")
@@ -42,7 +43,7 @@ public class TeacherController {
     /**
      * 教师页面跳转
      */
-    @RequestMapping("/teacher")
+    @RequestMapping("/index")
     public String index(Model model){
         user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("current", user);
@@ -55,11 +56,17 @@ public class TeacherController {
         model.addAttribute("current",user);
         return "/teacher/edit";
     }
-    @RequestMapping("/TeacherPersonal")
+    @RequestMapping("/personal")
     public String personal(Model model){
         user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("current",user);
         return "/teacher/personal";
+    }
+    @RequestMapping("/update")
+    public String update(Model model){
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("current", user);
+        return "/update";
     }
 
     /**

@@ -46,18 +46,19 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests()
                 /**
                  * 1. 多URL的坑: 规则是按顺序的，如果把"/**"写一开始，那么后面的"/a/**"将不会生效
-                 * 2. "?"代表单字符，"."代表0到多个字符，".."代表0到多个目录；这里要注意"**"指的是目录
-                 * 3. 控制器类写一个@RequestMapping("/a"),里面方法再写一个@RequestMapping("/b"),然后在
-                 *    这里拦截"/a/b"会发现拦截不到；方法里直接写@RequestMapping("/a/b")的也好像拦截不到
+                 * 2. "?"代表单字符，"*"代表0到多个字符，"**"代表0到多个目录
+                 * 3. 关于Role和Authority: 如果要hasRole判断，在loadUserByUsername方法中放入List<GrantedAuthority>
+                 *    中就需要"ROLE_xx"; 如果要hasAuthority判断，则不用"ROLE_"前缀； 因为这个写一点血的教训，曾因为数据
+                 *    库role表的字段没加"ROLE_"前缀导致一直用不了hasRole方法，反而是permission表的字段没有限制
                  */
-                .antMatchers("/student/*").hasRole("STUDENT")
-                .antMatchers("/teacher/*").hasRole("TEACHER")
-                .antMatchers("/admin/*").hasRole("ADMIN")
-                .antMatchers("/error","/login","/sayhello","/update").permitAll()
+                .antMatchers("/student/**").hasAnyRole("STUDENT","ADMIN")
+                .antMatchers("/teacher/**").hasAnyRole("TEACHER","ADMIN")
+                .antMatchers("/**","/admin/**").hasRole("ADMIN")
+                .antMatchers("/public/**").permitAll()
                 .anyRequest().authenticated()
             .and()
                 .formLogin()
-                .loginPage("/login")
+                .loginPage("/public/login")
                 .failureHandler(failureHandler)
                 .successHandler(successHandler)
                 .permitAll()
@@ -66,9 +67,9 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .headers().frameOptions().sameOrigin()
             .and()
                 .csrf().disable()
-                .sessionManagement()
+                /*.sessionManagement()
                 .maximumSessions(1)
-                .expiredUrl("/login");
+                .expiredUrl("/login")*/;
     }
 
     @Override

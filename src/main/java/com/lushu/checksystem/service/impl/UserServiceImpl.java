@@ -2,6 +2,7 @@ package com.lushu.checksystem.service.impl;
 
 import com.lushu.checksystem.constant.DatabaseConstant;
 import com.lushu.checksystem.constant.OtherConstant;
+import com.lushu.checksystem.dao.RoleDao;
 import com.lushu.checksystem.dao.UserDao;
 import com.lushu.checksystem.pojo.Authority;
 import com.lushu.checksystem.pojo.PageBean;
@@ -31,10 +32,12 @@ import java.util.*;
 public class UserServiceImpl implements UserService {
 
     private UserDao userDao;
+    private RoleDao roleDao;
     private FileService fileService;
 
-    public UserServiceImpl(UserDao userDao, FileService fileService) {
+    public UserServiceImpl(UserDao userDao, RoleDao roleDao, FileService fileService) {
         this.userDao = userDao;
+        this.roleDao = roleDao;
         this.fileService = fileService;
     }
 
@@ -60,7 +63,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public HashMap<String, Object> selectUser(String username) {
         User user = userDao.selectUserByUsername(username);
-        Role role = userDao.selectRoleByUsername(username);
+        List<Role> role = roleDao.selectRole(username);
         HashMap<String, Object> res = new HashMap<>(4);
         res.put("user", user);
         res.put("role", role);
@@ -70,7 +73,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public HashMap<String, Object> selectUserByRealname(String realname) {
         User user = userDao.selectUserByRealname("%"+realname+"%");
-        Role role = userDao.selectRoleByUsername(user.getUsername());
+        List<Role> role = roleDao.selectRole(user.getUsername());
         HashMap<String, Object> res = new HashMap<>(4);
         res.put("user", user);
         res.put("role", role);
@@ -84,7 +87,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Role selectRoleByUsername(String username) {
-        return userDao.selectRoleByUsername(username);
+        return roleDao.selectRole(username).get(0);
     }
 
     @Override
@@ -106,18 +109,27 @@ public class UserServiceImpl implements UserService {
     public UserDetails loadUserByUsername(String var1) throws UsernameNotFoundException {
         //先根据用户名查用户
         User user = userDao.selectUserByUsername(var1);
-        //再根据用户名查权限
-        List<Authority> authorities = userDao.selectAuthoritiesByUsername(var1);
+        if (user != null) {
+            //再根据用户名查角色
+            List<Role> roles = roleDao.selectRole(var1);
+            List<Authority> authorities = new ArrayList<>();
+            List<GrantedAuthority> authorityList = new ArrayList<>();
+            for (Role role : roles) {
+                GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(role.getName());
+                authorityList.add(grantedAuthority);
 
-        List<GrantedAuthority> authorityList = new ArrayList<>();
-        for (Authority authority : authorities){
-            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority(authority.getTag());
-            authorityList.add(grantedAuthority);
+                authorities = role.getAuthorityList();
+                for (Authority authority : authorities) {
+                    grantedAuthority = new SimpleGrantedAuthority(authority.getTag());
+                    authorityList.add(grantedAuthority);
+                }
+            }
+
+            //把该用户的角色和权限放User对象
+            user.setAuthorities(authorityList);
+            return user;
         }
-
-        //把该用户的所有权限放User对象
-        user.setAuthorities(authorityList);
-        return user;
+        throw new UsernameNotFoundException("用户名或密码错误");
     }
 
     @Override
@@ -154,7 +166,7 @@ public class UserServiceImpl implements UserService {
                     firstId = 1;
                 }
                 List<Integer> ids = new ArrayList<>();
-                if (roleId == DatabaseConstant.Role.TEACHER.ordinal()+1) {
+                if (roleId == DatabaseConstant.Role.ROLE_TEACHER.ordinal()+1) {
                     for (User user : users) {
                         int fileRes = fileService.newTeacherFile(user.getUsername(), user.getRealname(), firstId);
                         if (fileRes != 1) {
@@ -177,7 +189,7 @@ public class UserServiceImpl implements UserService {
                         }
                         return res;
                     }
-                } else if (roleId == DatabaseConstant.Role.STUDENT.ordinal()+1) {
+                } else if (roleId == DatabaseConstant.Role.ROLE_STUDENT.ordinal()+1) {
                     for (User user : users) {
                         ids.add(firstId);
                         firstId++;

@@ -22,8 +22,7 @@ import java.io.IOException;
 public class MyAuthenticationFailureHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException {
-        log.error("错误处理器:",e);
         response.setContentType("text/html;charset=UTF-8");
-        response.sendRedirect("/errorPage");
+        response.sendRedirect("/public/norError");
     }
 }
