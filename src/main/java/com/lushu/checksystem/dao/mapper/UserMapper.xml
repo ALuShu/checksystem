@@ -6,9 +6,7 @@
     <select id="selectAllUser" parameterType="Map" resultType="User">
         select *
         from sys_user
-        <if test="start != null and limit != null">
-            limit #{start},#{limit}
-        </if>
+        limit #{start},#{limit}
     </select>
 
     <!-- checkUsernames：搜索出数据库里所有账号进行判断操作；return：List<String>-->
@@ -29,7 +27,7 @@
     <select id="selectUserByUsername" parameterType="String" resultType="User">
         select *
         from sys_user
-        where username=#{username}
+        where username = #{username}
         limit 1
     </select>
 
@@ -45,14 +43,14 @@
     <select id="selectUsersByDepartment" parameterType="String" resultType="User">
         select *
         from sys_user
-        where department=#{department}
+        where department = #{department}
     </select>
 
     <!-- selectUsersByMajor：根据系别搜索用户；return：List<User> -->
     <select id="selectUsersByMajor" parameterType="String" resultType="User">
         select *
         from sys_user
-        where major=#{major}
+        where major = #{major}
     </select>
 
     <!-- selectByIds：id搜索用户；return：User -->
@@ -76,17 +74,28 @@
     </select>
 
     <!-- selectUserByRole：根据角色搜索用户群（用户与角色n:1）；return：List<User> -->
-    <select id="selectUsersByRole" parameterType="Integer" resultType="User">
+    <select id="selectUsersByRole" parameterType="Map" resultType="User">
         SELECT *
         FROM sys_user
-        WHERE id IN
-              (SELECT user_id FROM sys_user_role WHERE role_id = #{roleId})
+        <if test="roleId != null and roleId != ''">
+            WHERE id IN
+            (SELECT user_id FROM sys_user_role WHERE role_id = #{roleId})
+        </if>
+        limit #{start},#{limit}
     </select>
 
-    <!-- countUsers：搜索总记录数；return：int -->
+    <!-- countUsers：用户总记录数；return：int -->
     <select id="countUsers" resultType="Integer">
         select count(id)
         from sys_user
+    </select>
+
+    <!-- countCurrentUsers：学生/教师总记录数；return：int -->
+    <select id="countCurrentUsers" parameterType="Integer" resultType="Integer">
+        select count(id)
+        from sys_user
+        WHERE id IN
+              (SELECT user_id FROM sys_user_role WHERE role_id = #{roleId})
     </select>
 
 

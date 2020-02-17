@@ -24,7 +24,7 @@ public class LoginCheckController {
 
     private UserService userService;
 
-    public void setUserService(UserService userService) {
+    public LoginCheckController(UserService userService) {
         this.userService = userService;
     }
 

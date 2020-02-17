@@ -82,17 +82,24 @@ public interface UserDao {
     List<Authority> selectAuthoritiesByUsername(String username);
 
     /**
-     * 根据角色搜索用户群（用户与角色n:1）
-     * @param role
+     * 根据角色搜索用户群（用户与角色n:n）
+     * @param param
      * @return
      */
-    List<User> selectUsersByRole(Integer role);
+    List<User> selectUsersByRole(HashMap<String, Object> param);
 
     /**
-     * 搜索总记录数
+     * 用户总记录数
      * @return
      */
     int countUsers();
+
+    /**
+     * 学生/教师总记录数
+     * @param role
+     * @return
+     */
+    int countCurrentUsers(Integer role);
 
     /**
      * 批量增加用户
@@ -123,7 +130,7 @@ public interface UserDao {
     int updatePassword(User user);
 
     /**
-     * 批量添加用户角色中间表记录（用户与角色n:1）
+     * 批量添加用户角色中间表记录（用户与角色n:n）
      * @param userId
      * @param roleId
      * @return
@@ -131,14 +138,14 @@ public interface UserDao {
     int addUserRole(@Param("userId") List<Integer> userId, @Param("roleId") Integer roleId);
 
     /**
-     * 批量删除用户角色中间表记录（用户与角色n:1）
+     * 批量删除用户角色中间表记录（用户与角色n:n）
      * @param userIds
      * @return
      */
     int deleteUserRole(List<Integer> userIds);
 
     /**
-     * 更新用户角色中间表记录（用户与角色n:1）
+     * 更新用户角色中间表记录（用户与角色n:n）
      * @param userId
      * @param roleId
      * @return

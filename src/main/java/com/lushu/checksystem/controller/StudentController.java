@@ -185,9 +185,9 @@ public class StudentController {
      */
     @RequestMapping(value = "/showTeachers", method = RequestMethod.GET)
     @ResponseBody
-    public Map showTeachers(){
+    public Map showTeachers(@RequestParam int page, @RequestParam int limit){
         Map<String, Object> map = new HashMap<>(1);
-        map.put("teachers",userService.selectUsersByRole(DatabaseConstant.Role.ROLE_TEACHER.ordinal()+1));
+        map.put("teachers",userService.selectUsersByRole(page,limit,DatabaseConstant.Role.ROLE_TEACHER.ordinal()+1));
         map.put("code", 1);
         map.put("msg", "查询成功");
         return map;

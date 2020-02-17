@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lushu.checksystem.constant.BasicConstant;
 import com.lushu.checksystem.constant.OtherConstant;
+import com.lushu.checksystem.pojo.PageBean;
 import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.service.UserService;
@@ -47,11 +48,8 @@ public class AdminController {
     private FileService fileService;
     private User user = user = new User();
 
-    public void setUserService(UserService userService) {
+    public AdminController(UserService userService, FileService fileService) {
         this.userService = userService;
-    }
-
-    public void setFileService(FileService fileService) {
         this.fileService = fileService;
     }
 
@@ -161,10 +159,15 @@ public class AdminController {
      */
     @RequestMapping(value = "/users", method = RequestMethod.GET)
     @ResponseBody
-    public Map users(@RequestParam(required = false) String page
-            , @RequestParam(required = false) String limit){
-        Map<String, Object> memberMap = new HashMap<>(1);
-        memberMap.put("userMap",userService.selectAllUser(Integer.valueOf(page), Integer.valueOf(limit)));
+    public Map users(@RequestParam("page") int page
+            ,@RequestParam("limit") int limit
+            ,@RequestParam(required = false, value = "role") Integer role){
+        Map<String, Object> memberMap = new HashMap<>(4);
+        PageBean<User> res = userService.selectUsersByRole(page, limit, role);
+        memberMap.put("data",res.getList());
+        memberMap.put("code",0);
+        memberMap.put("msg","");
+        memberMap.put("count",res.getTotalRecord());
         return memberMap;
     }
 

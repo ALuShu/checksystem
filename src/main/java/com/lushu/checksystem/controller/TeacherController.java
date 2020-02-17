@@ -36,7 +36,8 @@ public class TeacherController {
     private String root;
     private User user = new User();
     private FileService fileService;
-    public void setFileService(FileService fileService) {
+
+    public TeacherController(FileService fileService) {
         this.fileService = fileService;
     }
 

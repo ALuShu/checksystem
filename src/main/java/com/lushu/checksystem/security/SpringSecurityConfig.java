@@ -63,6 +63,12 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .successHandler(successHandler)
                 .permitAll()
             .and()
+                .logout()
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/public/login")
+                .deleteCookies("JSESSIONID")
+                .permitAll()
+            .and()
                 //开放给前端的页面<iframe>引用
                 .headers().frameOptions().sameOrigin()
             .and()

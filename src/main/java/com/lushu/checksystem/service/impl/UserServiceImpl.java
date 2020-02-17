@@ -91,8 +91,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> selectUsersByRole(Integer role) {
-        return userDao.selectUsersByRole(role);
+    public PageBean<User> selectUsersByRole(Integer currentPage, Integer pageSize, Integer roleId) {
+        HashMap<String, Object> pageMap = new HashMap<>(3);
+        PageBean<User> pageBean = new PageBean<>();
+        pageBean.setCurrentPage(currentPage);
+        pageBean.setPageSize(pageSize);
+        pageMap.put("start", (currentPage - 1) * pageSize);
+        pageMap.put("limit", pageBean.getPageSize());
+        if (roleId != null) {
+            pageMap.put("roleId", roleId);
+        }
+        List<User> users = userDao.selectUsersByRole(pageMap);
+        pageBean.setList(users);
+        int count = userDao.countCurrentUsers(roleId);
+        pageBean.setTotalRecord(count);
+        if (count % pageSize == 0) {
+            pageBean.setTotalPage(count / pageSize);
+        } else {
+            pageBean.setTotalPage((count / pageSize) + 1);
+        }
+        return pageBean;
     }
 
     @Override
