@@ -6,7 +6,46 @@
     <link rel="stylesheet" href="../layui/css/layui.css" type="text/css">
 </head>
 <body>
-    这是搜索页面
+
+    <form class="layui-form" action="">
+        <div class="layui-inline">
+            <select name="type" lay-verify="" >
+                <option value="">分类</option>
+                <option value="username">账号</option>
+                <option value="realname">姓名</option>
+            </select>
+        </div>
+        <div class="layui-inline">
+            <input type="text" class="layui-input" placeholder="输入用户名" name="keyword" autocomplete="off">
+        </div>
+        <div class="layui-inline">
+            <button id="searchBtn" lay-filter="searchBtn" type="button" lay-submit class="layui-btn layui-btn-primary">
+                <i class="layui-icon layui-icon-search"></i>
+            </button>
+        </div>
+    </form>
+
+    <div>
+
+    </div>
+
+    <!-- 方法 -->
+    <script src="../webjars/jquery/3.4.1/jquery.js"></script>
     <script src="../layui/layui.js" type="text/javascript"></script>
+    <script th:inline="none">
+
+    layui.use(['form','table','element'], function () {
+        var form = layui.form
+            ,element = layui.element
+            ,table = layui.table;
+
+        form.on('submit(searchBtn)', function (data) {
+            layer.alert(JSON.stringify(data.field), {
+                title: '最终的提交信息'
+            });
+            return false;
+        });
+    });
+    </script>
 </body>
 </html>

@@ -41,24 +41,23 @@
                 <li class="layui-nav-item layui-nav-itemed">
                     <a href="javascript:">所有用户</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="/admin/students" target="main_self">学生用户</a></dd>
-                        <dd><a href="/admin/teachers" target="main_self">教师用户</a></dd>
-                        <dd><a href="/admin/search" target="main_self">搜索</a></dd>
+                        <dd><a id="navStuUser" href="/admin/students" target="main_self">学生用户</a></dd>
+                        <dd><a id="navTeaUser" href="/admin/teachers" target="main_self">教师用户</a></dd>
+                        <dd><a id="navUserSearch" href="/admin/search" target="main_self">搜索</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item">
                     <a href="javascript:">通知</a>
                     <dl class="layui-nav-child">
-                        <dd><a href="/admin/informs" target="main_self">必修通知</a></dd>
-                        <dd><a href="/admin/informs" target="main_self">选修通知</a></dd>
+                        <dd><a id="navInform1" href="/admin/informs" target="main_self">必修通知</a></dd>
+                        <dd><a id="navInform0" href="/admin/informs" target="main_self">选修通知</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item">
                     <a href="javascript:">文件</a>
                     <dl class="layui-nav-child">
                         <dd><a href="/admin/files" target="main_self">系统根目录</a></dd>
-                        <dd><a href="/admin/files" target="main_self">教师目录</a></dd>
-                        <dd><a href="/admin/search" target="main_self">搜索</a></dd>
+                        <dd><a id="navFileSearch" href="/admin/search" target="main_self">搜索</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item">
@@ -73,13 +72,23 @@
 
     <div class="layui-body" style="height: 100%">
         <!-- 内容主体区域 -->
-        <iframe class="admin-frame" src="/admin/students" name="main_self" frameborder="0" ></iframe>
+        <iframe id="childFrame" class="admin-frame" src="/admin/students" name="main_self" frameborder="0" ></iframe>
     </div>
 
 </div>
 <script src="../webjars/jquery/3.4.1/jquery.js"></script>
 <script src="../layui/layui.js" type="text/javascript"></script>
 <script th:inline="none">
+    let childFrameObj = document.getElementById('childFrame');
+
+    $("#navInform1").click(function () {
+        childFrameObj.contentWindow.paramFromParent = '1';
+    });
+
+    $("#navInform0").click(function () {
+        childFrameObj.contentWindow.paramFromParent = '0';
+    });
+
     $('#logout').click(function () {
         layer.confirm('确定退出系统吗',function () {
             window.location="/logout";

@@ -48,15 +48,32 @@ public class InformServiceImpl implements InformService {
         }
 
         map.put("start", (currentPage-1)*pageSize);
-        map.put("size", pageBean.getPageSize());
+        map.put("limit", pageBean.getPageSize());
         List<Inform> informs = informDao.selectAllInforms(map);
         pageBean.setList(informs);
         return pageBean;
     }
 
     @Override
-    public List<Inform> selectInformsByType(boolean type) {
-        return informDao.selectInformsByType(type);
+    public PageBean<Inform> selectInformsByType(Integer type, int currentPage, int limit) {
+        HashMap<String, Object> map = new HashMap<>();
+        PageBean<Inform> pageBean = new PageBean<>();
+        pageBean.setCurrentPage(currentPage);
+        pageBean.setPageSize(limit);
+        int total = informDao.countByType(type);
+        pageBean.setTotalRecord(total);
+        if (total%limit == 0){
+            pageBean.setTotalPage(total/limit);
+        }else {
+            pageBean.setTotalPage((total/limit)+1);
+        }
+
+        map.put("start", (currentPage-1)*limit);
+        map.put("limit", pageBean.getPageSize());
+        map.put("type", type);
+        List<Inform> informs = informDao.selectInformsByType(map);
+        pageBean.setList(informs);
+        return pageBean;
     }
 
     @Override

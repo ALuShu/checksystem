@@ -5,9 +5,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lushu.checksystem.constant.BasicConstant;
 import com.lushu.checksystem.constant.OtherConstant;
+import com.lushu.checksystem.pojo.Inform;
 import com.lushu.checksystem.pojo.PageBean;
 import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.FileService;
+import com.lushu.checksystem.service.InformService;
 import com.lushu.checksystem.service.UserService;
 import com.lushu.checksystem.util.ExcelUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -46,11 +48,13 @@ public class AdminController {
     private String root;
     private UserService userService;
     private FileService fileService;
+    private InformService informService;
     private User user = user = new User();
 
-    public AdminController(UserService userService, FileService fileService) {
+    public AdminController(UserService userService, FileService fileService, InformService informService) {
         this.userService = userService;
         this.fileService = fileService;
+        this.informService = informService;
     }
 
     /**
@@ -192,6 +196,22 @@ public class AdminController {
         return memberMap;
     }
 
+    /**
+     * 管理员端展示通知列表
+     */
+    @RequestMapping(value = "/informType", method = RequestMethod.GET)
+    @ResponseBody
+    public Map inform(@RequestParam(value = "page", required = false) int page
+            ,@RequestParam(value = "limit", required = false) int limit
+            ,@RequestParam(required = false, value = "type") Integer type) {
+        Map<String, Object> informMap = new HashMap<>(4);
+        PageBean<Inform> res = informService.selectInformsByType(type, page, limit);
+        informMap.put("data",res.getList());
+        informMap.put("code",0);
+        informMap.put("msg","");
+        informMap.put("count",res.getTotalRecord());
+        return informMap;
+    }
 
 
     /**

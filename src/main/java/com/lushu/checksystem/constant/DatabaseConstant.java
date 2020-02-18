@@ -66,5 +66,21 @@ public interface DatabaseConstant {
         }
     }
 
+    enum Inform implements DatabaseConstant{
+        //通知类型
+        COMPULSORY(1),
+        ELECTIVE(0);
+
+        private Integer type;
+
+        Inform(Integer type) {
+            this.type = type;
+        }
+
+        public Integer getType() {
+            return type;
+        }
+    }
+
 
 }

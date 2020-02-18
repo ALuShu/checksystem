@@ -12,6 +12,6 @@ public class Inform implements Serializable {
   private String content;
   private String date;
   private String path;
-  private boolean type;
+  private Integer type;
 
 }

@@ -17,16 +17,23 @@
     </select>
 
     <!-- selectInformsByType：根据必修或选修查询通知；return：List<Inform> -->
-    <select id="selectInformsByType" parameterType="boolean" resultType="Inform">
+    <select id="selectInformsByType" parameterType="Map" resultType="Inform">
         select *
         from sys_inform
         where type=#{type}
+        limit #{start},#{limit}
     </select>
 
     <!---->
     <select id="count">
         select count(id)
         from sys_inform
+    </select>
+
+    <select id="countByType" parameterType="Integer" resultType="Integer">
+        select count(id)
+        from sys_inform
+        where type=#{type}
     </select>
 
     <!-- addInform：批量发布通知；return：int -->

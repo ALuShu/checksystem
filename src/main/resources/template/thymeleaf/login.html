@@ -23,7 +23,11 @@
     </div>
 
     <script src="../layui/layui.js" type="text/javascript"></script>
-
+    <script >
+        if (window != top){
+            top.location.href = location.href;
+        }
+    </script>
 </body>
 
 </html>

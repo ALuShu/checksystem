@@ -34,16 +34,23 @@ public interface InformDao {
 
     /**
      * 根据必修或选修查询通知
-     * @param type
+     * @param param
      * @return
      */
-    List<Inform> selectInformsByType(boolean type);
+    List<Inform> selectInformsByType(HashMap<String, Object> param);
 
     /**
      * 统计
      * @return
      */
     Integer count();
+
+    /**
+     * 根据通知类型返回统计
+     * @param type
+     * @return
+     */
+    Integer countByType(Integer type);
 
     /**
      * 批量发布通知
