@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lushu.checksystem.constant.BasicConstant;
-import com.lushu.checksystem.constant.OtherConstant;
 import com.lushu.checksystem.pojo.Inform;
 import com.lushu.checksystem.pojo.PageBean;
 import com.lushu.checksystem.pojo.User;
@@ -27,12 +26,10 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -115,47 +112,27 @@ public class AdminController {
      */
     @RequestMapping(value = "/adminList", method = RequestMethod.GET)
     @ResponseBody
-    public Map list(@RequestParam(required = false) String page
-            , @RequestParam(required = false) String limit
+    public Map list(@RequestParam int page
+            , @RequestParam int limit
             , @RequestParam(required = false) String path) throws ServletException, JSONException {
         Map<String, Object> res = new HashMap<>();
         if (path == null) {
             path = "/";
         }
 
-        try {
-            // 返回的结果集
-            List<Map<String, Object>> fileItems = new ArrayList<>();
-
-            try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(root, path))) {
-                for (Path pathObj : directoryStream) {
-                    // 获取文件基本属性
-                    BasicFileAttributes attrs = Files.readAttributes(pathObj, BasicFileAttributes.class);
-
-                    // 封装返回JSON数据
-                    Map<String, Object> fileItem = new HashMap<>();
-                    fileItem.put("name", pathObj.getFileName().toString());
-                    fileItem.put("date", OtherConstant.DATE_FORMAT.format(new Date(attrs.lastModifiedTime().toMillis())));
-                    fileItem.put("size", attrs.size());
-                    fileItem.put("type", attrs.isDirectory() ? "dir" : "file");
-                    fileItems.add(fileItem);
-                }
-            } catch (IOException e) {
-                log.error("递归文件出错:", e);
-            }
+        PageBean<Map<String, Object>> fileList = fileService.showFileList(path, page, limit);
+        if (fileList == null){
+            res.put("data",null);
+            res.put("code",0);
+            res.put("msg","");
+            res.put("count",0);
+        }else {
+            res.put("data", fileList.getList());
             res.put("code", 0);
             res.put("msg", "");
-            res.put("count", fileItems.size());
-            res.put("data", fileItems);
-            return res;
-        } catch (Exception e) {
-            log.error("递归文件出错:" + e);
-            res.put("code", -1);
-            res.put("msg", "数据获取错误");
-            res.put("count", 0);
-            res.put("data", "");
-            return res;
+            res.put("count", fileList.getTotalRecord());
         }
+        return res;
     }
 
     /**

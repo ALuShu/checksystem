@@ -18,6 +18,8 @@
 </style>
 </head>
 <body class="layui-layout-body">
+<input id="inform1" style="display: none" value="1">
+<input id="inform0" style="display: none" value="0">
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header" style="background-color: #2F4056">
 
@@ -49,8 +51,8 @@
                 <li class="layui-nav-item">
                     <a href="javascript:">通知</a>
                     <dl class="layui-nav-child">
-                        <dd><a id="navInform1" href="/admin/informs" target="main_self">必修通知</a></dd>
-                        <dd><a id="navInform0" href="/admin/informs" target="main_self">选修通知</a></dd>
+                        <dd><a href="/admin/informs" target="main_self">必修通知</a></dd>
+                        <dd><a id="navInform0" target="main_self">选修通知</a></dd>
                     </dl>
                 </li>
                 <li class="layui-nav-item">
@@ -79,15 +81,6 @@
 <script src="../webjars/jquery/3.4.1/jquery.js"></script>
 <script src="../layui/layui.js" type="text/javascript"></script>
 <script th:inline="none">
-    let childFrameObj = document.getElementById('childFrame');
-
-    $("#navInform1").click(function () {
-        childFrameObj.contentWindow.paramFromParent = '1';
-    });
-
-    $("#navInform0").click(function () {
-        childFrameObj.contentWindow.paramFromParent = '0';
-    });
 
     $('#logout').click(function () {
         layer.confirm('确定退出系统吗',function () {

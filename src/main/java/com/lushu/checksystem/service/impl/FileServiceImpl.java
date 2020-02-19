@@ -5,6 +5,7 @@ import com.lushu.checksystem.constant.DatabaseConstant;
 import com.lushu.checksystem.constant.OtherConstant;
 import com.lushu.checksystem.dao.FileDao;
 import com.lushu.checksystem.pojo.File;
+import com.lushu.checksystem.pojo.PageBean;
 import com.lushu.checksystem.service.FileService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileTime;
 import java.util.*;
 
@@ -23,7 +25,7 @@ import java.util.*;
  */
 @Service
 @Slf4j
-@SuppressWarnings("unchecked")
+@SuppressWarnings("unchecked")/*防止maven打包时警告*/
 public class FileServiceImpl implements FileService {
 
     @Value("${checksystem.root}")
@@ -36,6 +38,32 @@ public class FileServiceImpl implements FileService {
     @Override
     public List<File> selectOldSubmitted(Integer submitter) {
         return fileDao.selectFileBySubmitter(submitter);
+    }
+
+    @Override
+    public PageBean<Map<String, Object>> showFileList(String path, int page, int limit) {
+        //page:当前页数；limit：每页记录数,bug:limit有可能超过集合大小
+        List<Map<String, Object>> fileList = new ArrayList<>();
+        try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(root+path))) {
+            for (Path pathObj : directoryStream) {
+                BasicFileAttributes attrs = Files.readAttributes(pathObj, BasicFileAttributes.class);
+                Map<String, Object> fileItem = new HashMap<>(4);
+                fileItem.put("name", pathObj.getFileName().toString());
+                fileItem.put("date", OtherConstant.DATE_FORMAT.format(new Date(attrs.lastModifiedTime().toMillis())));
+                fileItem.put("size", attrs.size());
+                fileItem.put("type", attrs.isDirectory() ? "dir" : "file");
+                fileList.add(fileItem);
+            }
+            int start = (page-1)*limit;
+            List<Map<String, Object>> newFileList = fileList.subList(start, start+limit+1);
+            PageBean<Map<String, Object>> pageBean = new PageBean<>();
+            pageBean.setList(newFileList);
+            pageBean.setTotalRecord(newFileList.size());
+            return pageBean;
+        } catch (IOException e) {
+            log.error("文件遍历失败", e);
+            return null;
+        }
     }
 
     @Override
