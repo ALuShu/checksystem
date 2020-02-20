@@ -35,6 +35,10 @@ public class LoginCheckController {
     public String login(){
         return "/login";
     }
+    @RequestMapping("/inform")
+    public String inform(){
+        return "/informDetail";
+    }
     @RequestMapping("/perError")
     public String perError(){
         return "/permissionerror";
@@ -54,7 +58,7 @@ public class LoginCheckController {
     }
 
     /**
-     * 修改密码
+     * 修改密码（未完成）
      */
     @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
     @ResponseBody

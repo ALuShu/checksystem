@@ -2,6 +2,7 @@ package com.lushu.checksystem.service.impl;
 
 import com.lushu.checksystem.constant.DatabaseConstant;
 import com.lushu.checksystem.constant.OtherConstant;
+import com.lushu.checksystem.dao.AuthorityDao;
 import com.lushu.checksystem.dao.RoleDao;
 import com.lushu.checksystem.dao.UserDao;
 import com.lushu.checksystem.pojo.Authority;
@@ -33,11 +34,13 @@ public class UserServiceImpl implements UserService {
 
     private UserDao userDao;
     private RoleDao roleDao;
+    private AuthorityDao authorityDao;
     private FileService fileService;
 
-    public UserServiceImpl(UserDao userDao, RoleDao roleDao, FileService fileService) {
+    public UserServiceImpl(UserDao userDao, RoleDao roleDao, AuthorityDao authorityDao, FileService fileService) {
         this.userDao = userDao;
         this.roleDao = roleDao;
+        this.authorityDao = authorityDao;
         this.fileService = fileService;
     }
 
@@ -82,12 +85,23 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<Authority> selectAuthoritiesByUsername(String username) {
-        return userDao.selectAuthoritiesByUsername(username);
+        return authorityDao.selectAuthoritiesByUsername(username);
     }
 
     @Override
     public Role selectRoleByUsername(String username) {
+        //用为角色和用户逻辑上是多对多关系，但此系统暂时是一对一，数据库即持久层的设计遵从多对多
         return roleDao.selectRole(username).get(0);
+    }
+
+    @Override
+    public List<Role> selectAllRole() {
+        return roleDao.selectAllRole();
+    }
+
+    @Override
+    public List<Authority> selectAllAuthority() {
+        return authorityDao.selectAllAuthotities();
     }
 
     @Override

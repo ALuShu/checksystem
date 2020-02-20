@@ -4,9 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lushu.checksystem.constant.BasicConstant;
-import com.lushu.checksystem.pojo.Inform;
-import com.lushu.checksystem.pojo.PageBean;
-import com.lushu.checksystem.pojo.User;
+import com.lushu.checksystem.pojo.*;
 import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.service.InformService;
 import com.lushu.checksystem.service.UserService;
@@ -153,7 +151,72 @@ public class AdminController {
     }
 
     /**
-     * 管理员端搜索用户
+     * 管理员端展示通知列表
+     */
+    @RequestMapping(value = "/informType", method = RequestMethod.GET)
+    @ResponseBody
+    public Map inform(@RequestParam(value = "page", required = false) int page
+            ,@RequestParam(value = "limit", required = false) int limit
+            ,@RequestParam(required = false, value = "type") Integer type) {
+        Map<String, Object> informMap = new HashMap<>(4);
+        PageBean<Inform> res = informService.selectInformsByType(type, page, limit);
+        informMap.put("data",res.getList());
+        informMap.put("code",0);
+        informMap.put("msg","");
+        informMap.put("count",res.getTotalRecord());
+        return informMap;
+    }
+
+
+    /**
+     * 管理员端展示角色列表
+     */
+    @RequestMapping(value = "/showRoles",method = RequestMethod.GET)
+    @ResponseBody
+    public Map roles(@RequestParam(value = "username", required = false) String username){
+        Map<String, Object> roleMap = new HashMap<>(4);
+        if (username == null) {
+            List<Role> roles = userService.selectAllRole();
+            roleMap.put("data", roles);
+            roleMap.put("code", 0);
+            roleMap.put("msg", "");
+            roleMap.put("count", roles.size());
+        }else {
+            Role role = userService.selectRoleByUsername(username);
+            roleMap.put("data", role);
+            roleMap.put("code", 0);
+            roleMap.put("msg", "");
+            roleMap.put("count", 1);
+        }
+        return roleMap;
+    }
+
+    /**
+     * 管理员端展示角色列表
+     */
+    @RequestMapping(value = "/showAuthorities",method = RequestMethod.GET)
+    @ResponseBody
+    public Map authority(@RequestParam(value = "username", required = false) String username){
+        Map<String, Object> authorityMap = new HashMap<>(4);
+        if (username == null) {
+            List<Authority> authorities = userService.selectAllAuthority();
+            authorityMap.put("data", authorities);
+            authorityMap.put("code", 0);
+            authorityMap.put("msg", "");
+            authorityMap.put("count", authorities.size());
+        }else {
+            List<Authority> authorities = userService.selectAuthoritiesByUsername(username);
+            authorityMap.put("data", authorities);
+            authorityMap.put("code", 0);
+            authorityMap.put("msg", "");
+            authorityMap.put("count", authorities.size());
+        }
+        return authorityMap;
+    }
+
+
+    /**
+     * 管理员端搜索用户（未完成）
      */
     @RequestMapping(value = "/searchUser", method = RequestMethod.POST)
     @ResponseBody
@@ -174,36 +237,7 @@ public class AdminController {
     }
 
     /**
-     * 管理员端展示通知列表
-     */
-    @RequestMapping(value = "/informType", method = RequestMethod.GET)
-    @ResponseBody
-    public Map inform(@RequestParam(value = "page", required = false) int page
-            ,@RequestParam(value = "limit", required = false) int limit
-            ,@RequestParam(required = false, value = "type") Integer type) {
-        Map<String, Object> informMap = new HashMap<>(4);
-        PageBean<Inform> res = informService.selectInformsByType(type, page, limit);
-        informMap.put("data",res.getList());
-        informMap.put("code",0);
-        informMap.put("msg","");
-        informMap.put("count",res.getTotalRecord());
-        return informMap;
-    }
-
-
-    /**
-     * 管理员端展示角色列表（未完成）
-     */
-    @RequestMapping(value = "/showRoles",method = RequestMethod.GET)
-    @ResponseBody
-    public Map roles(){
-        Map<String, Object> roleMap = new HashMap<>();
-        return roleMap;
-    }
-
-
-    /**
-     * 管理员端批量管理用户
+     * 管理员端批量管理用户（未完成）
      */
     @RequestMapping(value = "/manageUsers", method = RequestMethod.POST)
     @ResponseBody
@@ -231,7 +265,6 @@ public class AdminController {
         }
         return res;
     }
-
     @RequestMapping(value = "/deleteUsers", method = RequestMethod.POST)
     @ResponseBody
     public Map deleteUsers(@RequestParam String jsonIds) throws JsonProcessingException {
@@ -241,7 +274,6 @@ public class AdminController {
         userService.deleteUsers(idList);
         return res;
     }
-
     @RequestMapping(value = "/updateUsers", method = RequestMethod.POST)
     @ResponseBody
     public Map updateUsers(@RequestParam String jsonUsers) throws JsonProcessingException {

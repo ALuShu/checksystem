@@ -40,6 +40,8 @@ public interface UserService extends UserDetailsService {
      */
     List<Authority> selectAuthoritiesByUsername(String username);
     Role selectRoleByUsername(String username);
+    List<Role> selectAllRole();
+    List<Authority> selectAllAuthority();
 
     /**
      * 三个如同名字的方法

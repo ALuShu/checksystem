@@ -63,16 +63,6 @@
         </foreach>
     </select>
 
-    <!-- selectAuthoritiesByUsername：用户名搜索用户的全部权限，用于登录认证；return：List<Authority> -->
-    <select id="selectAuthoritiesByUsername" parameterType="String" resultType="Authority">
-        SELECT authority.*
-        FROM sys_user user
-                 INNER JOIN sys_user_role ur ON user.id = ur.user_id
-                 INNER JOIN sys_role_authority ra ON ur.role_id = ra.role_id
-                 INNER JOIN sys_authority authority ON ra.authority_id = authority.id
-        where user.username = #{username}
-    </select>
-
     <!-- selectUserByRole：根据角色搜索用户群（用户与角色n:1）；return：List<User> -->
     <select id="selectUsersByRole" parameterType="Map" resultType="User">
         SELECT *

@@ -1,6 +1,6 @@
 package com.lushu.checksystem.dao;
 
-import com.lushu.checksystem.pojo.Role;
+import com.lushu.checksystem.pojo.Authority;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
 
@@ -9,22 +9,21 @@ import java.util.List;
 /**
  * @author ALuShu
  * @Description
- * @date 2020/2/14
+ * @date 2020/2/20
  */
-
 @Repository
 @Mapper
-public interface RoleDao {
+public interface AuthorityDao {
     /**
-     * 用户名查角色，多对多包括权限
+     * 用户名搜索用户的全部权限，用于登录认证
      * @param username
      * @return
      */
-    List<Role> selectRole(String username);
+    List<Authority> selectAuthoritiesByUsername(String username);
 
     /**
-     * 所有角色
+     * 所有权限
      * @return
      */
-    List<Role> selectAllRole();
+    List<Authority> selectAllAuthotities();
 }

@@ -16,6 +16,12 @@
             u.username=#{username}
     </select>
 
+    <!-- selectAllRole:所有角色；return: List<Role>-->
+    <select id="selectAllRole" resultType="Role">
+        select *
+        from sys_role
+    </select>
+
     <resultMap id="roleWithAuthority" type="Role">
         <id property="id" column="id"/>
         <result property="name" column="name"/>

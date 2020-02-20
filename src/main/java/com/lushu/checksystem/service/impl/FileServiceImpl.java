@@ -42,7 +42,6 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public PageBean<Map<String, Object>> showFileList(String path, int page, int limit) {
-        //page:当前页数；limit：每页记录数,bug:limit有可能超过集合大小
         List<Map<String, Object>> fileList = new ArrayList<>();
         try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(root+path))) {
             for (Path pathObj : directoryStream) {
@@ -55,10 +54,11 @@ public class FileServiceImpl implements FileService {
                 fileList.add(fileItem);
             }
             int start = (page-1)*limit;
-            List<Map<String, Object>> newFileList = fileList.subList(start, start+limit+1);
+            int end = Math.min((start + limit), fileList.size());
+            List<Map<String, Object>> newFileList = fileList.subList(start, end);
             PageBean<Map<String, Object>> pageBean = new PageBean<>();
             pageBean.setList(newFileList);
-            pageBean.setTotalRecord(newFileList.size());
+            pageBean.setTotalRecord(fileList.size());
             return pageBean;
         } catch (IOException e) {
             log.error("文件遍历失败", e);

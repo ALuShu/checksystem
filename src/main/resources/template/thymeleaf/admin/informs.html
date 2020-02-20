@@ -62,6 +62,9 @@
         link0.addEventListener('click', function () {
             table.reload('demo', {
                 url: '/admin/informType?type=0'
+                ,page: {
+                    curr: 1 //重新从第 1 页开始
+                }
             });
         });
 
