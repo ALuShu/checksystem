@@ -159,7 +159,7 @@ public class AdminController {
             ,@RequestParam(value = "limit", required = false) int limit
             ,@RequestParam(required = false, value = "type") Integer type) {
         Map<String, Object> informMap = new HashMap<>(4);
-        PageBean<Inform> res = informService.selectInformsByType(type, page, limit);
+        PageBean<Inform> res = informService.selectInformsBySort(type, page, limit);
         informMap.put("data",res.getList());
         informMap.put("code",0);
         informMap.put("msg","");

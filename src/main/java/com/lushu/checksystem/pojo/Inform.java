@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class Inform implements Serializable {
 
   private Integer id;
-  private Integer sendId;
+  private String sendId;
   private String content;
   private String date;
   private String path;

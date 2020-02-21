@@ -62,7 +62,7 @@ CREATE TABLE `sys_file`  (
 DROP TABLE IF EXISTS `sys_inform`;
 CREATE TABLE `sys_inform`  (
   `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '通知id',
-  `send_id` int(10) NOT NULL COMMENT '发布者',
+  `send_id` varchar(10) NOT NULL COMMENT '发布者',
   `content` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '通知内容',
   `type` tinyint(1) NOT NULL COMMENT '0为选修，1为必修',
   `date` datetime(0) NOT NULL COMMENT '发布时间',

@@ -27,7 +27,7 @@ public class InformServiceImpl implements InformService {
     }
 
     @Override
-    public List<Inform> selectInforms(Integer sendId) {
+    public List<Inform> selectInforms(String sendId) {
         return informDao.selectInforms(sendId);
     }
 
@@ -55,24 +55,43 @@ public class InformServiceImpl implements InformService {
     }
 
     @Override
-    public PageBean<Inform> selectInformsByType(Integer type, int currentPage, int limit) {
+    public PageBean<Inform> selectInformsBySort(Integer type, int currentPage, int limit, String ... department) {
         HashMap<String, Object> map = new HashMap<>();
         PageBean<Inform> pageBean = new PageBean<>();
         pageBean.setCurrentPage(currentPage);
         pageBean.setPageSize(limit);
-        int total = informDao.countByType(type);
-        pageBean.setTotalRecord(total);
-        if (total%limit == 0){
-            pageBean.setTotalPage(total/limit);
-        }else {
-            pageBean.setTotalPage((total/limit)+1);
-        }
+        if (department == null) {
+            int total = informDao.countByType(type);
+            pageBean.setTotalRecord(total);
+            if (total % limit == 0) {
+                pageBean.setTotalPage(total / limit);
+            } else {
+                pageBean.setTotalPage((total / limit) + 1);
+            }
 
-        map.put("start", (currentPage-1)*limit);
-        map.put("limit", pageBean.getPageSize());
-        map.put("type", type);
-        List<Inform> informs = informDao.selectInformsByType(map);
-        pageBean.setList(informs);
+            map.put("start", (currentPage - 1) * limit);
+            map.put("limit", pageBean.getPageSize());
+            map.put("type", type);
+            List<Inform> informs = informDao.selectInformsByType(map);
+            pageBean.setList(informs);
+
+        }else {
+            String tmpDepartment = department[0];
+            map.put("department", tmpDepartment);
+            int total = informDao.countBySort(type, tmpDepartment);
+            pageBean.setTotalRecord(total);
+            if (total % limit == 0) {
+                pageBean.setTotalPage(total / limit);
+            } else {
+                pageBean.setTotalPage((total / limit) + 1);
+            }
+
+            map.put("start", (currentPage - 1) * limit);
+            map.put("limit", pageBean.getPageSize());
+            map.put("type", type);
+            List<Inform> informs = informDao.selectInformsBySort(map);
+            pageBean.setList(informs);
+        }
         return pageBean;
     }
 

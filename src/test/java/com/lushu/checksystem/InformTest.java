@@ -32,21 +32,21 @@ class InformTest extends ChecksystemApplicationTests{
         for (int i = 0; i < 20; i++){
             Inform inform = new Inform();
             String tmpUsername = String.valueOf(random.nextInt(13)+1001);
-            inform.setSendId(Integer.parseInt(tmpUsername));
+            inform.setSendId(tmpUsername);
             inform.setContent("这是第"+(i+1)+"通知内容");
             inform.setDate(OtherConstant.DATE_FORMAT.format(new Date()));
             inform.setType(DatabaseConstant.Inform.COMPULSORY.getType());
-            inform.setPath(root+"\\"+"1001_测试教师"+"\\"+"实验一");
+            inform.setPath(root+"1001_测试教师"+"\\"+"实验一");
             informs.add(inform);
         }
         for (int i = 0; i < 20; i++){
             Inform inform = new Inform();
             String tmpUsername = String.valueOf(random.nextInt(13)+1001);
-            inform.setSendId(Integer.parseInt(tmpUsername));
+            inform.setSendId(tmpUsername);
             inform.setContent("这是第"+(i+1)+"通知内容");
             inform.setDate(OtherConstant.DATE_FORMAT.format(new Date()));
             inform.setType(DatabaseConstant.Inform.ELECTIVE.getType());
-            inform.setPath(root+"\\"+"1001_测试教师"+"\\"+"实验一");
+            inform.setPath(root+"1001_测试教师"+"\\"+"实验一");
             informs.add(inform);
         }
         informService.addInforms(informs);

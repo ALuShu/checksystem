@@ -2,8 +2,11 @@ package com.lushu.checksystem.controller;
 
 import com.lushu.checksystem.constant.BasicConstant;
 import com.lushu.checksystem.constant.DatabaseConstant;
+import com.lushu.checksystem.pojo.Inform;
+import com.lushu.checksystem.pojo.PageBean;
 import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.FileService;
+import com.lushu.checksystem.service.InformService;
 import com.lushu.checksystem.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,11 +36,13 @@ public class StudentController {
     private String current;
     private UserService userService;
     private FileService fileService;
+    private InformService informService;
     private User user = new User();
 
-    public StudentController(UserService userService, FileService fileService) {
+    public StudentController(UserService userService, FileService fileService, InformService informService) {
         this.userService = userService;
         this.fileService = fileService;
+        this.informService = informService;
     }
 
     /**
@@ -49,6 +54,7 @@ public class StudentController {
         model.addAttribute("current", user);
         return "/student/index";
     }
+
     @RequestMapping("/upload")
     public String upload(String path, Model model) {
         user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -56,41 +62,55 @@ public class StudentController {
         current = root + "\\" + path;
         return "/student/upload";
     }
+
     @RequestMapping("/personal")
     public String personal(Model model) {
         user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("current", user);
         return "/student/personal";
     }
+
     @RequestMapping("/update")
-    public String update(Model model){
+    public String update(Model model) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("current", user);
         return "/update";
     }
 
 
-
     /**
-     * 通知列表，可筛选（未完成）
+     * 通知列表，可筛选
      */
     @RequestMapping(value = "/showInforms", method = RequestMethod.GET)
-    public void showInforms(){}
+    @ResponseBody
+    public Map showInforms(@RequestParam(value = "type", required = false) int type
+            , @RequestParam(value = "department", required = false) String department
+            , @RequestParam(value = "page") int page
+            , @RequestParam(value = "limit") int limit) {
+        HashMap<String, Object> informMap = new HashMap<>(4);
+        PageBean<Inform> pageBean = informService.selectInformsBySort(type, page, limit, department);
+        informMap.put("data", pageBean.getList());
+        informMap.put("msg", "");
+        informMap.put("code", 0);
+        informMap.put("count", pageBean.getTotalRecord());
+        return informMap;
+    }
 
     /**
      * 以往作业列表（未完成）
      */
     @RequestMapping(value = "/showOldWorks", method = RequestMethod.GET)
-    public void showOldWorks(){}
+    public void showOldWorks() {
+    }
 
     /**
      * 教师列表（未完成）
      */
     @RequestMapping(value = "/showTeachers", method = RequestMethod.GET)
     @ResponseBody
-    public Map showTeachers(@RequestParam int page, @RequestParam int limit){
+    public Map showTeachers(@RequestParam int page, @RequestParam int limit) {
         Map<String, Object> map = new HashMap<>(1);
-        map.put("teachers",userService.selectUsersByRole(page,limit, DatabaseConstant.Role.ROLE_TEACHER.ordinal()+1));
+        map.put("teachers", userService.selectUsersByRole(page, limit, DatabaseConstant.Role.ROLE_TEACHER.ordinal() + 1));
         map.put("code", 1);
         map.put("msg", "查询成功");
         return map;
@@ -110,7 +130,7 @@ public class StudentController {
         Map<String, Object> json = new HashMap<>();
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
-        if(fileMap == null || fileMap.size() == 0){
+        if (fileMap == null || fileMap.size() == 0) {
         }
         Collection<MultipartFile> files = fileMap.values();
 
@@ -159,17 +179,17 @@ public class StudentController {
      * 学生端搜索教师（未完成）
      */
     @RequestMapping(value = "/searchTeacher", method = RequestMethod.POST)
-    public Map searchTeacher(@RequestParam String key, @RequestParam String keyword){
+    public Map searchTeacher(@RequestParam String key, @RequestParam String keyword) {
         HashMap<String, Object> des;
-        if (BasicConstant.User.USERNAME.getString().equals(key)){
+        if (BasicConstant.User.USERNAME.getString().equals(key)) {
             des = userService.selectUser(keyword);
-        }else {
+        } else {
             des = userService.selectUserByRealname(keyword);
         }
-        if (des.get("user") == null){
+        if (des.get("user") == null) {
             des.put("code", 0);
             des.put("msg", "not found teacher");
-        }else {
+        } else {
 
             des.put("code", 0);
             des.put("msg", "success");

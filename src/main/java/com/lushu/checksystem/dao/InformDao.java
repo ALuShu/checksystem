@@ -2,6 +2,7 @@ package com.lushu.checksystem.dao;
 
 import com.lushu.checksystem.pojo.Inform;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -23,10 +24,10 @@ public interface InformDao {
      * @param sendId
      * @return
      */
-    List<Inform> selectInforms(Integer sendId);
+    List<Inform> selectInforms(String sendId);
 
     /**
-     * 查询所有通知，分页，按日期排序
+     * 查询所有通知，分页
      * @param param
      * @return
      */
@@ -40,6 +41,13 @@ public interface InformDao {
     List<Inform> selectInformsByType(HashMap<String, Object> param);
 
     /**
+     * 根据条件查询通知
+     * @param param
+     * @return
+     */
+    List<Inform> selectInformsBySort(HashMap<String, Object> param);
+
+    /**
      * 统计
      * @return
      */
@@ -51,6 +59,14 @@ public interface InformDao {
      * @return
      */
     Integer countByType(Integer type);
+
+    /**
+     * 根据条件返回统计
+     * @param type
+     * @param department
+     * @return
+     */
+    Integer countBySort(@Param("type")Integer type, @Param("department")String department);
 
     /**
      * 批量发布通知

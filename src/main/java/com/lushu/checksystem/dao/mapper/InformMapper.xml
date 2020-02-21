@@ -3,13 +3,13 @@
 <mapper namespace="com.lushu.checksystem.dao.InformDao">
 
     <!-- selectInform：查询通知；return：List<Inform> -->
-    <select id="selectInforms" parameterType="Integer" resultType="Inform">
+    <select id="selectInforms" parameterType="String" resultType="Inform">
         select *
         from sys_inform
         where send_id = #{sendId}
     </select>
 
-    <!-- selectAllInforms：查询所有通知，分页，按日期排序；return：List<Inform> -->
+    <!-- selectAllInforms：查询所有通知，分页；return：List<Inform> -->
     <select id="selectAllInforms" parameterType="Map" resultType="Inform">
         select *
         from sys_inform
@@ -24,16 +24,34 @@
         limit #{start},#{limit}
     </select>
 
-    <!---->
+    <!-- selectInformsBySort：根据条件查询通知；return：List<Inform> -->
+    <select id="selectInformsBySort" parameterType="Map" resultType="Inform">
+        select *
+        from sys_inform i
+        inner join sys_user u on i.send_id = u.username
+        where i.type=#{type} and u.department=#{department}
+        limit #{start},#{limit}
+    </select>
+
+    <!-- count:统计;return:Integer -->
     <select id="count">
         select count(id)
         from sys_inform
     </select>
 
+    <!-- countByType:根据通知类型返回统计;return:Integer -->
     <select id="countByType" parameterType="Integer" resultType="Integer">
         select count(id)
         from sys_inform
         where type=#{type}
+    </select>
+
+    <!-- countBySort:根据条件返回统计;return:Integer -->
+    <select id="countBySort" resultType="Integer">
+        select count(i.id)
+        from sys_inform i
+        inner join sys_user u on i.send_id = u.username
+        where i.type=#{type} and u.department=#{department}
     </select>
 
     <!-- addInform：批量发布通知；return：int -->

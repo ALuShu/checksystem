@@ -15,12 +15,16 @@
 
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
-                <a href="javascript:;" style="color: #393D49">
+                <a href="/student/personal">
                     <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
-                    贤心
+                    <span style="color: black" th:text="${current.realname}"></span>
                 </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="">基本资料</a></dd>
+                    <dd><a href="/public/update">修改密码</a></dd>
+                </dl>
             </li>
-            <li class="layui-nav-item"><a href="" style="color: #393D49">退了</a></li>
+            <li class="layui-nav-item"><a id="logout" href="javascript:" style="color: black">注销</a></li>
         </ul>
     </div>
 
@@ -31,7 +35,7 @@
                 <div class="layui-col-md12">
                     <div class="layui-row grid-demo">
 
-                        <%-- 列表 --%>
+                        <!-- 列表 -->
                         <div class="layui-col-md9" style="background: #1E9FFF">
                             <div class="layui-btn-group demoTable" style="margin-bottom: 10px;">
                                 <button class="layui-btn" data-type="parseTable">立即转化为数据表格</button>
@@ -65,7 +69,8 @@
                         </div>
 
                         <div class="layui-col-md3 layui-row grid-demo">
-                            <%-- 右侧教师 --%>
+
+                            <!-- 右侧教师 -->
                             <div class="layui-col-md12" style="background: #8D8D8D">
                                 <table lay-filter="parse-table-demo">
                                     <thead>
@@ -104,11 +109,16 @@
 
 
 </div>
+
+<!-- 方法 -->
+<script src="../webjars/jquery/3.4.1/jquery.js"></script>
 <script src="../layui/layui.js" type="text/javascript"></script>
 <script th:inline="none">
-    layui.use(['form','table'], function () {
+
+    layui.use(['form', 'table','element'], function () {
         var form = layui.form
-            ,table = layui.table;
+            ,element = layui.element
+            , table = layui.table;
 
         var $ = layui.$, active = {
             parseTable: function(){

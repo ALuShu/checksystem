@@ -51,6 +51,10 @@ public class LoginCheckController {
     public String error(){
         return "/error";
     }
+    @RequestMapping("/update")
+    public String update(){
+        return "/update";
+    }
     @GetMapping("/sayhello")
     public String say(Model model){
         model.addAttribute("msg","你好啊");
