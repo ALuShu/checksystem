@@ -1,5 +1,6 @@
 package com.lushu.checksystem.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.lushu.checksystem.constant.BasicConstant;
 import com.lushu.checksystem.constant.DatabaseConstant;
 import com.lushu.checksystem.pojo.Inform;
@@ -74,7 +75,7 @@ public class StudentController {
     public String update(Model model) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("current", user);
-        return "/update";
+        return "/student/update";
     }
 
 
@@ -94,6 +95,30 @@ public class StudentController {
         informMap.put("code", 0);
         informMap.put("count", pageBean.getTotalRecord());
         return informMap;
+    }
+
+    /**
+     * 修改密码（未完成）
+     */
+    @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
+    @ResponseBody
+    public Map updatePassword(@RequestBody Map jsonUsers) throws JsonProcessingException {
+        Map<String, Object> res = new HashMap<>(2);
+        String oldPassword = (String) jsonUsers.get("oldPassword");
+        String newPassword = (String) jsonUsers.get("newPassword");
+        User oldUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        int updRes = userService.updatePassword(newPassword, oldPassword, oldUser);
+        if (updRes == 0){
+            res.put("code", 0);
+            res.put("msg", "error");
+        }else if (updRes == -1){
+            res.put("code", -1);
+            res.put("msg", "old password error");
+        }else {
+            res.put("code", 1);
+            res.put("msg", "success");
+        }
+        return res;
     }
 
     /**

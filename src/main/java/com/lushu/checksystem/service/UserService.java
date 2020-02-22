@@ -79,5 +79,5 @@ public interface UserService extends UserDetailsService {
     /**
      * 修改密码
      */
-    int updatePassword(User user);
+    int updatePassword(String newPassword, String oldPassword, User oldUser);
 }

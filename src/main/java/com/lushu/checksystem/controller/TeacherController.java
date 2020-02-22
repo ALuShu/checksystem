@@ -1,8 +1,10 @@
 package com.lushu.checksystem.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.lushu.checksystem.constant.OtherConstant;
 import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.FileService;
+import com.lushu.checksystem.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONException;
@@ -36,9 +38,11 @@ public class TeacherController {
     private String root;
     private User user = new User();
     private FileService fileService;
+    private UserService userService;
 
-    public TeacherController(FileService fileService) {
+    public TeacherController(FileService fileService, UserService userService) {
         this.fileService = fileService;
+        this.userService = userService;
     }
 
     /**
@@ -67,7 +71,35 @@ public class TeacherController {
     public String update(Model model){
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("current", user);
-        return "/update";
+        return "/teacher/update";
+    }
+
+
+    /**
+     * 修改密码（未完成）
+     */
+    @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
+    @ResponseBody
+    public Map updatePassword(@RequestParam String jsonUsers) throws JsonProcessingException {
+        Map<String, Object> res = new HashMap<>(2);
+        /*ObjectMapper mapper = new ObjectMapper();
+        User newUser = mapper.readValue(jsonUsers, User.class);
+        User oldUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();;
+        int updRes = userService.updatePassword(newUser, oldUser);
+        if (updRes == 0){
+            res.put("code", 0);
+            res.put("msg", "error");
+            return res;
+        }else if (updRes == -1){
+            res.put("code", -1);
+            res.put("msg", "old password error");
+            return res;
+        }else {
+            res.put("code", 1);
+            res.put("msg", "success");
+            return res;
+        }*/
+        return res;
     }
 
     /**

@@ -269,8 +269,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public int updatePassword(User user) {
-        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
-        return userDao.updatePassword(user);
+    public int updatePassword(String newPassword, String oldPassword, User oldUser) {
+        int res = 0;
+        String encodedPassword = userDao.selectUserByUsername(oldUser.getUsername()).getPassword();
+        if (BCryptPasswordEncoder().matches(oldPassword, encodedPassword)){
+            User user = new User();
+            user.setId(oldUser.getId());
+            user.setPassword(BCryptPasswordEncoder().encode(newPassword));
+            res = userDao.updatePassword(user);
+        }else {
+            res = -1;
+        }
+        return res;
+    }
+
+    private static BCryptPasswordEncoder BCryptPasswordEncoder(){
+        return new BCryptPasswordEncoder();
     }
 }
