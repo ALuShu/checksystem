@@ -93,15 +93,16 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public int addFiles(Collection<MultipartFile> files, String path, Integer owner, Integer submitter) {
+    public int addFiles(Collection<MultipartFile> files, String path , Integer submitter) {
         Iterator<MultipartFile> fileIterator = files.iterator();
+        Integer owner = Integer.parseInt(path.substring(1,5));
         if (files.size() == 1){
-            File preFile = addMethod(fileIterator.next(), new File(), path, owner, submitter);
+            File preFile = addMethod(fileIterator.next(), new File(), root+path, owner, submitter);
             return (preFile!=null) ? fileDao.addFile(preFile) : -1;
         }else {
             List<File> preFiles = new ArrayList<>();
             while (fileIterator.hasNext()){
-                File current = addMethod(fileIterator.next(), new File(), path, owner, submitter);
+                File current = addMethod(fileIterator.next(), new File(), root+path, owner, submitter);
                 if (current == null){
                     preFiles.clear();
                     break;

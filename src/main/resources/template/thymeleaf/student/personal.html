@@ -11,7 +11,7 @@
 
     <div class="layui-header layui-bg-gray">
 
-        <div class="layui-logo" style="font-size: 20px; color: #393D49">作业查重系统学生端</div>
+        <div class="layui-logo" style="font-size: 20px; color: #393D49; cursor: pointer" onclick="index()">作业查重系统学生端</div>
 
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
@@ -114,6 +114,16 @@
 <script src="../webjars/jquery/3.4.1/jquery.js"></script>
 <script src="../layui/layui.js" type="text/javascript"></script>
 <script th:inline="none">
+
+    $('#logout').click(function () {
+        layer.confirm('确定退出系统吗',function () {
+            window.location="/logout";
+        })
+    });
+
+    function index(){
+        window.location="/student/index"
+    }
 
     layui.use(['form', 'table','element'], function () {
         var form = layui.form

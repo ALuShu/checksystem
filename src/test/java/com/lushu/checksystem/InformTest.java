@@ -29,24 +29,24 @@ class InformTest extends ChecksystemApplicationTests{
     void addInformTest(){
         List<Inform> informs = new ArrayList<>();
         Random random = new Random();
-        for (int i = 0; i < 20; i++){
+        for (int i = 0; i < 50; i++){
             Inform inform = new Inform();
             String tmpUsername = String.valueOf(random.nextInt(13)+1001);
             inform.setSendId(tmpUsername);
-            inform.setContent("这是第"+(i+1)+"通知内容");
+            inform.setContent("这是第"+(i+1)+"条通知内容");
             inform.setDate(OtherConstant.DATE_FORMAT.format(new Date()));
             inform.setType(DatabaseConstant.Inform.COMPULSORY.getType());
-            inform.setPath(root+"1001_测试教师"+"\\"+"实验一");
+            inform.setPath(root+tmpUsername+"_测试教师"+"\\");
             informs.add(inform);
         }
-        for (int i = 0; i < 20; i++){
+        for (int i = 0; i < 50; i++){
             Inform inform = new Inform();
             String tmpUsername = String.valueOf(random.nextInt(13)+1001);
             inform.setSendId(tmpUsername);
-            inform.setContent("这是第"+(i+1)+"通知内容");
+            inform.setContent("这是第"+(i+1)+"条通知内容");
             inform.setDate(OtherConstant.DATE_FORMAT.format(new Date()));
             inform.setType(DatabaseConstant.Inform.ELECTIVE.getType());
-            inform.setPath(root+"1001_测试教师"+"\\"+"实验一");
+            inform.setPath(root+tmpUsername+"_测试教师"+"\\");
             informs.add(inform);
         }
         informService.addInforms(informs);

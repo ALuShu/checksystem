@@ -20,6 +20,13 @@ import java.util.List;
 public interface InformDao {
 
     /**
+     * 单个通知
+     * @param id
+     * @return
+     */
+    Inform selectInform(Integer id);
+
+    /**
      * 查询通知
      * @param sendId
      * @return

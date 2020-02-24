@@ -40,7 +40,7 @@ public interface FileService {
      * 创建文件或文件夹时，往数据库添加相应记录，支持批量操作
      * paramMap包含(Collection<MultipartFile> files, String path, Integer owner, Integer submitter)
      */
-    int addFiles(Collection<MultipartFile> files, String path, Integer owner, Integer submitter);
+    int addFiles(Collection<MultipartFile> files, String path , Integer submitter);
 
     /**
      * 更新文件属性时，更新数据库相关记录，支持批量操作

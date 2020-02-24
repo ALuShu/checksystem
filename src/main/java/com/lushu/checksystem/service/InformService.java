@@ -11,6 +11,7 @@ import java.util.List;
  * @date 2020/1/10
  */
 public interface InformService {
+    Inform selectInform(Integer id);
     List<Inform> selectInforms(String sendId);
     PageBean<Inform> selectAllInforms(int currentPage);
     PageBean<Inform> selectInformsBySort(Integer type, int currentPage, int limit, String ... department);

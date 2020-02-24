@@ -11,6 +11,7 @@ import com.lushu.checksystem.service.InformService;
 import com.lushu.checksystem.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
 import java.util.HashMap;
@@ -47,35 +49,53 @@ public class StudentController {
     }
 
     /**
-     * 学生主页跳转
+     * 学生页面的一些跳转
      */
     @RequestMapping("/index")
     public String index(Model model) {
-        user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("current", user);
-        return "/student/index";
+        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())){
+            return "redirect:/logout";
+        }else {
+            user = (User) a;
+            model.addAttribute("current", user);
+            return "/student/index";
+        }
     }
-
     @RequestMapping("/upload")
-    public String upload(String path, Model model) {
-        user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("current", user);
-        current = root + "\\" + path;
-        return "/student/upload";
+    public String upload(@RequestParam String requestPath, Model model) {
+        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())){
+            return "redirect:/logout";
+        }else {
+            user = (User) a;
+            model.addAttribute("current", user);
+            model.addAttribute("currentPath", current);
+            current = requestPath;
+            return "/student/upload";
+        }
     }
-
     @RequestMapping("/personal")
     public String personal(Model model) {
-        user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("current", user);
-        return "/student/personal";
+        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())){
+            return "redirect:/logout";
+        }else {
+            user = (User) a;
+            model.addAttribute("current", user);
+            return "/student/personal";
+        }
     }
-
     @RequestMapping("/update")
     public String update(Model model) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("current", user);
-        return "/student/update";
+        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())){
+            return "redirect:/logout";
+        }else {
+            user = (User) a;
+            model.addAttribute("current", user);
+            return "/student/update";
+        }
     }
 
 
@@ -98,7 +118,7 @@ public class StudentController {
     }
 
     /**
-     * 修改密码（未完成）
+     * 修改密码（后续优化：将旧密码的确认做成异步）
      */
     @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
     @ResponseBody
@@ -142,8 +162,33 @@ public class StudentController {
     }
 
     /**
-     * 学生端显示文件列表（未完成）
+     * 学生端显示文件列表
      */
+    @RequestMapping(value = "/studentList", method = RequestMethod.GET)
+    @ResponseBody
+    public Map list(@RequestParam int page
+            , @RequestParam int limit
+            , @RequestParam(required = false) String path) throws ServletException, JSONException {
+        Map<String, Object> res = new HashMap<>();
+        if ((current != null && !"".equals(current) && path == null) || "/".equals(path)){
+            path = current;
+        }else if (current == null || "".equals(current)){
+            path = "/test";
+        }
+        PageBean<Map<String, Object>> fileList = fileService.showFileList(path, page, limit);
+        if (fileList == null){
+            res.put("data",null);
+            res.put("code",0);
+            res.put("msg","");
+            res.put("count",0);
+        }else {
+            res.put("data", fileList.getList());
+            res.put("code", 0);
+            res.put("msg", "");
+            res.put("count", fileList.getTotalRecord());
+        }
+        return res;
+    }
 
 
     /**
@@ -153,50 +198,31 @@ public class StudentController {
     @ResponseBody
     public Map upload(HttpServletRequest request, @RequestParam("path") String path) {
         Map<String, Object> json = new HashMap<>();
+        if (current != null && !"".equals(current) || "/".equals(path)){
+            path = current;
+        }else if (current == null || "".equals(current)){
+            path = "/test";
+        }
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Integer id = user.getId();
         if (fileMap == null || fileMap.size() == 0) {
-        }
-        Collection<MultipartFile> files = fileMap.values();
-
-        //com.lushu.checksystem.pojo.File daoDest = new com.lushu.checksystem.pojo.File();
-        /*if (file.isEmpty()) {
-            json.put("code", 1);
+            json.put("code", 0);
             json.put("msg", "请选择作业文件!");
-            json.put("data", "{'file':'" + file.getOriginalFilename() + "'}");
             return json;
         }
-        File rootPath = new File("src/main/resources/root" + path);*/
-        /*if (!rootPath.exists()){
-            rootPath.mkdir();
-        }*/
-        //String fileName = file.getOriginalFilename();
-        //String filePath = rootPath.getAbsolutePath();
-        /*daoDest.setName(fileName);
-        daoDest.setPath(filePath);
-        daoDest.setSize(file.getSize());*/
-        //File dest = new File(filePath, fileName);
-        /*try {
-            if (!dest.exists()) {
-                //fileService.addFiles(daoDest);
-                file.transferTo(dest);
-                json.put("code", 0);
-                json.put("msg", "上传成功！");
-                json.put("data", "{'file':'" + file.getOriginalFilename() + "'}");
-                return json;
-            } else {
-                json.put("code", 2);
-                json.put("msg", "上传失败，有同名文件");
-                json.put("data", "{'file':'" + file.getOriginalFilename() + "'}");
-                return json;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        Collection<MultipartFile> files = fileMap.values();
+        int res = fileService.addFiles(files, path, id);
+        if (res == fileMap.size()){
+            json.put("code", 1);
+            json.put("msg", "上传成功！");
+            return json;
+        }else {
+            json.put("code", -1);
+            json.put("msg", "上传失败！");
+            return json;
         }
-        json.put("code", -1);
-        json.put("msg", "上传失败");
-        json.put("data", "{'file':'" + file.getOriginalFilename() + "'}");*/
-        return json;
     }
 
 

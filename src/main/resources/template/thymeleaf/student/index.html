@@ -6,11 +6,12 @@
     <link rel="stylesheet" href="../layui/css/layui.css" type="text/css">
 </head>
 <body class="layui-layout-body">
+<input id="currentDepartment" style="display: none" th:value="${current.department}"/>
 <div class="layui-layout layui-layout-admin">
 
     <div class="layui-header layui-bg-gray">
 
-        <div class="layui-logo" style="font-size: 20px; color: #393D49">作业查重系统学生端</div>
+        <div class="layui-logo" style="font-size: 20px; color: #393D49; cursor: pointer" onclick="index()">作业查重系统学生端</div>
 
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
@@ -31,7 +32,7 @@
                     <div class="layui-row grid-demo">
 
                         <!-- 头部搜索框 -->
-                        <div class="layui-col-md12" style="background: #00FF00; padding-top: 15px; padding-left: 20px">
+                        <div class="layui-col-md12" style=" padding-top: 10px; padding-left: 20px">
                             <form class="layui-form" action="">
                                 <div class="layui-inline" style="width: 10%">
                                     <div class="layui-input-inline">
@@ -63,19 +64,20 @@
                         </div>
 
                         <!-- 左边内容 -->
-                        <div class="layui-col-md9">
+                        <div class="layui-col-md12">
 
                             <!-- 头部工具栏 -->
-                            <form class="layui-form" action="" method="get">
+                            <form class="layui-form" action="" method="get" style="padding-left: 20px">
                                 <div class="layui-inline">
                                     <select id="typeSelect" name="type" lay-verify="" lay-filter="typeSelect">
                                         <option value="1" selected>必修</option>
                                         <option value="0">选修</option>
                                     </select>
                                 </div>
-                                <div class="layui-inline">
+                                <div id="filterLabel" class="layui-form-mid layui-word-aux" style="float:left">筛选通知</div>
+                                <div id="selectDiv" class="layui-inline" style="display: none">
                                     <select id="departmentSelect" name="department" lay-verify="" lay-filter="departmentSelect">
-                                        <option value="计算机系" selected>计算机系</option>
+                                        <option value="计算机系">计算机系</option>
                                         <option value="软件系">软件系</option>
                                         <option value="外语系">外语系</option>
                                         <option value="国贸系">国贸系</option>
@@ -106,7 +108,7 @@
                             <table class="layui-table" lay-filter="test" lay-data="{
                                        url:'/student/showInforms?type='+typeSelect+'&department='+departmentSelect
                                        ,limit:15
-                                       ,height:'full-190'
+                                       ,height:'full-195'
                                        ,page: {
                                            layout: ['prev', 'page', 'next', 'skip','count']
                                            ,groups: 5
@@ -115,7 +117,6 @@
                                        ,initSort:{field: 'date',type: 'desc'}}">
                                 <thead>
                                     <tr>
-                                        <th lay-data="{type: 'checkbox', fixed: 'left'}"></th>
                                         <th lay-data="{field: 'sendId', width:80, event: 'showUser', style:'cursor: pointer;'}">
                                             发布人
                                         </th>
@@ -132,48 +133,6 @@
 
                         </div>
 
-                        <!-- 右边内容 -->
-                        <div class="layui-col-md3 layui-row grid-demo">
-                            <div class="layui-col-md12" style="background: #8D8D8D">
-
-                                <!-- 右上 -->
-                                <table lay-filter="parse-table-demo">
-                                    <thead>
-                                    <tr>
-                                        <th lay-data="{field:'username', width:200}">昵称</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>贤心1</td>
-                                        <td>2016-11-28</td>
-                                        <td>人生就像是一场修行 A</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-
-                                <!-- 右下 -->
-                                <div class="layui-col-md12" style="background: #00FF00">
-                                    <table lay-filter="parse-table-demo">
-                                        <thead>
-                                        <tr>
-                                            <th lay-data="{field:'username', width:200}">昵称</th>
-                                            <th lay-data="{field:'joinTime', width:150}">加入时间</th>
-                                            <th lay-data="{field:'sign', minWidth: 180}">签名</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <tr>
-                                            <td>贤心1</td>
-                                            <td>2016-11-28</td>
-                                            <td>人生就像是一场修行 A</td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-
-                            </div>
-                        </div>
 
                     </div>
                 </div>
@@ -199,12 +158,19 @@
 
     let departmentSelect = $("#departmentSelect").val();
     let typeSelect = $("#typeSelect").val();
+    let selectElement = document.getElementById("departmentSelect");
+    //根据用户系别修改默认的下拉选项
+    $("#departmentSelect option:contains("+departmentSelect+")").attr('selected', true);
 
     $('#logout').click(function () {
         layer.confirm('确定退出系统吗',function () {
             window.location="/logout";
         })
     });
+
+    function index(){
+        window.location="/student/index"
+    }
 
     layui.use(['form', 'table','element'], function () {
         var form = layui.form
@@ -214,14 +180,27 @@
 
         //监听下拉选择框
         form.on('select(typeSelect)', function (data) {
-            var tmpParam = $("#departmentSelect").val();
-            table.reload('demo',{
-                url:'/student/showInforms?type='+data.value+'&department='+tmpParam
-                ,page: {
-                    curr: 1 //重新从第 1 页开始
-                }
-            });
-            console.log(data.value); //得到被选中的值
+            if (data.value === "0") {
+                $('#selectDiv').css("display","inline-block");
+                var tmpParam = $("#departmentSelect").val();
+                table.reload('demo', {
+                    url: '/student/showInforms?type=' + data.value + '&department=' + tmpParam
+                    , page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                });
+                console.log(data.value); //得到被选中的值
+            }else {
+                $('#selectDiv').css("display","none");
+                var tmpParam = $("#currentDepartment").val();
+                table.reload('demo', {
+                    url: '/student/showInforms?type=' + data.value + '&department=' + tmpParam
+                    , page: {
+                        curr: 1 //重新从第 1 页开始
+                    }
+                });
+                console.log(data.value); //得到被选中的值
+            }
         });
 
         //监听下拉选择框
@@ -238,13 +217,25 @@
 
         //监听单元格事件
         table.on('tool(test)', function (obj) {
-            var data = obj.data;
+            var detailJson = obj.data;
             if (obj.event === 'showUser') {
                 layer.msg("展示用户")
             } else if (obj.event === 'showInform') {
-                layer.msg("展示通知内容")
+                $.ajax({
+                    type: "get",
+                    url:"/public/inform",
+                    async: true,
+                    data: detailJson,
+                    success:function (data) {
+                        window.location.href = '/public/informDetail/'+data.id;
+                    }
+                });
             } else {
-                layer.msg("展示文件路径")
+                var requestPath = detailJson.path;
+                var index = requestPath.indexOf('root')+5;
+                requestPath = requestPath.slice(index);
+                requestPath =  ('/' + requestPath).replace(/\\/, '/');
+                window.location.href = '/student/upload?requestPath='+requestPath;
             }
         });
 

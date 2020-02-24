@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.lushu.checksystem.dao.InformDao">
+    <!-- selectInform：单个通知；return：Inform -->
+    <select id="selectInform" parameterType="Integer" resultType="Inform">
+        select *
+        from sys_inform
+        where id = #{id}
+        limit 1
+    </select>
 
     <!-- selectInform：查询通知；return：List<Inform> -->
     <select id="selectInforms" parameterType="String" resultType="Inform">

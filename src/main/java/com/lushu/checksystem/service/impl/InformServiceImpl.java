@@ -27,6 +27,11 @@ public class InformServiceImpl implements InformService {
     }
 
     @Override
+    public Inform selectInform(Integer id) {
+        return informDao.selectInform(id);
+    }
+
+    @Override
     public List<Inform> selectInforms(String sendId) {
         return informDao.selectInforms(sendId);
     }

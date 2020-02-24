@@ -1,10 +1,15 @@
 package com.lushu.checksystem.controller;
 
-import com.lushu.checksystem.service.UserService;
+import com.lushu.checksystem.pojo.Inform;
+import com.lushu.checksystem.pojo.User;
+import com.lushu.checksystem.service.InformService;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author ALuShu
@@ -17,10 +22,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/public")
 public class LoginCheckController {
 
-    private UserService userService;
+    private InformService informService;
 
-    public LoginCheckController(UserService userService) {
-        this.userService = userService;
+    public LoginCheckController(InformService informService) {
+        this.informService = informService;
     }
 
     /**
@@ -29,10 +34,6 @@ public class LoginCheckController {
     @RequestMapping("/login")
     public String login(){
         return "/login";
-    }
-    @RequestMapping("/inform")
-    public String inform(){
-        return "/informDetail";
     }
     @RequestMapping("/perError")
     public String perError(){
@@ -51,6 +52,33 @@ public class LoginCheckController {
         model.addAttribute("msg","你好啊");
         return "/sayhello";
     }
+
+    /**
+     * 下面两个方法服务于ajax跳转
+     */
+    @RequestMapping(value = "/inform", method = RequestMethod.GET)
+    @ResponseBody
+    public Map inform(Inform detailJson){
+        HashMap<String,Object> resMap = new HashMap<>();
+        resMap.put("code",1);
+        resMap.put("id",detailJson.getId());
+        return resMap;
+    }
+    @RequestMapping(value = "/informDetail/{id}",method = RequestMethod.GET)
+    public String informDetail(Model model, @PathVariable("id") Integer id){
+        //超时会变成匿名用户anonymousUser，重定向到注销状态
+        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())){
+            return "redirect:/logout";
+        }else {
+            User user = (User)a;
+            Inform inform = informService.selectInform(id);
+            model.addAttribute("detail", inform);
+            model.addAttribute("current", user);
+            return "/informDetail";
+        }
+    }
+
 
 
 }

@@ -57,51 +57,91 @@ public class AdminController {
      */
     @RequestMapping("/index")
     public String index(Model model){
-        user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("current",user);
-        return "/admin/index";
+        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())){
+            return "redirect:/logout";
+        }else {
+            user = (User) a;
+            model.addAttribute("current", user);
+            return "/admin/index";
+        }
     }
     @RequestMapping("/authorities")
     public String authorities(Model model){
-        user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("current",user);
-        return "/admin/authorities";
+        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())){
+            return "redirect:/logout";
+        }else {
+            user = (User) a;
+            model.addAttribute("current", user);
+            return "/admin/authorities";
+        }
     }
     @RequestMapping("/files")
     public String files(Model model){
-        user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("current",user);
-        return "/admin/files";
+        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())){
+            return "redirect:/logout";
+        }else {
+            user = (User) a;
+            model.addAttribute("current", user);
+            return "/admin/files";
+        }
     }
     @RequestMapping("/informs")
     public String informs(Model model){
-        user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("current",user);
-        return "/admin/informs";
+        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())){
+            return "redirect:/logout";
+        }else {
+            user = (User) a;
+            model.addAttribute("current", user);
+            return "/admin/informs";
+        }
     }
     @RequestMapping("/roles")
     public String roles(Model model){
-        user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("current",user);
-        return "/admin/roles";
+        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())){
+            return "redirect:/logout";
+        }else {
+            user = (User) a;
+            model.addAttribute("current", user);
+            return "/admin/roles";
+        }
     }
     @RequestMapping("/search")
     public String search(Model model){
-        user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("current",user);
-        return "/admin/search";
+        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())){
+            return "redirect:/logout";
+        }else {
+            user = (User) a;
+            model.addAttribute("current", user);
+            return "/admin/search";
+        }
     }
     @RequestMapping("/students")
     public String students(Model model){
-        user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("current",user);
-        return "/admin/students";
+        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())){
+            return "redirect:/logout";
+        }else {
+            user = (User) a;
+            model.addAttribute("current", user);
+            return "/admin/students";
+        }
     }
     @RequestMapping("/teachers")
     public String teachers(Model model){
-        user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        model.addAttribute("current",user);
-        return "/admin/teachers";
+        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())){
+            return "redirect:/logout";
+        }else {
+            user = (User) a;
+            model.addAttribute("current", user);
+            return "/admin/teachers";
+        }
     }
 
 
