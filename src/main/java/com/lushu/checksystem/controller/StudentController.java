@@ -1,7 +1,6 @@
 package com.lushu.checksystem.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.lushu.checksystem.constant.BasicConstant;
 import com.lushu.checksystem.constant.DatabaseConstant;
 import com.lushu.checksystem.pojo.Inform;
 import com.lushu.checksystem.pojo.PageBean;
@@ -97,6 +96,30 @@ public class StudentController {
             return "/student/update";
         }
     }
+    @RequestMapping("/search")
+    public String teachers(Model model) {
+        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())){
+            return "redirect:/logout";
+        }else {
+            user = (User) a;
+            model.addAttribute("current", user);
+            return "/student/teachers";
+        }
+    }
+    @RequestMapping("/search/{username}")
+    public String teacher(Model model, @PathVariable String username) {
+        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())){
+            return "redirect:/logout";
+        }else {
+            user = (User) a;
+            User searchRes = (User) userService.selectUser(username).get("user");
+            model.addAttribute("current", user);
+            model.addAttribute("res", searchRes);
+            return "/student/teachers";
+        }
+    }
 
 
     /**
@@ -142,26 +165,6 @@ public class StudentController {
     }
 
     /**
-     * 以往作业列表（未完成）
-     */
-    @RequestMapping(value = "/showOldWorks", method = RequestMethod.GET)
-    public void showOldWorks() {
-    }
-
-    /**
-     * 教师列表（未完成）
-     */
-    @RequestMapping(value = "/showTeachers", method = RequestMethod.GET)
-    @ResponseBody
-    public Map showTeachers(@RequestParam int page, @RequestParam int limit) {
-        Map<String, Object> map = new HashMap<>(1);
-        map.put("teachers", userService.selectUsersByRole(page, limit, DatabaseConstant.Role.ROLE_TEACHER.ordinal() + 1));
-        map.put("code", 1);
-        map.put("msg", "查询成功");
-        return map;
-    }
-
-    /**
      * 学生端显示文件列表
      */
     @RequestMapping(value = "/studentList", method = RequestMethod.GET)
@@ -192,7 +195,7 @@ public class StudentController {
 
 
     /**
-     * 学生端上传文件方法（未完成）
+     * 学生端上传文件方法（后续优化：多文件上传时不像现在的要请求多次此方法）
      */
     @PostMapping("/uploadFile")
     @ResponseBody
@@ -218,6 +221,10 @@ public class StudentController {
             json.put("code", 1);
             json.put("msg", "上传成功！");
             return json;
+        }else if (res == 0){
+            json.put("code", 2);
+            json.put("msg", "覆盖操作！");
+            return json;
         }else {
             json.put("code", -1);
             json.put("msg", "上传失败！");
@@ -227,24 +234,39 @@ public class StudentController {
 
 
     /**
-     * 学生端搜索教师（未完成）
+     * 学生端搜索教师
      */
-    @RequestMapping(value = "/searchTeacher", method = RequestMethod.POST)
-    public Map searchTeacher(@RequestParam String key, @RequestParam String keyword) {
-        HashMap<String, Object> des;
-        if (BasicConstant.User.USERNAME.getString().equals(key)) {
-            des = userService.selectUser(keyword);
-        } else {
-            des = userService.selectUserByRealname(keyword);
-        }
-        if (des.get("user") == null) {
-            des.put("code", 0);
-            des.put("msg", "not found teacher");
-        } else {
-
-            des.put("code", 0);
-            des.put("msg", "success");
-        }
+    @RequestMapping(value = "/searchTeacher", method = RequestMethod.GET)
+    @ResponseBody
+    public Map searchTeacher(String username) {
+        HashMap<String, Object> des = new HashMap<>();
+        des.put("code",1);
+        des.put("msg","转发");
+        des.put("username",username);
         return des;
     }
+
+    /**
+     * 教师列表
+     */
+    @RequestMapping(value = "/showTeachers", method = RequestMethod.GET)
+    @ResponseBody
+    public Map showTeachers(@RequestParam int page, @RequestParam int limit) {
+        Map<String, Object> map = new HashMap<>();
+        PageBean<User> res = userService.selectUsersByRole(page, limit, DatabaseConstant.Role.ROLE_TEACHER.ordinal() + 1);
+        map.put("data", res.getList());
+        map.put("code", 0);
+        map.put("msg", "");
+        map.put("count", res.getTotalRecord());
+        return map;
+    }
+
+    /**
+     * 以往作业列表（未完成）
+     */
+    @RequestMapping(value = "/showOldWorks", method = RequestMethod.GET)
+    public void showOldWorks() {
+    }
+
+
 }

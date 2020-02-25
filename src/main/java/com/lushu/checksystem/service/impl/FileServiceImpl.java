@@ -95,10 +95,16 @@ public class FileServiceImpl implements FileService {
     @Override
     public int addFiles(Collection<MultipartFile> files, String path , Integer submitter) {
         Iterator<MultipartFile> fileIterator = files.iterator();
-        Integer owner = Integer.parseInt(path.substring(1,5));
-        if (files.size() == 1){
+            Integer owner = Integer.parseInt(path.substring(0,4));
+            if (files.size() == 1){
             File preFile = addMethod(fileIterator.next(), new File(), root+path, owner, submitter);
-            return (preFile!=null) ? fileDao.addFile(preFile) : -1;
+            File isExist = fileDao.checkFile(preFile);
+            if (isExist == null){
+                return (preFile!=null) ? fileDao.addFile(preFile) : -1;
+            }else {
+                return (preFile!=null) ? 0 : -1;
+            }
+
         }else {
             List<File> preFiles = new ArrayList<>();
             while (fileIterator.hasNext()){
@@ -120,7 +126,8 @@ public class FileServiceImpl implements FileService {
         String fileName = paramFile.getOriginalFilename();
         if (fileName != null) {
             java.io.File dest = new java.io.File(path, fileName);
-            if (dest.isFile()) {
+            /*判断是file还是dir*/
+            if (dest.getName().contains(".")) {
                 if (dest.exists()) {
                     log.info("添加覆盖操作");
                     boolean res = dest.delete();

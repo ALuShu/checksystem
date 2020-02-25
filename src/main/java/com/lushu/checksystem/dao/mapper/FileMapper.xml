@@ -2,6 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.lushu.checksystem.dao.FileDao">
 
+
+    <!-- checkFile：检查数据库中是否有相同记录；return：File -->
+    <select id="checkFile" parameterType="File" resultType="File">
+        select *
+        from sys_file
+        where name=#{name} and path=#{path}
+    </select>
+
     <!-- selectFileBySubmitter：查询同提交人的所有文件；return：List<File> -->
     <select id="selectFileBySubmitter" parameterType="Integer" resultType="File">
         select *

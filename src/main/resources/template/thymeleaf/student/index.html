@@ -11,7 +11,22 @@
 
     <div class="layui-header layui-bg-gray">
 
-        <div class="layui-logo" style="font-size: 20px; color: #393D49; cursor: pointer" onclick="index()">作业查重系统学生端</div>
+        <div class="layui-logo" style="font-size: 20px; color: #393D49; cursor: pointer" onclick="index()">作业查重系统学生端
+        </div>
+
+        <!-- 头部搜索框 -->
+        <div style="margin:0 auto; width: 60%; padding-top: 10px">
+            <form class="layui-form" action="/student/search" id="searchForm">
+                <div class="layui-inline" style="width: 100%">
+                    <div class="layui-input-inline" style="width: 90%">
+                        <input type="text" name="username" autocomplete="off" placeholder="输入教师姓名" class="layui-input">
+                    </div>
+                    <div class="layui-input-inline" style="width: 5%">
+                        <button type="submit" class="layui-btn layui-btn-warm" lay-submit="" lay-filter="searchBtn">搜索</button>
+                    </div>
+                </div>
+            </form>
+        </div>
 
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
@@ -31,38 +46,6 @@
                 <div class="layui-col-md12">
                     <div class="layui-row grid-demo">
 
-                        <!-- 头部搜索框 -->
-                        <div class="layui-col-md12" style=" padding-top: 10px; padding-left: 20px">
-                            <form class="layui-form" action="">
-                                <div class="layui-inline" style="width: 10%">
-                                    <div class="layui-input-inline">
-                                        <select name="department" lay-verify="required">
-                                            <option value="">选择系别</option>
-                                            <option value="计算机系">计算机系</option>
-                                            <option value="软件系">软件系</option>
-                                            <option value="外语系">外语系</option>
-                                            <option value="国贸系">国贸系</option>
-                                            <option value="市场营销系">市场营销系</option>
-                                            <option value="电子系">电子系</option>
-                                            <option value="数码媒体系">数码媒体系</option>
-                                            <option value="游戏系">游戏系</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="layui-inline" style="width: 88%">
-                                    <div class="layui-input-inline" style="width: 93%">
-                                        <input type="text" name="title" lay-verify="title" autocomplete="off"
-                                               placeholder="输入教师姓名" class="layui-input">
-                                    </div>
-                                    <div class="layui-input-inline" style="width: 5%">
-                                        <button type="submit" class="layui-btn layui-btn-warm" lay-submit=""
-                                                lay-filter="demo1">搜索
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-
                         <!-- 左边内容 -->
                         <div class="layui-col-md12">
 
@@ -74,9 +57,11 @@
                                         <option value="0">选修</option>
                                     </select>
                                 </div>
-                                <div id="filterLabel" class="layui-form-mid layui-word-aux" style="float:left">筛选通知</div>
+                                <div id="filterLabel" class="layui-form-mid layui-word-aux" style="float:left">筛选通知
+                                </div>
                                 <div id="selectDiv" class="layui-inline" style="display: none">
-                                    <select id="departmentSelect" name="department" lay-verify="" lay-filter="departmentSelect">
+                                    <select id="departmentSelect" name="department" lay-verify=""
+                                            lay-filter="departmentSelect">
                                         <option value="计算机系">计算机系</option>
                                         <option value="软件系">软件系</option>
                                         <option value="外语系">外语系</option>
@@ -116,18 +101,18 @@
                                        ,id:'demo'
                                        ,initSort:{field: 'date',type: 'desc'}}">
                                 <thead>
-                                    <tr>
-                                        <th lay-data="{field: 'sendId', width:80, event: 'showUser', style:'cursor: pointer;'}">
-                                            发布人
-                                        </th>
-                                        <th lay-data="{field: 'content', width :400, event: 'showInform', style:'cursor: pointer;'}">
-                                            内容
-                                        </th>
-                                        <th lay-data="{field: 'type', width:60 , templet: '#typeTpl'}">类型</th>
-                                        <th lay-data="{field: 'date'}">日期</th>
-                                        <th lay-data="{field: 'path', event: 'showPath', style:'cursor: pointer;'}">通知路径
-                                        </th>
-                                    </tr>
+                                <tr>
+                                    <th lay-data="{field: 'sendId', width:80, event: 'showUser', style:'cursor: pointer;'}">
+                                        发布人
+                                    </th>
+                                    <th lay-data="{field: 'content', width :400, event: 'showInform', style:'cursor: pointer;'}">
+                                        内容
+                                    </th>
+                                    <th lay-data="{field: 'type', width:60 , templet: '#typeTpl'}">类型</th>
+                                    <th lay-data="{field: 'date'}">日期</th>
+                                    <th lay-data="{field: 'path', event: 'showPath', style:'cursor: pointer;'}">通知路径
+                                    </th>
+                                </tr>
                                 </thead>
                             </table>
 
@@ -159,29 +144,34 @@
     let departmentSelect = $("#departmentSelect").val();
     let typeSelect = $("#typeSelect").val();
     let selectElement = document.getElementById("departmentSelect");
+
     //根据用户系别修改默认的下拉选项
-    $("#departmentSelect option:contains("+departmentSelect+")").attr('selected', true);
+    $("#departmentSelect option:contains(" + departmentSelect + ")").attr('selected', true);
 
     $('#logout').click(function () {
-        layer.confirm('确定退出系统吗',function () {
-            window.location="/logout";
+        layer.confirm('确定退出系统吗', function () {
+            window.location = "/logout";
         })
     });
 
-    function index(){
-        window.location="/student/index"
+    function index() {
+        window.location = "/student/index"
     }
 
-    layui.use(['form', 'table','element'], function () {
+    function subForm(){
+        document.getElementById("searchForm").submit();
+    }
+
+    layui.use(['form', 'table', 'element'], function () {
         var form = layui.form
-            ,element = layui.element
+            , element = layui.element
             , table = layui.table;
 
 
         //监听下拉选择框
         form.on('select(typeSelect)', function (data) {
             if (data.value === "0") {
-                $('#selectDiv').css("display","inline-block");
+                $('#selectDiv').css("display", "inline-block");
                 var tmpParam = $("#departmentSelect").val();
                 table.reload('demo', {
                     url: '/student/showInforms?type=' + data.value + '&department=' + tmpParam
@@ -190,8 +180,8 @@
                     }
                 });
                 console.log(data.value); //得到被选中的值
-            }else {
-                $('#selectDiv').css("display","none");
+            } else {
+                $('#selectDiv').css("display", "none");
                 var tmpParam = $("#currentDepartment").val();
                 table.reload('demo', {
                     url: '/student/showInforms?type=' + data.value + '&department=' + tmpParam
@@ -206,9 +196,9 @@
         //监听下拉选择框
         form.on('select(departmentSelect)', function (data) {
             var tmpParam = $("#typeSelect").val();
-            table.reload('demo',{
-                url:'/student/showInforms?type='+tmpParam+'&department='+data.value
-                ,page: {
+            table.reload('demo', {
+                url: '/student/showInforms?type=' + tmpParam + '&department=' + data.value
+                , page: {
                     curr: 1 //重新从第 1 页开始
                 }
             });
@@ -223,20 +213,37 @@
             } else if (obj.event === 'showInform') {
                 $.ajax({
                     type: "get",
-                    url:"/public/inform",
+                    url: "/public/inform",
                     async: true,
                     data: detailJson,
-                    success:function (data) {
-                        window.location.href = '/public/informDetail/'+data.id;
+                    success: function (data) {
+                        window.location.href = '/public/informDetail/' + data.id;
                     }
                 });
             } else {
                 var requestPath = detailJson.path;
-                var index = requestPath.indexOf('root')+5;
+                var index = requestPath.indexOf('root') + 5;
                 requestPath = requestPath.slice(index);
-                requestPath =  ('/' + requestPath).replace(/\\/, '/');
-                window.location.href = '/student/upload?requestPath='+requestPath;
+                requestPath = (requestPath).replace(/\\/, '/');
+                window.location.href = '/student/upload?requestPath=' + requestPath;
             }
+        });
+
+        //监听提交
+        form.on('submit(searchBtn)', function (data) {
+            if (data.field == null){
+                subForm()
+            }else {
+                $.ajax({
+                    url: '/student/searchTeacher',
+                    type: 'get',
+                    data: data.field,
+                    success:function (result) {
+                        window.location.href="/student/search/"+result.username;
+                    }
+                });
+            }
+            return false;
         });
 
     });

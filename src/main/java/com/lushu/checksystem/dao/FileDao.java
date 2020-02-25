@@ -19,6 +19,13 @@ import java.util.List;
 public interface FileDao {
 
     /**
+     * 检查数据库中是否有相同记录
+     * @param target
+     * @return
+     */
+    File checkFile(File target);
+
+    /**
      * 查询同提交人的所有文件
      * @param submitter
      * @return

@@ -91,7 +91,7 @@
         var requestPath = $('#clickPath').text();
         var index = requestPath.indexOf('root')+5;
         requestPath = requestPath.slice(index);
-        requestPath =  ('/' + requestPath).replace(/\\/, '/');
+        requestPath =  (requestPath).replace(/\\/, '/');
         window.location.href = '/student/upload?requestPath='+requestPath;
     }
 
