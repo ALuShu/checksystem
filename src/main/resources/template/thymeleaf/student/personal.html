@@ -36,70 +36,10 @@
                     <div class="layui-row grid-demo">
 
                         <!-- 列表 -->
-                        <div class="layui-col-md9" style="background: #1E9FFF">
-                            <div class="layui-btn-group demoTable" style="margin-bottom: 10px;">
-                                <button class="layui-btn" data-type="parseTable">立即转化为数据表格</button>
-                            </div>
-                            <table lay-filter="parse-table-demo">
-                                <thead>
-                                <tr>
-                                    <th lay-data="{field:'username', width:200}">昵称</th>
-                                    <th lay-data="{field:'joinTime', width:150}">加入时间</th>
-                                    <th lay-data="{field:'sign', minWidth: 180}">签名</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>贤心1</td>
-                                    <td>2016-11-28</td>
-                                    <td>人生就像是一场修行 A</td>
-                                </tr>
-                                <tr>
-                                    <td>贤心2</td>
-                                    <td>2016-11-29</td>
-                                    <td>人生就像是一场修行 B</td>
-                                </tr>
-                                <tr>
-                                    <td>贤心3</td>
-                                    <td>2016-11-30</td>
-                                    <td>人生就像是一场修行 C</td>
-                                </tr>
-                                </tbody>
-                            </table>
+                        <div class="layui-col-md12">
+                            <table class="layui-table" id="oldWorks" lay-filter="oldWorks"></table>
                         </div>
 
-                        <div class="layui-col-md3 layui-row grid-demo">
-
-                            <!-- 右侧教师 -->
-                            <div class="layui-col-md12" style="background: #8D8D8D">
-                                <table lay-filter="parse-table-demo">
-                                    <thead>
-                                    <tr>
-                                        <th lay-data="{field:'username', width:200}">昵称</th>
-                                        <th lay-data="{field:'joinTime', width:150}">加入时间</th>
-                                        <th lay-data="{field:'sign', minWidth: 180}">签名</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <tr>
-                                        <td>贤心1</td>
-                                        <td>2016-11-28</td>
-                                        <td>人生就像是一场修行 A</td>
-                                    </tr>
-                                    <tr>
-                                        <td>贤心2</td>
-                                        <td>2016-11-29</td>
-                                        <td>人生就像是一场修行 B</td>
-                                    </tr>
-                                    <tr>
-                                        <td>贤心3</td>
-                                        <td>2016-11-30</td>
-                                        <td>人生就像是一场修行 C</td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
 
                     </div>
                 </div>
@@ -109,6 +49,19 @@
 
 
 </div>
+
+<!-- 模板 -->
+<script type="text/html" id="statusTpl" th:inline="none">
+    {{#  if(d.status === 0){ }}
+    <label name="status" class="layui-form-label" style="text-align: left; padding-left: 0">未查阅</label>
+    {{#  } else if(d.status === 1) { }}
+    <label name="status" class="layui-form-label" style="text-align: left; padding-left: 0">及格</label>
+    {{#  } else if(d.status === 2) { }}
+    <label name="status" class="layui-form-label" style="text-align: left; padding-left: 0">已查阅</label>
+    {{#  } else { }}
+    <label name="status" class="layui-form-label" style="text-align: left; padding-left: 0">未及格</label>
+    {{#  } }}
+</script>
 
 <!-- 方法 -->
 <script src="../webjars/jquery/3.4.1/jquery.js"></script>
@@ -130,30 +83,27 @@
             ,element = layui.element
             , table = layui.table;
 
-        var $ = layui.$, active = {
-            parseTable: function(){
-                table.init('parse-table-demo', { //转化静态表格
-                    //height: 'full-500'
-                });
+        //layui数据表格
+        table.render({
+            elem: '#oldWorks'
+            , url: '/student/showOldWorks'
+            ,limit:15
+            ,height:'full-195'
+            ,page: {
+                layout: ['prev', 'page', 'next', 'skip','count']
+                ,groups: 5
             }
-        };
-
-        $('.demoTable .layui-btn').on('click', function(){
-            var type = $(this).data('type');
-            active[type] ? active[type].call(this) : '';
+            , cols: [[
+                {field: 'name', title: '作业名', sort: true}
+                , {field: 'updateTime', title: '最后修改时间', sort: true}
+                , {field: 'path', title: '提交路径', sort: true}
+                , {field: 'size', title: '大小', sort: true}
+                , {field: 'owner', title: '教师', sort: true}
+                , {field: 'status', title: '状态', sort: true, templet:'#statusTpl'}
+            ]]
         });
 
-        //监听提交
-        form.on('submit(demo1)', function(data){
-            layer.alert(JSON.stringify(data.field), {
-                title: '最终的提交信息'
-            })
-            return false;
-        });
 
-        //但是，如果你的HTML是动态生成的，自动渲染就会失效
-        //因此你需要在相应的地方，执行下述方法来进行渲染
-        form.render();
     });
 
 

@@ -36,8 +36,19 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public List<File> selectOldSubmitted(Integer submitter) {
-        return fileDao.selectFileBySubmitter(submitter);
+    public PageBean<File> selectOldSubmitted(Integer submitter, int page, int limit) {
+        HashMap<String, Object> pageMap = new HashMap<>(3);
+        PageBean<File> pageBean = new PageBean<>();
+        pageBean.setCurrentPage(page);
+        pageBean.setPageSize(limit);
+        int count = fileDao.countBySubmitter(submitter);
+        pageBean.setTotalRecord(count);
+        pageMap.put("start", (page-1) * limit);
+        pageMap.put("limit", pageBean.getPageSize());
+        pageMap.put("submitter", submitter);
+        List<File> files = fileDao.selectFileBySubmitter(pageMap);
+        pageBean.setList(files);
+        return pageBean;
     }
 
     @Override
@@ -164,6 +175,7 @@ public class FileServiceImpl implements FileService {
                 }
             }
         }
+        destFile.setStatus(DatabaseConstant.File.UNCHECKED.getFlag());
         destFile.setName(fileName);
         destFile.setPath(path);
         destFile.setSize(paramFile.getSize());

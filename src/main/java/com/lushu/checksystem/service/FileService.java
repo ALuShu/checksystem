@@ -6,7 +6,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,7 +19,7 @@ public interface FileService {
     /**
      * 查询学生以往作业
      */
-    List<File> selectOldSubmitted(Integer submitter);
+    PageBean<File> selectOldSubmitted(Integer submitter, int page, int limit);
 
     /**
      * 展示系统文件列表

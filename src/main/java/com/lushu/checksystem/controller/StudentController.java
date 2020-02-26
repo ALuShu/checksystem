@@ -2,6 +2,7 @@ package com.lushu.checksystem.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.lushu.checksystem.constant.DatabaseConstant;
+import com.lushu.checksystem.pojo.File;
 import com.lushu.checksystem.pojo.Inform;
 import com.lushu.checksystem.pojo.PageBean;
 import com.lushu.checksystem.pojo.User;
@@ -265,7 +266,25 @@ public class StudentController {
      * 以往作业列表（未完成）
      */
     @RequestMapping(value = "/showOldWorks", method = RequestMethod.GET)
-    public void showOldWorks() {
+    @ResponseBody
+    public Map showOldWorks(@RequestParam int page, @RequestParam int limit,Model model) {
+        Map<String, Object> map = new HashMap<>();
+        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())){
+            map.put("data", "");
+            map.put("code", 1);
+            map.put("msg", "验证信息失效，请重新登录");
+            map.put("count", 0);
+            return map;
+        }else {
+            User user = (User) a;
+            PageBean<File> res = fileService.selectOldSubmitted(user.getId(), page, limit);
+            map.put("data", res.getList());
+            map.put("code", 0);
+            map.put("msg", "");
+            map.put("count", res.getTotalRecord());
+            return map;
+        }
     }
 
 

@@ -5,6 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -27,10 +28,10 @@ public interface FileDao {
 
     /**
      * 查询同提交人的所有文件
-     * @param submitter
+     * @param param
      * @return
      */
-    List<File> selectFileBySubmitter(Integer submitter);
+    List<File> selectFileBySubmitter(HashMap<String, Object> param);
 
     /**
      * 查询同拥有人的所有文件
@@ -45,6 +46,13 @@ public interface FileDao {
      * @return
      */
     List<File> selectFileByIds(List<Integer> ids);
+
+    /**
+     * 相同提交人的总记录数
+     * @param submitter
+     * @return
+     */
+    int countBySubmitter(Integer submitter);
 
     /**
      * 增加文件

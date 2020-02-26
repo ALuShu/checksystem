@@ -17,7 +17,7 @@
             <form class="layui-form" action="">
                 <div class="layui-inline" style="width: 15%">
                     <div class="layui-input-inline">
-                        <select name="department" lay-verify="required">
+                        <select name="department" id="departmentSelect" lay-filter="departmentSelect">
                             <option value="">选择系别</option>
                             <option value="计算机系">计算机系</option>
                             <option value="软件系">软件系</option>
@@ -125,6 +125,18 @@
         //layui表格点击文件事件
         table.on('row(teachers)', function (obj) {
             layer.msg("点击事件")
+        });
+
+        //监听下拉选择框（未完成）
+        form.on('select(departmentSelect)', function (data) {
+            var tmpParam = $("#typeSelect").val();
+            table.reload('demo', {
+                url: '/student/showTeachers?department=' + data.value
+                , page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            layer.msg(data.value); //得到被选中的值
         });
 
     });

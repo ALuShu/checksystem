@@ -11,10 +11,11 @@
     </select>
 
     <!-- selectFileBySubmitter：查询同提交人的所有文件；return：List<File> -->
-    <select id="selectFileBySubmitter" parameterType="Integer" resultType="File">
+    <select id="selectFileBySubmitter" parameterType="Map" resultType="File">
         select *
         from sys_file
         where submitter = #{submitter}
+        limit #{start},#{limit}
     </select>
 
     <!-- selectFileByOwner：查询同拥有人的所有文件；return：List<File> -->
@@ -32,6 +33,13 @@
         <foreach collection="list" open="(" close=")" separator="," item="item" index="index">
             #{item}
         </foreach>
+    </select>
+
+    <!-- countBySubmitter：相同提交人的总记录数；return：int -->
+    <select id="countBySubmitter" parameterType="Integer" resultType="Integer">
+        select count(id)
+        from sys_file
+        where submitter = #{submitter}
     </select>
 
     <!-- addFile：增加文件；return：Integer -->
