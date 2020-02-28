@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author ALuShu
@@ -35,10 +36,10 @@ public interface FileDao {
 
     /**
      * 查询同拥有人的所有文件
-     * @param owner
+     * @param param
      * @return
      */
-    List<File> selectFileByOwner(Integer owner);
+    List<File> selectFileByOwner(HashMap<String, Object> param);
 
     /**
      * 根据id群查询文件群
@@ -55,6 +56,13 @@ public interface FileDao {
     int countBySubmitter(Integer submitter);
 
     /**
+     * 相同拥有者的总记录数
+     * @param owner
+     * @return
+     */
+    int countByOwner(Integer owner);
+
+    /**
      * 增加文件
      * @param file
      * @return
@@ -66,7 +74,7 @@ public interface FileDao {
      * @param file
      * @return
      */
-    Integer updateFile(File file);
+    Integer updateFile(Map<String,Object> file);
 
     /**
      * 批量增加文件

@@ -12,7 +12,7 @@ import java.util.List;
  */
 public interface InformService {
     Inform selectInform(Integer id);
-    List<Inform> selectInforms(String sendId);
+    PageBean<Inform> selectInforms(String publisher, int page, int limit);
     PageBean<Inform> selectAllInforms(int currentPage);
     PageBean<Inform> selectInformsBySort(Integer type, int currentPage, int limit, String ... department);
     Integer addInforms(List<Inform> list);

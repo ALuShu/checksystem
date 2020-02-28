@@ -11,7 +11,7 @@
  Target Server Version : 80018
  File Encoding         : 65001
 
- Date: 12/02/2020 14:07:30
+ Date: 28/02/2020 23:44:05
 */
 
 SET NAMES utf8mb4;
@@ -26,7 +26,7 @@ CREATE TABLE `sys_authority`  (
   `name` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `tag` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_authority
@@ -51,9 +51,11 @@ CREATE TABLE `sys_file`  (
   `owner` int(10) NOT NULL COMMENT '拥有者id',
   `submitter` int(10) NULL DEFAULT NULL COMMENT '提交人id，文件夹为null',
   `status` int(2) NULL DEFAULT NULL COMMENT '作业文件状态;0表示未查；2表示已查；1表示通过；-1表示未通过',
+  `sign` bigint(64) NULL DEFAULT NULL COMMENT '文档指纹',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `owner_index`(`owner`) USING BTREE,
-  INDEX `submitter_index`(`submitter`) USING BTREE
+  INDEX `submitter_index`(`submitter`) USING BTREE,
+  INDEX `complex_index`(`name`, `path`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -62,13 +64,13 @@ CREATE TABLE `sys_file`  (
 DROP TABLE IF EXISTS `sys_inform`;
 CREATE TABLE `sys_inform`  (
   `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '通知id',
-  `send_id` varchar(10) NOT NULL COMMENT '发布者',
+  `publisher` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '发布者',
   `content` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '通知内容',
   `type` tinyint(1) NOT NULL COMMENT '0为选修，1为必修',
   `date` datetime(0) NOT NULL COMMENT '发布时间',
   `path` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '该通知所要提交到的目录的物理地址',
   PRIMARY KEY (`id`) USING BTREE,
-  INDEX `send_id_index`(`send_id`) USING BTREE
+  INDEX `publisher_index`(`publisher`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -80,7 +82,7 @@ CREATE TABLE `sys_role`  (
   `name` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `detail` char(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_role
@@ -98,7 +100,7 @@ CREATE TABLE `sys_role_authority`  (
   `role_id` int(1) NOT NULL,
   `authority_id` int(2) NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of sys_role_authority

@@ -10,7 +10,6 @@ import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.service.InformService;
 import com.lushu.checksystem.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -34,8 +33,6 @@ import java.util.Map;
 @RequestMapping("/student")
 public class StudentController {
 
-    @Value("${checksystem.root}")
-    private String root;
     private String current;
     private UserService userService;
     private FileService fileService;
@@ -178,6 +175,8 @@ public class StudentController {
             path = current;
         }else if (current == null || "".equals(current)){
             path = "/test";
+        }else {
+            path = current + path;
         }
         PageBean<Map<String, Object>> fileList = fileService.showFileList(path, page, limit);
         if (fileList == null){
@@ -196,7 +195,7 @@ public class StudentController {
 
 
     /**
-     * 学生端上传文件方法（后续优化：多文件上传时不像现在的要请求多次此方法）
+     * 学生端上传文件方法（后续优化：多文件上传时不像现在的要请求多次此方法；Windows的"/"在数据库里取出来不好弄）
      */
     @PostMapping("/uploadFile")
     @ResponseBody

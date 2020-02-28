@@ -4,6 +4,7 @@ import com.lushu.checksystem.constant.BasicConstant;
 import com.lushu.checksystem.constant.DatabaseConstant;
 import com.lushu.checksystem.constant.OtherConstant;
 import com.lushu.checksystem.dao.FileDao;
+import com.lushu.checksystem.dao.UserDao;
 import com.lushu.checksystem.pojo.File;
 import com.lushu.checksystem.pojo.PageBean;
 import com.lushu.checksystem.service.FileService;
@@ -31,8 +32,11 @@ public class FileServiceImpl implements FileService {
     @Value("${checksystem.root}")
     private String root;
     private FileDao fileDao;
-    public FileServiceImpl(FileDao fileDao) {
+    private static UserDao userDao;
+
+    public FileServiceImpl(FileDao fileDao, UserDao userDao) {
         this.fileDao = fileDao;
+        FileServiceImpl.userDao = userDao;
     }
 
     @Override
@@ -41,12 +45,31 @@ public class FileServiceImpl implements FileService {
         PageBean<File> pageBean = new PageBean<>();
         pageBean.setCurrentPage(page);
         pageBean.setPageSize(limit);
-        int count = fileDao.countBySubmitter(submitter);
+        Integer count = fileDao.countBySubmitter(submitter);
         pageBean.setTotalRecord(count);
         pageMap.put("start", (page-1) * limit);
         pageMap.put("limit", pageBean.getPageSize());
         pageMap.put("submitter", submitter);
         List<File> files = fileDao.selectFileBySubmitter(pageMap);
+        pageBean.setList(files);
+        return pageBean;
+    }
+
+    @Override
+    public PageBean<File> selectRecent(Integer owner, int page, int limit, String modern) {
+        HashMap<String, Object> pageMap = new HashMap<>(3);
+        PageBean<File> pageBean = new PageBean<>();
+        pageBean.setCurrentPage(page);
+        pageBean.setPageSize(limit);
+        Integer count = fileDao.countByOwner(owner);
+        pageBean.setTotalRecord(count);
+        pageMap.put("start", (page-1) * limit);
+        pageMap.put("limit", pageBean.getPageSize());
+        pageMap.put("owner", owner);
+        if (modern != null){
+            pageMap.put("modern", modern);
+        }
+        List<File> files = fileDao.selectFileByOwner(pageMap);
         pageBean.setList(files);
         return pageBean;
     }
@@ -70,6 +93,8 @@ public class FileServiceImpl implements FileService {
             PageBean<Map<String, Object>> pageBean = new PageBean<>();
             pageBean.setList(newFileList);
             pageBean.setTotalRecord(fileList.size());
+            pageBean.setPageSize(limit);
+            pageBean.setCurrentPage(page);
             return pageBean;
         } catch (IOException e) {
             log.error("文件遍历失败", e);
@@ -106,9 +131,9 @@ public class FileServiceImpl implements FileService {
     @Override
     public int addFiles(Collection<MultipartFile> files, String path , Integer submitter) {
         Iterator<MultipartFile> fileIterator = files.iterator();
-            Integer owner = Integer.parseInt(path.substring(0,4));
+            String ownerUsername = path.substring(0,4);
             if (files.size() == 1){
-            File preFile = addMethod(fileIterator.next(), new File(), root+path, owner, submitter);
+            File preFile = addMethod(fileIterator.next(), new File(), root+path, ownerUsername, submitter);
             File isExist = fileDao.checkFile(preFile);
             if (isExist == null){
                 return (preFile!=null) ? fileDao.addFile(preFile) : -1;
@@ -119,7 +144,7 @@ public class FileServiceImpl implements FileService {
         }else {
             List<File> preFiles = new ArrayList<>();
             while (fileIterator.hasNext()){
-                File current = addMethod(fileIterator.next(), new File(), root+path, owner, submitter);
+                File current = addMethod(fileIterator.next(), new File(), root+path, ownerUsername, submitter);
                 if (current == null){
                     preFiles.clear();
                     break;
@@ -133,7 +158,7 @@ public class FileServiceImpl implements FileService {
     /**
      * 在磁盘添加文件或文件夹，并生成一个File对象
      */
-    private static File addMethod(MultipartFile paramFile, File destFile, String path, Integer owner, Integer submitter) {
+    private static File addMethod(MultipartFile paramFile, File destFile, String path, String ownerUsername, Integer submitter) {
         String fileName = paramFile.getOriginalFilename();
         if (fileName != null) {
             java.io.File dest = new java.io.File(path, fileName);
@@ -150,6 +175,7 @@ public class FileServiceImpl implements FileService {
                 destFile.setType(DatabaseConstant.File.WORD_FILE.getFlag());
                 destFile.setPermission("-rwx-rwx-r-x");
                 destFile.setSubmitter(submitter);
+                destFile.setStatus(DatabaseConstant.File.UNCHECKED.getFlag());
                 try {
                     paramFile.transferTo(dest);
                 } catch (IOException e) {
@@ -175,34 +201,56 @@ public class FileServiceImpl implements FileService {
                 }
             }
         }
-        destFile.setStatus(DatabaseConstant.File.UNCHECKED.getFlag());
         destFile.setName(fileName);
         destFile.setPath(path);
         destFile.setSize(paramFile.getSize());
         destFile.setUpdateTime(OtherConstant.DATE_FORMAT.format(new Date()));
-        destFile.setOwner(owner);
+        destFile.setOwner(userDao.selectUserByUsername(ownerUsername).getId());
         return destFile;
+    }
+
+    @Override
+    public Integer addDirectory(String name, String path, Integer owner) {
+        Path direction = Paths.get(root+path, name);
+        try {
+            Files.createDirectory(direction);
+            File tempFile = new File();
+            tempFile.setName(name);
+            tempFile.setPath(root+path);
+            tempFile.setUpdateTime(OtherConstant.DATE_FORMAT.format(new Date()));
+            tempFile.setOwner(owner);
+            tempFile.setType(DatabaseConstant.File.DIRECTORY_FILE.getFlag());
+            tempFile.setPermission("-rwx-rwx-rw-");
+            return fileDao.addFile(tempFile);
+        } catch (IOException e) {
+            log.error("创建文件夹失败", e);
+            return 0;
+        }
     }
 
     @Override
     public int updateFiles(HashMap<String, Object> updateParam, String action){
         if (BasicConstant.FileAction.RENAME.getString().equals(action)){
-            Path resource = (Path) updateParam.get("resource");
+            String path = (String) updateParam.get("resourcePath");
+            String oldName = (String) updateParam.get("resourceName");
+            Path resource = Paths.get(root,path+oldName);
             String newName = (String) updateParam.get("newName");
             try {
                 if (Files.exists(resource)) {
+                    Map<String, Object> param = new HashMap<>();
                     Files.move(resource, resource.resolveSibling(newName));
-                    File newFile = new File();
-                    newFile.setUpdateTime(OtherConstant.DATE_FORMAT.format(new Date()));
-                    newFile.setName(newName);
-                    return fileDao.updateFile(newFile);
+                    param.put("name", newName);
+                    param.put("updateTime", OtherConstant.DATE_FORMAT.format(new Date()));
+                    param.put("resourcePath", path);
+                    param.put("resourceName", oldName);
+                    return fileDao.updateFile(param);
                 }
             } catch (IOException e) {
                 log.error("重命名失败",e);
                 return -1;
             }
 
-        }else if (BasicConstant.FileAction.MOVE.getString().equals(action)){
+        }/*else if (BasicConstant.FileAction.MOVE.getString().equals(action)){
             Path newDir = (Path) updateParam.get("newDir");
             if (updateParam.get("resource") instanceof ArrayList<?>){
                 List<Path> resources = (ArrayList<Path>) updateParam.get("resource");
@@ -224,7 +272,7 @@ public class FileServiceImpl implements FileService {
                 return (newObject != null) ? fileDao.updateFile(newObject) : -1;
             }
 
-        }else if (BasicConstant.FileAction.CORRECT.getString().equals(action)){
+        }*//*else if (BasicConstant.FileAction.CORRECT.getString().equals(action)){
             Integer status = (Integer) updateParam.get("status");
             long time = System.currentTimeMillis();
             FileTime fileTime = FileTime.fromMillis(time);
@@ -245,19 +293,25 @@ public class FileServiceImpl implements FileService {
                     files.add(file);
                 }
                 return (files.size() != 0) ? fileDao.updateFiles(files) : -1;
-            }else {
-                Path resource = (Path) updateParam.get("resource");
-                try {
-                    Files.setAttribute(resource, "basic:lastModifiedTime", fileTime);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return -1;
-                }
-                File file = new File();
-                file.setUpdateTime(OtherConstant.DATE_FORMAT.format(new Date(fileTime.toMillis())));
-                file.setStatus(status);
-                return fileDao.updateFile(file);
+            }*/else {
+            long time = System.currentTimeMillis();
+            FileTime fileTime = FileTime.fromMillis(time);
+            String path = (String) updateParam.get("resourcePath");
+            String name = (String) updateParam.get("resourceName");
+            Path resource = Paths.get(root, path+name);
+            Integer status = (Integer) updateParam.get("status");
+            try {
+                Files.setAttribute(resource, "basic:lastModifiedTime", fileTime);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return -1;
             }
+            Map<String, Object> param = new HashMap<>();
+            param.put("status", status);
+            param.put("updateTime", OtherConstant.DATE_FORMAT.format(new Date()));
+            param.put("resourcePath", path);
+            param.put("resourceName", name);
+            return fileDao.updateFile(param);
         }
         return 0;
     }
@@ -297,19 +351,11 @@ public class FileServiceImpl implements FileService {
     public int deleteFile(HashMap<String, Object> param) {
         //dir or file;null dir;name and path
         String path = (String)param.get("path");
-        int delRes = 0;
-        if (param.get("fileName") instanceof ArrayList<?>){
-            List<String> nameList = (ArrayList<String>) param.get("fileName");
-            for (String fileName : nameList){
-                File current = deleteMethod(path, fileName);
-                if (current != null) {
-                    delRes += fileDao.deleteFile(current);
-                }
-            }
-        }else {
-            String fileName = (String) param.get("fileName");
-            File current = deleteMethod(path, fileName);
-            delRes = fileDao.deleteFile(current);
+        String[] name = (String[]) param.get("fileName");
+        Integer delRes = 0;
+        for (int i = 0; i<name.length; i++) {
+            File current = deleteMethod(root+path, name[i]);
+            delRes += fileDao.deleteFile(current);
         }
         return delRes;
     }
@@ -339,5 +385,12 @@ public class FileServiceImpl implements FileService {
     @Override
     public int deleteUnPassedFiles(Integer submitter, Integer status) {
         return fileDao.deleteFilesByStatus(submitter, status);
+    }
+
+    @Override
+    public List<File> checkMethod(String[] names, String path) {
+        ArrayList<File> files = new ArrayList<>();
+
+        return files;
     }
 }

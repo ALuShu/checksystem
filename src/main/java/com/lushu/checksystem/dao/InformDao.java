@@ -28,10 +28,17 @@ public interface InformDao {
 
     /**
      * 查询通知
-     * @param sendId
+     * @param publisher
      * @return
      */
-    List<Inform> selectInforms(String sendId);
+    List<Inform> selectInforms(String publisher);
+
+    /**
+     * 查询同一发布者通知
+     * @param param
+     * @return
+     */
+    List<Inform> selectInformsByPublisher(HashMap<String, Object> param);
 
     /**
      * 查询所有通知，分页
@@ -66,6 +73,13 @@ public interface InformDao {
      * @return
      */
     Integer countByType(Integer type);
+
+    /**
+     * 统计同发布者
+     * @param publisher
+     * @return
+     */
+    Integer countByPublisher(String publisher);
 
     /**
      * 根据条件返回统计

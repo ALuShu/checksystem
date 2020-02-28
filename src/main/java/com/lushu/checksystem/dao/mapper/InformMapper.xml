@@ -13,7 +13,15 @@
     <select id="selectInforms" parameterType="String" resultType="Inform">
         select *
         from sys_inform
-        where send_id = #{sendId}
+        where publisher = #{publisher}
+    </select>
+
+    <!-- selectInformsByPublisher：查询同一发布者通知，分页；return：List<Inform> -->
+    <select id="selectInformsByPublisher" parameterType="Map" resultType="Inform">
+        select *
+        from sys_inform
+        where publisher=#{publisher}
+        limit #{start},#{limit}
     </select>
 
     <!-- selectAllInforms：查询所有通知，分页；return：List<Inform> -->
@@ -35,7 +43,7 @@
     <select id="selectInformsBySort" parameterType="Map" resultType="Inform">
         select *
         from sys_inform i
-        inner join sys_user u on i.send_id = u.username
+        inner join sys_user u on i.publisher = u.username
         where i.type=#{type} and u.department=#{department}
         limit #{start},#{limit}
     </select>
@@ -57,16 +65,23 @@
     <select id="countBySort" resultType="Integer">
         select count(i.id)
         from sys_inform i
-        inner join sys_user u on i.send_id = u.username
+        inner join sys_user u on i.publisher = u.username
         where i.type=#{type} and u.department=#{department}
+    </select>
+
+    <!-- countByPublisher:根据发布人返回统计;return:Integer -->
+    <select id="countByPublisher" parameterType="String" resultType="Integer">
+        select count(id)
+        from sys_inform
+        where publisher=#{publisher}
     </select>
 
     <!-- addInform：批量发布通知；return：int -->
     <insert id="addInforms" parameterType="java.util.List">
-        insert into sys_inform (send_id, content, type, date, path)
+        insert into sys_inform (publisher, content, type, date, path)
         values
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.sendId},
+            (#{item.publisher},
             #{item.content},
             #{item.type},
             #{item.date},

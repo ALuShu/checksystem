@@ -6,6 +6,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -22,11 +23,12 @@ public interface FileService {
     PageBean<File> selectOldSubmitted(Integer submitter, int page, int limit);
 
     /**
+     * 查询最近批改
+     */
+    PageBean<File> selectRecent(Integer owner, int page, int limit, String modern);
+
+    /**
      * 展示系统文件列表
-     * @param path
-     * @param page
-     * @param limit
-     * @return
      */
     PageBean<Map<String, Object>> showFileList(String path, int page, int limit);
 
@@ -40,6 +42,11 @@ public interface FileService {
      * paramMap包含(Collection<MultipartFile> files, String path, Integer owner, Integer submitter)
      */
     int addFiles(Collection<MultipartFile> files, String path , Integer submitter);
+
+    /**
+     * 添加文件夹
+     */
+    Integer addDirectory(String name, String path, Integer owner);
 
     /**
      * 更新文件属性时，更新数据库相关记录，支持批量操作
@@ -62,4 +69,9 @@ public interface FileService {
      * 删除学生未通过的作业
      */
     int deleteUnPassedFiles(Integer submitter, Integer status);
+
+    /**
+     * 文档simHash查重，返回File集合中，每个File对象有一个都有一个映射记录着和其他文档的海明距离
+     */
+    List<File> checkMethod(String[] names, String path);
 }

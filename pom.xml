@@ -78,24 +78,6 @@
             <version>3.4.1</version>
         </dependency>
 
-        <!-- simHash包 -->
-        <dependency>
-            <groupId>com.xzixi.algorithm</groupId>
-            <artifactId>simhash-common</artifactId>
-            <version>1.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.xzixi.algorithm</groupId>
-            <artifactId>simhash-core</artifactId>
-            <version>1.1.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.xzixi.algorithm</groupId>
-            <artifactId>simhash-analyzer</artifactId>
-            <version>1.1.0</version>
-        </dependency>
-
-
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
@@ -117,6 +99,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.6</version>
+        </dependency>
+
 
         <!-- 解析.xls后缀1个jar包(也可以解析.doc) -->
         <dependency>
@@ -147,6 +135,12 @@
             <version>1.9.3</version>
         </dependency>
 
+        <!-- HanLP分词器 -->
+        <dependency>
+            <groupId>com.hankcs</groupId>
+            <artifactId>hanlp</artifactId>
+            <version>portable-1.7.6</version>
+        </dependency>
     </dependencies>
 
     <build>

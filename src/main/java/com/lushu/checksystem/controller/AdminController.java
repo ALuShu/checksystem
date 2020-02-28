@@ -195,9 +195,9 @@ public class AdminController {
      */
     @RequestMapping(value = "/informType", method = RequestMethod.GET)
     @ResponseBody
-    public Map inform(@RequestParam(value = "page", required = false) int page
-            ,@RequestParam(value = "limit", required = false) int limit
-            ,@RequestParam(required = false, value = "type") Integer type) {
+    public Map inform(@RequestParam int page
+            ,@RequestParam int limit
+            ,@RequestParam(required = false) Integer type) {
         Map<String, Object> informMap = new HashMap<>(4);
         PageBean<Inform> res = informService.selectInformsBySort(type, page, limit);
         informMap.put("data",res.getList());

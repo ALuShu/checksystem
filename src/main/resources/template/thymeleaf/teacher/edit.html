@@ -1,12 +1,112 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>通知编辑</title>
     <link rel="stylesheet" href="../layui/css/layui.css" type="text/css">
 </head>
-<body>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div class="layui-header layui-bg-gray">
 
+        <div class="layui-logo" style="font-size: 20px; color: #393D49; cursor: pointer" onclick="index()">作业查重系统教师端
+        </div>
+
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="/teacher/personal" style="color: #393D49">
+                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img"><span th:text="${current.realname}"></span>
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="javascript:;">基本资料</a></dd>
+                    <dd><a href="/teacher/edit">发布通知</a></dd>
+                    <dd><a href="/teacher/update">修改密码</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a id="logout" href="javascript:;" style="color: #393D49">注销</a></li>
+        </ul>
+    </div>
+
+    <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
+        <legend>编辑通知内容</legend>
+    </fieldset>
+    <form class="layui-form layui-form-pane" action="">
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">短输入框</label>
+            <div class="layui-input-inline">
+                <input type="text" name="username" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">短输入框</label>
+            <div class="layui-input-inline">
+                <input type="text" name="username" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">短输入框</label>
+            <div class="layui-input-inline">
+                <input type="text" name="username" lay-verify="required" placeholder="请输入" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <label class="layui-form-label">单行选择框</label>
+            <div class="layui-input-block">
+                <select name="interest" lay-filter="aihao">
+                    <option value=""></option>
+                    <option value="0">写作</option>
+                    <option value="1" selected="">阅读</option>
+                    <option value="2">游戏</option>
+                    <option value="3">音乐</option>
+                    <option value="4">旅行</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="layui-form-item" pane="">
+            <label class="layui-form-label">单选框</label>
+            <div class="layui-input-block">
+                <input type="radio" name="sex" value="1" title="必修" checked="">
+                <input type="radio" name="sex" value="0" title="选修">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">文本域</label>
+            <div class="layui-input-block">
+                <textarea placeholder="请输入内容" class="layui-textarea"></textarea>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <button class="layui-btn" lay-submit="" lay-filter="demo2">跳转式提交</button>
+        </div>
+    </form>
+</div>
+
+
+<!-- 方法 -->
+<script src="../webjars/jquery/3.4.1/jquery.js"></script>
 <script src="../layui/layui.js" type="text/javascript"></script>
+<script th:inline="none">
+    function index() {
+        window.location = "/teacher/index"
+    }
+
+    $('#logout').click(function () {
+        layer.confirm('确定退出系统吗',function () {
+            window.location="/logout";
+        })
+    });
+
+    layui.use(['form','table','element'], function () {
+        var form = layui.form
+            , element = layui.element
+            , table = layui.table;
+
+    });
+</script>
 </body>
 </html>

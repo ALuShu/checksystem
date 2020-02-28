@@ -11,33 +11,55 @@
 
     <div class="layui-header layui-bg-gray">
 
-        <div class="layui-logo" style="font-size: 20px; color: #393D49">作业查重系统教师端</div>
+        <div class="layui-logo" style="font-size: 20px; color: #393D49; cursor: pointer" onclick="index()">作业查重系统教师端
+        </div>
 
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
-                <a href="javascript:;" style="color: #393D49">
-                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
-                    贤心
+                <a href="/teacher/personal" style="color: #393D49">
+                    <img src="http://t.cn/RCzsdCq" class="layui-nav-img"><span th:text="${current.realname}"></span>
                 </a>
             </li>
-            <li class="layui-nav-item"><a href="" style="color: #393D49">退了</a></li>
+            <li class="layui-nav-item"><a id="logout" href="javascript:;" style="color: #393D49">注销</a></li>
         </ul>
     </div>
 
     <div class="layui-bg-green">
         <!-- 内容主体区域 -->
-        <div style="padding: 15px; width: 80%; margin: auto">
+        <div style="padding: 5px; width: 80%; margin: auto">
             <div class="layui-row layui-col-space5 layui-bg-gray">
                 <div class="layui-col-md12">
                     <div class="layui-row grid-demo">
 
-                        <div class="layui-col-md12 layui-form-item">
-                            <label class="layui-form-label">单行输入框</label>
+                        <!-- 搜索框 -->
+                        <div class="layui-col-md12" style="background: #00FF00; padding-top: 5px; margin: 0 auto">
+                            <form class="layui-form" action="" id="searchForm">
+                                <div class="layui-form-item">
+
+                                    <div class="layui-input-inline">
+                                        <select name="modules" lay-search="">
+                                            <option value="">选择搜索方式</option>
+                                            <option value="fileName">文件名</option>
+                                            <option value="directionName">文件夹名</option>
+                                            <option value="username">学号</option>
+                                            <option value="realname">姓名</option>
+                                        </select>
+                                    </div>
+                                    <div class="layui-input-inline" style="width: 30%">
+                                        <input type="text" name="keyword" lay-verify="require" autocomplete="off"
+                                               placeholder="输入关键词搜索文件或文件夹" class="layui-input">
+                                    </div>
+                                    <div class="layui-input-inline">
+                                        <button id="topSubmitBtn" type="submit" class="layui-btn layui-btn-warm" lay-submit=""
+                                                lay-filter="topSubmitBtn">搜索
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
 
-                        <div class="layui-col-md12" style="background: #00FF00; padding-top: 15px; padding-left: 20px">
-                            <!-- 面包屑导航 -->
-                            <div class="layui-col-md12 layui-form-item" style="padding-left: 20px">
+                        <!-- 面包屑导航 -->
+                        <div class="layui-col-md12 layui-form-item" style="padding-left: 20px">
                             <span id="view" class="layui-breadcrumb" lay-filter="breaddemo">
                                 <script id="bread" type="text/html">
                                     {{# console.log(d);}}
@@ -47,11 +69,21 @@
                                     {{# }); }}
                                 </script>
                             </span>
-                            </div>
                         </div>
 
-                        <div class="layui-col-md12" style="background: #1E9FFF">
-                            <!-- 数据表格 -->
+                        <!-- 头部工具栏 -->
+                        <div class="layui-btn-group demoTable">
+                            <button class="layui-btn" id="uploadBtn" data-type="uploadBtn">上传</button>
+                            <button class="layui-btn" id="newBtn" data-type="newBtn">创建</button>
+                            <button class="layui-btn" id="delBtn" data-type="delBtn">删除</button>
+                            <button class="layui-btn" id="renameBtn" data-type="renameBtn">重命名</button>
+                            <button class="layui-btn" id="downloadBtn" data-type="downloadBtn">下载</button>
+                            <button class="layui-btn" id="lookBtn" data-type="lookBtn">查看(查阅相关)</button>
+                            <button class="layui-btn" id="checkBtn" data-type="checkBtn">点击查重(及格相关)</button>
+                        </div>
+
+                        <!-- 数据表格 -->
+                        <div class="layui-col-md12">
                             <table id="test" class="layui-table" lay-filter="test"></table>
                         </div>
 
@@ -62,36 +94,353 @@
     </div>
 
 </div>
+
+
+<!-- 模板 -->
+<script type="text/html" id="FileDemo">
+    <form class="layui-form" action="" lay-filter="FileForm" id="FileForm" method="post">
+        <div class="layui-form-item">
+            <div class="layui-input-inline">
+                <input type="text" id="name" name="name" lay-verify="required" autocomplete="off" class="layui-input">
+            </div>
+        </div>
+        <!-- 隐藏提交按钮 -->
+        <button type="submit" lay-submit="" lay-filter="submitBtn" id="submitBtn" style="display: none">提交</button>
+    </form>
+</script>
+
+
+<!-- 方法 -->
+<script src="../webjars/jquery/3.4.1/jquery.js"></script>
 <script src="../layui/layui.js" type="text/javascript"></script>
 <script th:inline="none">
-    layui.use(['form','table'], function () {
-        var form = layui.form
-            ,table = layui.table;
 
-        var $ = layui.$, active = {
-            parseTable: function(){
-                table.init('parse-table-demo', { //转化静态表格
-                    //height: 'full-500'
-                });
+    function index() {
+        window.location = "/teacher/index"
+    }
+
+    $('#logout').click(function () {
+        layer.confirm('确定退出系统吗', function () {
+            window.location = "/logout";
+        })
+    });
+
+    function getNameColumn(data){
+        var column = new Array();
+        for (var i =0;i < data.length; i++){
+            column.push(data[i].name);
+        }
+        return column;
+    }
+
+    //layui官方方法
+    layui.use(['table', 'tree', 'util', 'element', 'laytpl', 'upload', 'form'], function () {
+        var table = layui.table
+            , upload = layui.upload
+            , layer = layui.layer
+            , element = layui.element
+            , form = layui.form
+            , laytpl = layui.laytpl;
+        let url = '/teacher/teacherList';
+        //用于与后端交互，异步更新url
+        let path = [];
+        //面包屑导航多一个root元素以便返回根目录
+        let breadArray = [];
+        let j = {"name": "root"};
+        breadArray.push(j);
+        let breadData = {
+            "bread": breadArray
+        };
+        let getTpl = bread.innerHTML
+            , view = document.getElementById('view');
+
+
+        //layui数据表格
+        table.render({
+            elem: '#test'
+            , url: url
+            , limit: 15
+            , height: 'full-195'
+            , page: {
+                layout: ['prev', 'page', 'next', 'skip', 'count']
+                , groups: 5
             }
+            , cols: [[
+                {type: 'checkbox', fixed: 'left'}
+                , {field: 'name', title: '文件名', sort: true, style: 'cursor: pointer;', event: 'setSign'}
+                , {field: 'date', title: '修改日期', width: 150, sort: true}
+                , {field: 'size', title: '文件大小', width: 120, sort: true}
+                , {field: 'type', title: '文件类型', width: 120}
+            ]]
+        });
+
+
+        //layui表格点击文件事件
+        table.on('tool(test)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'setSign') {
+                if (data.type === 'file') {
+                    layer.alert("暂不支持打开文件");
+                } else {
+                    //点击表格文件夹时，向path后放文件夹名字
+                    path.push(data.name);
+                    var j = {};
+                    //path栈顶元素放{'name':'这里'}，然后放到breadArray中
+                    j.name = path[path.length - 1];
+                    breadArray.push(j);
+                    breadData = {
+                        "bread": breadArray
+                    };
+                    //layui模板引擎，此处用于把breadArray遍历成面包屑导航
+                    laytpl(getTpl).render(breadData, function (html) {
+                        view.innerHTML = html;
+                    });
+                    //layui表格重载，根据新的path
+                    table.reload('test', {
+                        page: {
+                            curr: 1 //重新从第 1 页开始
+                        },
+                        where: { //设定异步数据接口的额外参数，任意设
+                            "path": (path.join('/') + '/').replace(/\/\//, '/')
+                        }
+                    });
+                }
+            }
+        });
+
+        //监听面包屑导航点击
+        window.breadOn = function (breadName) {
+            //breadArray会比path多放一个root元素在开头
+            breadArray = [];
+            //面包屑导航默认显示root/
+            var j = {"name": "root"};
+            breadArray.push(j);
+            //若点击root，则把path清空
+            if (breadName === 'root') {
+                path = [];
+            } else {
+                //否则i为点击的breadArray在path中的索引
+                var i = path.indexOf(breadName);
+                //如果点的是root后第1个，path清剩那1个，breadArray清剩root
+                if (i === 0) {
+                    path = [breadName];
+                    j = {};
+                    j.name = path[0];
+                    breadArray.push(j);
+                } else {
+                    //否则裁剪数组path，[0,i+1)；breadArray
+                    path = path.slice(0, i + 1);
+                    for (var x = 0; x < i + 1; x++) {
+                        j = {};
+                        j.name = path[x];
+                        breadArray.push(j);
+                    }
+                }
+            }
+            breadData = {
+                "bread": breadArray
+            };
+            laytpl(getTpl).render(breadData, function (html) {
+                view.innerHTML = html;
+            });
+
+            table.reload('test', {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: { //设定异步数据接口的额外参数，任意设
+                    "path": (path.join('/') + '/').replace(/\/\//, '/')
+                }
+            });
         };
 
-        $('.demoTable .layui-btn').on('click', function(){
+        //拖拽上传
+        upload.render({
+            elem: '#uploadBtn'
+            , url: '/teacher/uploadFile'
+            , method: 'post'
+            , done: function (res) {
+                if (res.code === 0 || res.code === 1 || res.code === -1 || res.code === 2) {
+                    alert(res.msg);
+                } else {
+                    alert("未知错误，请联系管理员")
+                }
+                table.reload('test', {
+                    page: {
+                        curr: 1 //重新从第 1 页开始
+                    },
+                    where: { //设定异步数据接口的额外参数，任意设
+                        "path": (path.join('/') + '/').replace(/\/\//, '/')
+                    }
+                });
+            }
+            , data: {//上传文件到当前文件夹附带path
+                "path": function () {
+                    return (path.join('/') + '/').replace(/\/\//, '/');
+                }
+            }
+            , accept: 'file'
+            , multiple: 'true'
+            , size: 10240
+        });
+
+
+        //初始化面包屑导航
+        laytpl(getTpl).render(breadData, function (html) {
+            view.innerHTML = html;
+        });
+
+
+        //layui自定义按钮事件监听，按钮须有data-type属性
+        var $ = layui.$, active = {
+            newBtn: function () { //创建按钮
+                $('#name').val("新建文件夹");
+                layer.open({
+                    skin: 'demo-class',
+                    content: $('#FileDemo').html(),
+                    title: '编辑文件夹名',
+                    btn: ['提交', '取消'],
+                    yes: function () {
+                        form.on('submit(submitBtn)', function (data) {
+                            //确认表单信息
+                            layer.alert(JSON.stringify(data.field), function (index) {
+                                $.ajax({
+                                    url:'/teacher/newFile',
+                                    data: {
+                                        "name": data.field.name,
+                                        "path": (path.join('/') + '/').replace(/\/\//, '/')
+                                    },
+                                    method: 'POST',
+                                    success:function (result) {
+                                        layer.close(index);
+                                        table.reload('test',{
+                                            page: {
+                                                curr: 1
+                                            }
+                                        })
+                                    }
+                                })
+                            });
+                            return false;
+                        });
+                        $('#submitBtn').trigger('click');
+                    }
+                });
+
+            }
+            , delBtn: function () { //删除按钮
+                var checkStatus = table.checkStatus('test')
+                    , data = checkStatus.data
+                    , nameColumn = getNameColumn(data);
+                layer.confirm('确认删除？', function(index){
+                        $.ajax({
+                            url:'/teacher/delFile',
+                            data:{
+                                "name":nameColumn,
+                                "path": (path.join('/') + '/').replace(/\/\//, '/')
+                            },
+                            method: 'POST',
+                            success:function (result) {
+                                layer.close(index);
+                                table.reload('test',{
+                                    page: {
+                                        curr: 1
+                                    }
+                                })
+                            }
+                        });
+                });
+                /*layer.msg('选中了：'+ data.length + ' 个');
+                layer.msg(checkStatus.isAll ? '全选': '未全选')*/
+            }
+            , renameBtn: function () { //重命名按钮
+                var checkStatus = table.checkStatus('test')
+                    , fileData = checkStatus.data;
+                layer.open({
+                    skin: 'demo-class',
+                    content: $('#FileDemo').html(),
+                    title: '重命名',
+                    btn: ['提交', '取消'],
+                    yes: function () {
+                        form.on('submit(submitBtn)', function (data) {
+                            //确认表单信息
+                            layer.alert(JSON.stringify(data.field), function (index) {
+                                $.ajax({
+                                    url:'/teacher/renameFile',
+                                    data:{
+                                        "name":data.field.name,
+                                        "path": (path.join('/')).replace(/\/\//, '/')+fileData[0].name
+                                    },
+                                    method: 'post',
+                                    success:function (result) {
+                                        layer.close(index);
+                                        table.reload('test',{
+                                            page: {
+                                                curr: 1
+                                            }
+                                        })
+                                    }
+                                })
+                            });
+                            return false;
+                        });
+                        $('#submitBtn').trigger('click');
+                    }
+                });
+            }
+            , downloadBtn: function () { //下载按钮
+                var checkStatus = table.checkStatus('test')
+                    , data = checkStatus.data;
+                if (data.length === 0){
+                    layer.msg("请选择要下载的文件")
+                }else {
+                    $.ajax({
+                        url: '/teacher/downloadFile',
+                        data: {
+                            "name": data.field.name,
+                            "path": (path.join('/')).replace(/\/\//, '/')
+                        },
+                        method: 'post',
+                        dataType: 'json',
+                        contentType: 'application/json;charset=utf-8',
+                        success: function (result) {
+                            //不知下载这里写啥
+                        }
+                    })
+                }
+            }
+            , lookBtn: function () { //查看按钮
+                var checkStatus = table.checkStatus('test')
+                    , data = checkStatus.data;
+                layer.alert(JSON.stringify(data));
+                //页面上显示office文档，后续待做
+            }
+            , checkBtn: function () { //查重按钮
+                var checkStatus = table.checkStatus('test')
+                    , fileData = checkStatus.data
+                    ,nameColumn = getNameColumn(fileData);
+                $.ajax({
+                    url: '/teacher/checkFile',
+                    data: {
+                        "name": nameColumn,
+                        "path": (path.join('/')).replace(/\/\//, '/')
+                    },
+                    method: 'post',
+                    dataType: 'json',
+                    contentType: 'application/json;charset=utf-8',
+                    success: function (result) {
+                        //返回重复率结果
+                    }
+                })
+            }
+
+        };
+        $('.layui-btn').on('click', function () {
             var type = $(this).data('type');
             active[type] ? active[type].call(this) : '';
         });
 
-        //监听提交
-        form.on('submit(demo1)', function(data){
-            layer.alert(JSON.stringify(data.field), {
-                title: '最终的提交信息'
-            })
-            return false;
-        });
 
-        //但是，如果你的HTML是动态生成的，自动渲染就会失效
-        //因此你需要在相应的地方，执行下述方法来进行渲染
-        form.render();
     });
 
 

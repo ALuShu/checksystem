@@ -13,7 +13,7 @@
 </div>
 
 <!-- 面包屑导航 -->
-<div>
+<div style="padding-top: 5px">
 <span id="view" class="layui-breadcrumb" lay-filter="breaddemo">
     <script id="bread" type="text/html">
         {{# console.log(d);}}
@@ -24,6 +24,7 @@
     </script>
 </span>
 </div>
+
 
 <!-- 数据表格 -->
 <table id="test" class="layui-table" lay-filter="test"></table>
@@ -58,7 +59,12 @@
         table.render({
             elem: '#test'
             , url: url
-            , height: 'full-20'
+            , height: 'full-170'
+            , limit:15
+            , page: {
+                layout: ['prev', 'page', 'next', 'skip','count']
+                ,groups: 5
+            }
             , cols: [[
                 {type: 'checkbox', fixed: 'left'}
                 , {field: 'name', title: '文件名', width: 340, sort: true, style: 'cursor: pointer;', event: 'setSign'}
@@ -66,11 +72,6 @@
                 , {field: 'size', title: '文件大小', width: 120, sort: true}
                 , {field: 'type', title: '文件类型', width: 120}
             ]]
-            , limit:15
-            , page: {
-                layout: ['prev', 'page', 'next', 'skip','count']
-                ,groups: 5
-            }
         });
 
 

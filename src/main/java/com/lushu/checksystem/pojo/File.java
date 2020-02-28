@@ -3,6 +3,8 @@ package com.lushu.checksystem.pojo;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigInteger;
+import java.util.HashMap;
 
 @Data
 public class File implements Serializable {
@@ -26,6 +28,11 @@ public class File implements Serializable {
   private Integer owner;
   private Integer submitter;
   private Integer status;
+  private BigInteger sign;
+  /**
+   * 海明距离{"文件名":1000001010101}
+   */
+  private HashMap<String, Integer> distances;
 
 
 }

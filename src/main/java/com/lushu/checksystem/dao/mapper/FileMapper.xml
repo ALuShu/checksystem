@@ -19,10 +19,14 @@
     </select>
 
     <!-- selectFileByOwner：查询同拥有人的所有文件；return：List<File> -->
-    <select id="selectFileByOwner" parameterType="Integer" resultType="File">
+    <select id="selectFileByOwner" parameterType="Map" resultType="File">
         select *
         from sys_file
-        where owner = #{owner}
+        where owner=#{owner}
+        <if test="modern != null and modern != ''">
+            order by #{modern} desc
+        </if>
+        limit #{start},#{limit}
     </select>
 
     <!-- selectFileByIds：根据id群查询文件群；return：List<File> -->
@@ -42,6 +46,13 @@
         where submitter = #{submitter}
     </select>
 
+    <!-- countByOwner：相同拥有者的总记录数；return：int -->
+    <select id="countByOwner" parameterType="Integer" resultType="Integer">
+        select count(id)
+        from sys_file
+        where owner = #{owner}
+    </select>
+
     <!-- addFile：增加文件；return：Integer -->
     <insert id="addFile" parameterType="File">
         insert into sys_file (name, path, size, update_time, type, permission, owner, submitter, status)
@@ -49,7 +60,7 @@
     </insert>
 
     <!-- updateFile：更新文件,作业状态；return：Integer -->
-    <update id="updateFile" parameterType="File">
+    <update id="updateFile" parameterType="Map">
         update sys_file
         <set>
             <if test="name != null and name != ''">
@@ -80,6 +91,12 @@
             </if>
             <if test="submitter != null and submitter != ''">
                 and submitter=#{submitter}
+            </if>
+            <if test="resourcePath != null and resourcePath != ''">
+                and path=#{resourcePath}
+            </if>
+            <if test="resourceName != null and resourceName != ''">
+                and name=#{resourceName}
             </if>
         </where>
     </update>
@@ -135,6 +152,11 @@
                 <trim prefix="status=case" suffix="end,">
                     <if test="item.status!=null">
                         when id=#{item.id} then #{item.status} else status
+                    </if>
+                </trim>
+                <trim prefix="sign=case" suffix="end,">
+                    <if test="item.sign!=null">
+                        when id=#{item.id} then #{item.sign} else sign
                     </if>
                 </trim>
             </foreach>
