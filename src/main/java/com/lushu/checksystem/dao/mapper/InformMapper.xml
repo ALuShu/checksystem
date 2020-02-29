@@ -42,9 +42,8 @@
     <!-- selectInformsBySort：根据条件查询通知；return：List<Inform> -->
     <select id="selectInformsBySort" parameterType="Map" resultType="Inform">
         select *
-        from sys_inform i
-        inner join sys_user u on i.publisher = u.username
-        where i.type=#{type} and u.department=#{department}
+        from sys_inform
+        where type=#{type} and department=#{department}
         limit #{start},#{limit}
     </select>
 
@@ -62,11 +61,10 @@
     </select>
 
     <!-- countBySort:根据条件返回统计;return:Integer -->
-    <select id="countBySort" resultType="Integer">
-        select count(i.id)
-        from sys_inform i
-        inner join sys_user u on i.publisher = u.username
-        where i.type=#{type} and u.department=#{department}
+    <select id="countBySort" resultType="Integer" parameterType="Inform">
+        select count(id)
+        from sys_inform
+        where type=#{type} and department=#{department}
     </select>
 
     <!-- countByPublisher:根据发布人返回统计;return:Integer -->
@@ -78,10 +76,12 @@
 
     <!-- addInform：批量发布通知；return：int -->
     <insert id="addInforms" parameterType="java.util.List">
-        insert into sys_inform (publisher, content, type, date, path)
+        insert into sys_inform (title, publisher, department,  content, type, date, path)
         values
         <foreach collection="list" item="item" index="index" separator=",">
-            (#{item.publisher},
+            (#{item.title},
+            #{item.publisher},
+            #{item.department},
             #{item.content},
             #{item.type},
             #{item.date},
@@ -93,8 +93,14 @@
     <update id="updateInform" parameterType="Inform">
         update sys_inform
         <set>
+            <if test="title != null and title != ''">
+                title=#{title},
+            </if>
             <if test="content != null and content != ''">
                 content=#{content},
+            </if>
+            <if test="department != null and department != ''">
+                department=#{department},
             </if>
             <if test="date != null and date != ''">
                 date=#{date},

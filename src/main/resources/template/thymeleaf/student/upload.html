@@ -140,7 +140,8 @@
                             curr: 1 //重新从第 1 页开始
                         },
                         where: { //设定异步数据接口的额外参数，任意设
-                            "path": (path.join('/') + '/').replace(/\/\//, '/')
+                            //"path": (path.join('/') + '/').replace(/\/\//, '/')
+                            "path": path.join('\\')+ '\\'
                         }
                     });
                 }
@@ -188,7 +189,8 @@
                     curr: 1 //重新从第 1 页开始
                 },
                 where: { //设定异步数据接口的额外参数，任意设
-                    "path": (path.join('/') + '/' ).replace(/\/\//, '/')
+                    "path": path.join('\\')+ '\\'
+                    //"path": (path.join('/') + '/' ).replace(/\/\//, '/')
                 }
             });
         };
@@ -209,13 +211,14 @@
                         curr: 1 //重新从第 1 页开始
                     },
                     where: { //设定异步数据接口的额外参数，任意设
-                        "path": (path.join('/') + '/').replace(/\/\//, '/')
+                        //"path": (path.join('/') + '/').replace(/\/\//, '/')
+                        "path": path.join('\\')+ '\\'
                     }
                 });
             }
             ,data:{//上传文件到当前文件夹附带path
                 "path":function () {
-                    return (path.join('/') + '/').replace(/\/\//, '/');
+                    return path.join('\\')+ '\\'
                 }
             }
             ,accept: 'file'

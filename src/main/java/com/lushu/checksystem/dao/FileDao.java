@@ -22,10 +22,18 @@ public interface FileDao {
 
     /**
      * 检查数据库中是否有相同记录
-     * @param target
+     * @param path
+     * @param name
      * @return
      */
-    File checkFile(File target);
+    File checkFile(@Param("name")String name, @Param("path")String path);
+
+    /**
+     * 同一目录下的所有File对象
+     * @param path
+     * @return
+     */
+    List<File> checkFiles(String path);
 
     /**
      * 查询同提交人的所有文件

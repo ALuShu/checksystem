@@ -11,6 +11,7 @@ import com.lushu.checksystem.service.InformService;
 import com.lushu.checksystem.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -24,9 +25,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author lushu
@@ -37,6 +36,8 @@ import java.util.Map;
 @RequestMapping("/teacher")
 public class TeacherController {
 
+    @Value("${checksystem.root}")
+    private String realPath;
     private String root;
     private User user = new User();
     private FileService fileService;
@@ -60,7 +61,7 @@ public class TeacherController {
         }else {
             user = (User) a;
             model.addAttribute("current", user);
-            root = user.getUsername() + "_" + user.getRealname() + "/";
+            root = user.getUsername() + "_" + user.getRealname()+"\\";
             return "/teacher/index";
         }
     }
@@ -160,9 +161,6 @@ public class TeacherController {
     @ResponseBody
     public Map upload(HttpServletRequest request, @RequestParam("path") String path) {
         Map<String, Object> json = new HashMap<>();
-        if (path == null || "/".equals(path)){
-            path = root;
-        }
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -173,7 +171,7 @@ public class TeacherController {
             return json;
         }
         Collection<MultipartFile> files = fileMap.values();
-        int res = fileService.addFiles(files, path, id);
+        int res = fileService.addFiles(files, root+path, id);
         if (res == fileMap.size()){
             json.put("code", 1);
             json.put("msg", "上传成功！");
@@ -197,11 +195,11 @@ public class TeacherController {
     @ResponseBody
     public Map newFile(@RequestParam String name, @RequestParam String path) {
         Map<String, Object> json = new HashMap<>();
-        if (path == null || "/".equals(path)){
+        if("\\".equals(path)){
             path = root;
         }
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        int res = fileService.addDirectory(name, path, user.getId());
+        int res = fileService.addDirectory(name, root+path, user.getId());
         if (res == 1){
             json.put("code", 1);
             json.put("msg", "创建成功！");
@@ -220,9 +218,6 @@ public class TeacherController {
     @ResponseBody
     public Map delFile(@RequestParam(value = "name[]") String[] name, @RequestParam String path) {
         Map<String, Object> json = new HashMap<>();
-        if (path == null || "/".equals(path)){
-            path = root;
-        }
         HashMap<String, Object> param = new HashMap<>();
         param.put("fileName", name);
         param.put("path", root+path);
@@ -245,12 +240,13 @@ public class TeacherController {
     @ResponseBody
     public Map renameFile(@RequestParam String name, @RequestParam String path) {
         Map<String, Object> json = new HashMap<>();
-        int index = path.lastIndexOf("/");
+        path = root + path;
+        int index = path.lastIndexOf("\\");
         String tmpPath = path.substring(0, index);
         String tmpName = path.substring(index+1);
         HashMap<String, Object> param = new HashMap<>();
         param.put("newName", name);
-        param.put("resourcePath", root+tmpPath);
+        param.put("resourcePath", tmpPath);
         param.put("resourceName", tmpName);
         int res = fileService.updateFiles(param, BasicConstant.FileAction.RENAME.getString());
         if (res == 1){
@@ -299,16 +295,6 @@ public class TeacherController {
         return json;
     }
 
-    /**
-     * 个人中心最近通知(查看更多)
-     */
-    @RequestMapping(value = "/recentInforms", method = RequestMethod.GET)
-    @ResponseBody
-    public Map recentInforms(){
-        Map<String, Object> json = new HashMap<>();
-        return json;
-    }
-
 
     /**
      * 个人中心最近提交owner,倒数id
@@ -326,6 +312,50 @@ public class TeacherController {
         return json;
     }
 
+
+    /**
+     * 文件下载
+     */
+    @RequestMapping(value = "/downloadFile", method = RequestMethod.GET)
+    public ResponseEntity<byte[]> download(HttpServletRequest request, @RequestParam String name, @RequestParam String path) throws IOException {
+        String real = realPath+root+path;
+        java.io.File file = new java.io.File(real, name);
+        HttpHeaders headers = new HttpHeaders();
+        String downloadFileName = null;
+        downloadFileName = new String(name.getBytes("UTF-8"), "iso-8859-1");
+        headers.setContentDispositionFormData("attachment", downloadFileName);
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+        return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.CREATED);
+    }
+
+    /**
+     * 教师端作业查重
+     */
+    @RequestMapping(value = "/checkFile", method = RequestMethod.POST)
+    @ResponseBody
+    public Map checkFile(@RequestParam(value = "name[]") String[] name, @RequestParam String path){
+        HashMap<String,Object> resMap = new HashMap<>();
+        List<File> resFiles = fileService.checkMethod(name, root+path);
+        resMap.put("code",0);
+        resMap.put("msg","查重成功");
+        resMap.put("count",resFiles.size());
+        resMap.put("data",resFiles);
+        return resMap;
+    }
+
+
+    /**
+     * 个人中心最近通知(查看更多)
+     */
+    @RequestMapping(value = "/recentInforms", method = RequestMethod.GET)
+    @ResponseBody
+    public Map recentInforms(){
+        Map<String, Object> json = new HashMap<>();
+        return json;
+    }
+
+
     /**
      * 个人中心最近提交(查看更多)
      */
@@ -338,44 +368,30 @@ public class TeacherController {
 
 
     /**
-     * 文件下载
-     */
-    @RequestMapping(value = "/download", method = RequestMethod.GET)
-    public ResponseEntity<byte[]> download(HttpServletRequest request, String filename) throws IOException {
-        String realPath = request.getServletContext().getRealPath("/download");
-        java.io.File file = new java.io.File(realPath, filename);
-        HttpHeaders headers = new HttpHeaders();
-        String downloadFileName = null;
-        downloadFileName = new String(filename.getBytes("UTF-8"), "iso-8859-1");
-        headers.setContentDispositionFormData("attachment", downloadFileName);
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-
-        return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.CREATED);
-    }
-
-    /**
-     * 教师端作业查重
-     */
-    @RequestMapping(value = "/checkFile", method = RequestMethod.POST)
-    public void checkFile(@RequestParam(value = "name[]") String[] name, @RequestParam String path){
-
-    }
-
-
-    /**
      * 教师端作业文件更新
      */
     @RequestMapping(value = "/updateWork", method = RequestMethod.POST)
     public void updateWork(){}
 
 
-
-
-
     /**
      * 教师端通知发布
      */
     @RequestMapping(value = "/push", method = RequestMethod.POST)
-    public void pushInform(){}
+    @ResponseBody
+    public Map pushInform(Inform inform){
+        HashMap<String,Object> resMap = new HashMap<>();
+        List<Inform> informs = new ArrayList<>();
+        informs.add(inform);
+        Integer updRes = informService.addInforms(informs);
+        if (updRes == 1){
+            resMap.put("code",0);
+            resMap.put("msg","发布成功");
+        }else {
+            resMap.put("code",1);
+            resMap.put("msg","发布失败");
+        }
+        return resMap;
+    }
 
 }

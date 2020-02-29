@@ -98,7 +98,8 @@
                     //layui表格重载，根据新的path
                     table.reload('test', {
                         where: { //设定异步数据接口的额外参数，任意设
-                            "path": ('/' + path.join('/') + '/').replace(/\/\//, '/')
+                            "path": path.join('\\')+ '\\'
+                            //"path": ('/' + path.join('/') + '/').replace(/\/\//, '/')
                         }
                         ,page: {
                             curr: 1 //重新从第 1 页开始
@@ -146,7 +147,8 @@
 
             table.reload('test', {
                 where: { //设定异步数据接口的额外参数，任意设
-                    "path": ('/' + path.join('/') + '/').replace(/\/\//, '/')
+                    "path": path.join('\\')+ '\\'
+                    //"path": ('/' + path.join('/') + '/').replace(/\/\//, '/')
                 }
             });
         };

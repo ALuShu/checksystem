@@ -1,12 +1,15 @@
 package com.lushu.checksystem.service.impl;
 
+import com.lushu.checksystem.constant.OtherConstant;
 import com.lushu.checksystem.dao.InformDao;
 import com.lushu.checksystem.pojo.Inform;
 import com.lushu.checksystem.pojo.PageBean;
 import com.lushu.checksystem.service.InformService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,6 +24,8 @@ import java.util.List;
 @Slf4j
 public class InformServiceImpl implements InformService {
 
+    @Value("${checksystem.root}")
+    private String root;
     private InformDao informDao;
     public InformServiceImpl(InformDao informDao) {
         this.informDao = informDao;
@@ -95,7 +100,10 @@ public class InformServiceImpl implements InformService {
         }else {
             String tmpDepartment = department[0];
             map.put("department", tmpDepartment);
-            int total = informDao.countBySort(type, tmpDepartment);
+            Inform tmpInform = new Inform();
+            tmpInform.setType(type);
+            tmpInform.setDepartment(tmpDepartment);
+            int total = informDao.countBySort(tmpInform);
             pageBean.setTotalRecord(total);
             if (total % limit == 0) {
                 pageBean.setTotalPage(total / limit);
@@ -114,6 +122,11 @@ public class InformServiceImpl implements InformService {
 
     @Override
     public Integer addInforms(List<Inform> list) {
+        for (int i =0;i < list.size(); i++){
+            Inform current = list.get(i);
+            current.setPath(root+current.getPath());
+            current.setDate(OtherConstant.DATE_FORMAT.format(new Date()));
+        }
         return informDao.addInforms(list);
     }
 

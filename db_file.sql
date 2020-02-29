@@ -51,7 +51,7 @@ CREATE TABLE `sys_file`  (
   `owner` int(10) NOT NULL COMMENT '拥有者id',
   `submitter` int(10) NULL DEFAULT NULL COMMENT '提交人id，文件夹为null',
   `status` int(2) NULL DEFAULT NULL COMMENT '作业文件状态;0表示未查；2表示已查；1表示通过；-1表示未通过',
-  `sign` bigint(64) NULL DEFAULT NULL COMMENT '文档指纹',
+  `sign` varchar(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '文档指纹',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `owner_index`(`owner`) USING BTREE,
   INDEX `submitter_index`(`submitter`) USING BTREE,
@@ -64,7 +64,9 @@ CREATE TABLE `sys_file`  (
 DROP TABLE IF EXISTS `sys_inform`;
 CREATE TABLE `sys_inform`  (
   `id` int(10) NOT NULL AUTO_INCREMENT COMMENT '通知id',
+  `title` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '通知标题',
   `publisher` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '发布者',
+  `department` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '通知到的系别',
   `content` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '通知内容',
   `type` tinyint(1) NOT NULL COMMENT '0为选修，1为必修',
   `date` datetime(0) NOT NULL COMMENT '发布时间',

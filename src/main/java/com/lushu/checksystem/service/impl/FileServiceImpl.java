@@ -8,6 +8,8 @@ import com.lushu.checksystem.dao.UserDao;
 import com.lushu.checksystem.pojo.File;
 import com.lushu.checksystem.pojo.PageBean;
 import com.lushu.checksystem.service.FileService;
+import com.lushu.checksystem.util.SimHash;
+import com.lushu.checksystem.util.WordUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -78,6 +80,7 @@ public class FileServiceImpl implements FileService {
     public PageBean<Map<String, Object>> showFileList(String path, int page, int limit) {
         List<Map<String, Object>> fileList = new ArrayList<>();
         try(DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(root+path))) {
+            List<File> files = fileDao.checkFiles(root+path);
             for (Path pathObj : directoryStream) {
                 BasicFileAttributes attrs = Files.readAttributes(pathObj, BasicFileAttributes.class);
                 Map<String, Object> fileItem = new HashMap<>(4);
@@ -85,6 +88,12 @@ public class FileServiceImpl implements FileService {
                 fileItem.put("date", OtherConstant.DATE_FORMAT.format(new Date(attrs.lastModifiedTime().toMillis())));
                 fileItem.put("size", attrs.size());
                 fileItem.put("type", attrs.isDirectory() ? "dir" : "file");
+                for (File file : files){
+                    if (file.getName().equals(pathObj.getFileName().toString())){
+                        fileItem.put("status", file.getStatus());
+                        break;
+                    }
+                }
                 fileList.add(fileItem);
             }
             int start = (page-1)*limit;
@@ -134,7 +143,7 @@ public class FileServiceImpl implements FileService {
             String ownerUsername = path.substring(0,4);
             if (files.size() == 1){
             File preFile = addMethod(fileIterator.next(), new File(), root+path, ownerUsername, submitter);
-            File isExist = fileDao.checkFile(preFile);
+            File isExist = fileDao.checkFile(preFile.getName(), preFile.getPath());
             if (isExist == null){
                 return (preFile!=null) ? fileDao.addFile(preFile) : -1;
             }else {
@@ -233,7 +242,7 @@ public class FileServiceImpl implements FileService {
         if (BasicConstant.FileAction.RENAME.getString().equals(action)){
             String path = (String) updateParam.get("resourcePath");
             String oldName = (String) updateParam.get("resourceName");
-            Path resource = Paths.get(root,path+oldName);
+            Path resource = Paths.get(root,path+"\\"+oldName);
             String newName = (String) updateParam.get("newName");
             try {
                 if (Files.exists(resource)) {
@@ -241,7 +250,7 @@ public class FileServiceImpl implements FileService {
                     Files.move(resource, resource.resolveSibling(newName));
                     param.put("name", newName);
                     param.put("updateTime", OtherConstant.DATE_FORMAT.format(new Date()));
-                    param.put("resourcePath", path);
+                    param.put("resourcePath", root+path+"\\");
                     param.put("resourceName", oldName);
                     return fileDao.updateFile(param);
                 }
@@ -390,7 +399,34 @@ public class FileServiceImpl implements FileService {
     @Override
     public List<File> checkMethod(String[] names, String path) {
         ArrayList<File> files = new ArrayList<>();
-
+        ArrayList<SimHash> hashes = new ArrayList<>();
+        String pathParam = root + path;
+        for (int i = 0; i < names.length; i++){
+            File tmpFile = fileDao.checkFile(names[i], pathParam);
+            try {
+                SimHash tmpHash = new SimHash(WordUtil.readWord(pathParam+"\\"+names[i]), 64);
+                String sign = tmpHash.strSimHash;
+                tmpFile.setSign(sign);
+                tmpFile.setStatus(DatabaseConstant.File.CHECKED.getFlag());
+                hashes.add(tmpHash);
+                files.add(tmpFile);
+            } catch (IOException e) {
+                log.error("simHash出错,检查文件是否存在",e);
+            }
+        }
+        //更新sign字段
+        Integer updRes = fileDao.updateFiles(files);
+        //存放海明距离
+        for (int i = 0; i < files.size()-1; i++){
+            HashMap<String, Integer> distanceMap = new HashMap<>();
+            String currentSign = files.get(i).getSign().toString();
+            for (int j = i+1; j < files.size(); j++){
+                String compareSign = files.get(j).getSign().toString();
+                int distance = hashes.get(i).getDistance(currentSign, compareSign);
+                distanceMap.put(files.get(j).getName(),distance);
+            }
+            files.get(i).setDistances(distanceMap);
+        }
         return files;
     }
 }

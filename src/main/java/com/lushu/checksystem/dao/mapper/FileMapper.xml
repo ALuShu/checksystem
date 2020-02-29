@@ -4,10 +4,17 @@
 
 
     <!-- checkFile：检查数据库中是否有相同记录；return：File -->
-    <select id="checkFile" parameterType="File" resultType="File">
+    <select id="checkFile" resultType="File">
         select *
         from sys_file
         where name=#{name} and path=#{path}
+    </select>
+
+    <!-- checkFiles：同一目录下所有File对象；return：List<File> -->
+    <select id="checkFiles" parameterType="String" resultType="File">
+        select *
+        from sys_file
+        where path=#{path}
     </select>
 
     <!-- selectFileBySubmitter：查询同提交人的所有文件；return：List<File> -->

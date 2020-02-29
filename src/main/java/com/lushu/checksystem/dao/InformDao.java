@@ -2,7 +2,6 @@ package com.lushu.checksystem.dao;
 
 import com.lushu.checksystem.pojo.Inform;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -83,11 +82,10 @@ public interface InformDao {
 
     /**
      * 根据条件返回统计
-     * @param type
-     * @param department
+     * @param inform
      * @return
      */
-    Integer countBySort(@Param("type")Integer type, @Param("department")String department);
+    Integer countBySort(Inform inform);
 
     /**
      * 批量发布通知

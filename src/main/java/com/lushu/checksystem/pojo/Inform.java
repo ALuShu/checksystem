@@ -8,7 +8,9 @@ import java.io.Serializable;
 public class Inform implements Serializable {
 
   private Integer id;
+  private String title;
   private String publisher;
+  private String department;
   private String content;
   private String date;
   private String path;
