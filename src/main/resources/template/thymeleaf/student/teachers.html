@@ -32,11 +32,11 @@
                 </div>
                 <div class="layui-inline" style="width: 80%">
                     <div class="layui-input-inline" style="width: 90%">
-                        <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="输入教师姓名"
+                        <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="输入教师工号"
                                class="layui-input">
                     </div>
                     <div class="layui-input-inline" style="width: 5%">
-                        <button type="submit" class="layui-btn layui-btn-warm" lay-submit="" lay-filter="searchBtn">搜索
+                        <button type="submit" class="layui-btn" lay-submit="" lay-filter="searchBtn"><i class="layui-icon layui-icon-search"></i>
                         </button>
                     </div>
                 </div>
@@ -54,28 +54,43 @@
         </ul>
     </div>
 
-    <!-- 结果表格 -->
-    <table id="single" class="layui-table" th:if="${res} != null">
-        <thead>
-            <tr>
-                <th>教师名称</th>
-                <th>教师工号</th>
-                <th>教师系别</th>
-                <th>最近登录时间</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr style="cursor: pointer;" onclick="openSingle()">
-                <td><span th:text="${res.getRealname()}"></span> </td>
-                <td><span th:text="${res.getUsername()}"></span></td>
-                <td><span th:text="${res.getDepartment()}"></span></td>
-                <td><span th:text="${res.getLastLoginTime()}"></span></td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="layui-bg-green">
+        <!-- 内容主体区域 -->
+        <div style="padding: 5px; width: 80%; margin: auto">
+            <div class="layui-row layui-col-space5 layui-bg-gray">
+                <div class="layui-col-md12">
+                    <div class="layui-row grid-demo">
 
-    <!-- 数据表格 -->
-    <table id="teachers" class="layui-table" th:if="${res} == null" lay-filter="teachers"></table>
+                        <!-- 结果表格 -->
+                        <table id="single" class="layui-table" style="" th:if="${res} != null">
+                            <thead>
+                            <tr>
+                                <th>教师名称</th>
+                                <th>教师工号</th>
+                                <th>教师系别</th>
+                                <th>最近登录时间</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr style="cursor: pointer;" onclick="openSingle()">
+                                <td><span th:text="${res.getRealname()}"></span> </td>
+                                <td><span th:text="${res.getUsername()}"></span></td>
+                                <td><span th:text="${res.getDepartment()}"></span></td>
+                                <td><span th:text="${res.getLastLoginTime()}"></span></td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- 数据表格 -->
+                        <table id="teachers" class="layui-table" th:if="${res} == null" lay-filter="teachers"></table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 
 </div>
 
@@ -99,7 +114,7 @@
     }
 
     //layui官方方法
-    layui.use('table', function () {
+    layui.use(['table','element'], function () {
         var table = layui.table
             , element = layui.element;
 
@@ -108,7 +123,7 @@
             elem: '#teachers'
             , url: '/student/showTeachers'
             ,limit:15
-            ,height:'full-195'
+            ,height:'full-100'
             ,page: {
                 layout: ['prev', 'page', 'next', 'skip','count']
                 ,groups: 5

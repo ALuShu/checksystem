@@ -19,10 +19,10 @@
             <form class="layui-form" action="/student/search" id="searchForm">
                 <div class="layui-inline" style="width: 100%">
                     <div class="layui-input-inline" style="width: 90%">
-                        <input type="text" name="username" autocomplete="off" placeholder="输入教师姓名" class="layui-input">
+                        <input type="text" name="username" autocomplete="off" placeholder="输入教师工号" class="layui-input">
                     </div>
                     <div class="layui-input-inline" style="width: 5%">
-                        <button type="submit" class="layui-btn layui-btn-warm" lay-submit="" lay-filter="searchBtn">搜索</button>
+                        <button type="submit" class="layui-btn" lay-submit="" lay-filter="searchBtn"><i class="layui-icon layui-icon-search"></i></button>
                     </div>
                 </div>
             </form>
@@ -41,7 +41,7 @@
 
     <!-- 内容主体区域 -->
     <div class="layui-bg-green">
-        <div style="padding: 15px; width: 80%; margin: auto">
+        <div style="padding: 5px; width: 80%; margin: auto">
             <div class="layui-row layui-col-space5 layui-bg-gray">
                 <div class="layui-col-md12">
                     <div class="layui-row grid-demo">
@@ -72,28 +72,13 @@
                                         <option value="游戏系">游戏系</option>
                                     </select>
                                 </div>
-                                <!--<div class="layui-inline">
-                                    <select name="teacher" lay-verify="">
-                                        <option value="realname" selected>教师姓名</option>
-                                        <option value="username">教师工号</option>
-                                    </select>
-                                </div>
-                                <div class="layui-input-inline" style="width: 30%">
-                                    <input type="text" name="title" lay-verify="title" autocomplete="off"
-                                           placeholder="输入教师姓名" class="layui-input">
-                                </div>
-                                <div class="layui-inline">
-                                    <button lay-filter="searchBtn" type="button" lay-submit class="layui-btn layui-btn-primary">
-                                        <i class="layui-icon layui-icon-search"></i>
-                                    </button>
-                                </div>-->
                             </form>
 
                             <!-- 数据表格 -->
                             <table class="layui-table" lay-filter="test" lay-data="{
                                        url:'/student/showInforms?type='+typeSelect+'&department='+departmentSelect
                                        ,limit:15
-                                       ,height:'full-195'
+                                       ,height:'full-130'
                                        ,page: {
                                            layout: ['prev', 'page', 'next', 'skip','count']
                                            ,groups: 5
@@ -102,7 +87,7 @@
                                        ,initSort:{field: 'date',type: 'desc'}}">
                                 <thead>
                                 <tr>
-                                    <th lay-data="{field: 'sendId', width:80, event: 'showUser', style:'cursor: pointer;'}">
+                                    <th lay-data="{field: 'publisher', width:80, event: 'showUser', style:'cursor: pointer;'}">
                                         发布人
                                     </th>
                                     <th lay-data="{field: 'content', width :400, event: 'showInform', style:'cursor: pointer;'}">

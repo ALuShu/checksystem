@@ -280,7 +280,7 @@ public class StudentController {
             PageBean<File> res = fileService.selectOldSubmitted(user.getId(), page, limit);
             map.put("data", res.getList());
             map.put("code", 0);
-            map.put("msg", "");
+            map.put("msg", "你还没提交过作业哦");
             map.put("count", res.getTotalRecord());
             return map;
         }

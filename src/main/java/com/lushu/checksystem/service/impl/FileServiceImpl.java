@@ -250,7 +250,7 @@ public class FileServiceImpl implements FileService {
                     Files.move(resource, resource.resolveSibling(newName));
                     param.put("name", newName);
                     param.put("updateTime", OtherConstant.DATE_FORMAT.format(new Date()));
-                    param.put("resourcePath", root+path+"\\");
+                    param.put("resourcePath", root+path);
                     param.put("resourceName", oldName);
                     return fileDao.updateFile(param);
                 }

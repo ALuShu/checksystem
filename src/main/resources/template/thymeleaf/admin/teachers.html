@@ -9,8 +9,10 @@
 <body>
 <!-- 头部工具栏 -->
 <script type="text/html" id="toolbarDemo">
-    <div class="layui-btn-container">
-        <button class="layui-btn layui-btn-sm" lay-event="getCheckData">获取选中行数据</button>
+    <div class="layui-btn-group">
+        <button id="uploadBtn" class="layui-btn layui-btn-sm " lay-event="excelToAdd"><i class="layui-icon layui-icon-upload-drag"></i>表格添加</button>
+        <button class="layui-btn layui-btn-sm " lay-event="newUser">新增</button>
+        <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delUsers">删除</button>
     </div>
 </script>
 
@@ -25,7 +27,6 @@
            }
            ,id:'demo'
            ,even: true
-           ,initSort:{field: 'createTime',type: 'desc'}
            ,toolbar: '#toolbarDemo'}">
     <thead>
     <tr>
@@ -201,7 +202,6 @@
                     },
                     end: function () {
                         $("#editIfram").css("display", "none");
-                        location.reload();
                     }
                 });
             }

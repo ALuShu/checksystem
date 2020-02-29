@@ -36,7 +36,7 @@
                     <div class="layui-card">
                         <div class="layui-card-header">标题待定</div>
                         <div class="layui-card-body">
-                            <span th:text="${detail.getContent()}"></span>
+                            <span th:text="${detail.content}"></span>
                         </div>
                     </div>
                 </div>
@@ -45,7 +45,7 @@
                     <div class="layui-card">
                         <div class="layui-card-header">发布人</div>
                         <div class="layui-card-body" style="height: 50px">
-                            <span onclick="clickTeahcer()" style="cursor: pointer;" th:text="${detail.getSendId()}" ></span>
+                            <span onclick="clickTeahcer()" style="cursor: pointer;" th:text="${detail.publisher}" ></span>
                         </div>
                     </div>
                 </div>
@@ -53,8 +53,8 @@
                     <div class="layui-card">
                         <div class="layui-card-header">类型</div>
                         <div class="layui-card-body" style="height: 50px">
-                            <span th:if="${detail.getType()}==1">必修</span>
-                            <span th:if="${detail.getType()}==0">选修</span>
+                            <span th:if="${detail.type}==1">必修</span>
+                            <span th:if="${detail.type}==0">选修</span>
                         </div>
                     </div>
                 </div>
@@ -62,7 +62,7 @@
                     <div class="layui-card">
                         <div class="layui-card-header">发布时间</div>
                         <div class="layui-card-body" style="height: 50px">
-                            <span th:text="${detail.getDate()}"></span>
+                            <span th:text="${detail.date}"></span>
                         </div>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
                     <div class="layui-card">
                         <div class="layui-card-header">路径</div>
                         <div class="layui-card-body" style="height: 50px">
-                            <span id="clickPath" onclick="clickPath()" style="cursor: pointer;" th:text="${detail.getPath()}"></span>
+                            <span id="clickPath" onclick="clickPath()" style="cursor: pointer;" th:text="${detail.path}"></span>
                         </div>
                     </div>
                 </div>

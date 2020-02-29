@@ -133,7 +133,7 @@ public class TeacherController {
             , @RequestParam(required = false) int limit
             , @RequestParam(required = false) String path) {
         Map<String, Object> res = new HashMap<>();
-        if (path == null || "/".equals(path)){
+        if("\\".equals(path) || path == null){
             path = root;
         }else {
             path = root + path;
@@ -195,11 +195,13 @@ public class TeacherController {
     @ResponseBody
     public Map newFile(@RequestParam String name, @RequestParam String path) {
         Map<String, Object> json = new HashMap<>();
-        if("\\".equals(path)){
+        if("\\".equals(path) || path == null){
             path = root;
+        }else {
+            path = root + path;
         }
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        int res = fileService.addDirectory(name, root+path, user.getId());
+        int res = fileService.addDirectory(name, path, user.getId());
         if (res == 1){
             json.put("code", 1);
             json.put("msg", "创建成功！");
@@ -219,8 +221,13 @@ public class TeacherController {
     public Map delFile(@RequestParam(value = "name[]") String[] name, @RequestParam String path) {
         Map<String, Object> json = new HashMap<>();
         HashMap<String, Object> param = new HashMap<>();
+        if("\\".equals(path) || path == null){
+            path = root;
+        }else {
+            path = root + path;
+        }
         param.put("fileName", name);
-        param.put("path", root+path);
+        param.put("path", path);
         int res = fileService.deleteFile(param);
         if (res == 1){
             json.put("code", 1);
@@ -242,7 +249,12 @@ public class TeacherController {
         Map<String, Object> json = new HashMap<>();
         path = root + path;
         int index = path.lastIndexOf("\\");
-        String tmpPath = path.substring(0, index);
+        String tmpPath ;
+        if(index == path.indexOf("\\")+1){
+            tmpPath = path.substring(0, index);
+        }else {
+            tmpPath = path.substring(0, index)+"\\";
+        }
         String tmpName = path.substring(index+1);
         HashMap<String, Object> param = new HashMap<>();
         param.put("newName", name);
@@ -346,6 +358,27 @@ public class TeacherController {
 
 
     /**
+     * 教师端通知发布
+     */
+    @RequestMapping(value = "/push", method = RequestMethod.POST)
+    @ResponseBody
+    public Map pushInform(Inform inform){
+        HashMap<String,Object> resMap = new HashMap<>();
+        List<Inform> informs = new ArrayList<>();
+        informs.add(inform);
+        Integer updRes = informService.addInforms(informs);
+        if (updRes == 1){
+            resMap.put("code",0);
+            resMap.put("msg","发布成功");
+        }else {
+            resMap.put("code",1);
+            resMap.put("msg","发布失败");
+        }
+        return resMap;
+    }
+
+
+    /**
      * 个人中心最近通知(查看更多)
      */
     @RequestMapping(value = "/recentInforms", method = RequestMethod.GET)
@@ -368,30 +401,9 @@ public class TeacherController {
 
 
     /**
-     * 教师端作业文件更新
+     * office展示
      */
-    @RequestMapping(value = "/updateWork", method = RequestMethod.POST)
-    public void updateWork(){}
-
-
-    /**
-     * 教师端通知发布
-     */
-    @RequestMapping(value = "/push", method = RequestMethod.POST)
-    @ResponseBody
-    public Map pushInform(Inform inform){
-        HashMap<String,Object> resMap = new HashMap<>();
-        List<Inform> informs = new ArrayList<>();
-        informs.add(inform);
-        Integer updRes = informService.addInforms(informs);
-        if (updRes == 1){
-            resMap.put("code",0);
-            resMap.put("msg","发布成功");
-        }else {
-            resMap.put("code",1);
-            resMap.put("msg","发布失败");
-        }
-        return resMap;
-    }
+    @RequestMapping(value = "/showOffice", method = RequestMethod.POST)
+    public void showOffice(){}
 
 }
