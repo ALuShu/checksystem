@@ -15,19 +15,15 @@ import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -37,6 +33,7 @@ import java.util.Map;
 @Controller
 @Slf4j
 @RequestMapping("/admin")
+@SuppressWarnings("unchecked")
 public class AdminController {
 
     @Value("${checksystem.root}")
@@ -188,6 +185,54 @@ public class AdminController {
         memberMap.put("msg","");
         memberMap.put("count",res.getTotalRecord());
         return memberMap;
+    }
+
+
+    /**
+     * Excel表格处理器
+     */
+    @PostMapping("/excelAdd")
+    @ResponseBody
+    public Map upload(HttpServletRequest request, @RequestParam("role")int role) {
+        Map<String, Object> json = new HashMap<>();
+        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+        Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
+        List<User> existUsers = new ArrayList<>();
+        for (String string : fileMap.keySet()){
+            ExcelUtil<User> userExcelUtil = new ExcelUtil<>(User.class);
+            MultipartFile currentFile = fileMap.get(string);
+            String fileName = currentFile.getOriginalFilename();
+            String suffixName = fileName.substring(fileName.lastIndexOf("."));
+            java.io.File upload = new java.io.File("src/main/resources/excel");
+            if(!upload.exists()){
+                upload.mkdirs();
+            }
+            fileName = UUID.randomUUID() + suffixName;
+            java.io.File dest = new java.io.File(upload.getAbsolutePath() +"/"+ fileName);
+            try {
+                currentFile.transferTo(dest);
+                List<User> studentList = userExcelUtil.explain(dest.getAbsolutePath());
+                Map<String, Object> resMap = userService.addUsersByExcel(studentList, role);
+                if (resMap.get("exist") != null && resMap.get("exist") instanceof List<?>){
+                    existUsers.addAll((List<User>) resMap.get("exist"));
+                }
+            } catch (IOException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
+                log.error("解析Excel发生错误，控制器处理异常",e);
+                json.put("code", -1);
+                json.put("msg", "上传失败！");
+                return json;
+            }
+        }
+        if (existUsers.size() == 0){
+            json.put("code", 0);
+            json.put("msg", "上传成功！");
+            return json;
+        }else {
+            json.put("code", 1);
+            json.put("exist", existUsers);
+            json.put("msg", "上传成功！");
+            return json;
+        }
     }
 
     /**

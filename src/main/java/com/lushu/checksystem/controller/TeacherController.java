@@ -155,7 +155,7 @@ public class TeacherController {
 
 
     /**
-     * 教师端上传文件方法（后续优化：多文件上传时不像现在的要请求多次此方法）
+     * 教师端上传文件方法
      */
     @PostMapping("/uploadFile")
     @ResponseBody

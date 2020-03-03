@@ -13,6 +13,11 @@ import java.io.IOException;
  **/
 class FileTest extends ChecksystemApplicationTests {
 
+    @Test
+    void file(){
+
+    }
+
     /*通常认为海明距离小于3的为高度相似文本*/
     @Test
     void simHashTest1(){

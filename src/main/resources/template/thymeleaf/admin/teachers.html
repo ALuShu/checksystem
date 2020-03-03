@@ -10,41 +10,14 @@
 <!-- 头部工具栏 -->
 <script type="text/html" id="toolbarDemo">
     <div class="layui-btn-group">
-        <button id="uploadBtn" class="layui-btn layui-btn-sm " lay-event="excelToAdd"><i class="layui-icon layui-icon-upload-drag"></i>表格添加</button>
+        <button id="uploadBtn" class="layui-btn layui-btn-sm"><i class="layui-icon layui-icon-upload-drag"></i>表格添加</button>
         <button class="layui-btn layui-btn-sm " lay-event="newUser">新增</button>
         <button class="layui-btn layui-btn-sm layui-btn-danger" lay-event="delUsers">删除</button>
     </div>
 </script>
 
 <!-- 数据表格 -->
-<table class="layui-table" lay-filter="test" lay-data="{
-           height: 'full-100'
-           ,url:'/admin/users?role=2'
-           ,limit:20
-           ,page: {
-               layout: ['prev', 'page', 'next', 'skip','count']
-               ,groups: 5
-           }
-           ,id:'demo'
-           ,even: true
-           ,toolbar: '#toolbarDemo'}">
-    <thead>
-    <tr>
-        <th lay-data="{type: 'checkbox', fixed: 'left'}"></th>
-        <th lay-data="{field: 'id', title: 'ID', hide:true}">ID</th>
-        <th lay-data="{field: 'username', width: 110, sort: true}">账号</th>
-        <th lay-data="{field: 'realname', width: 90}">姓名</th>
-        <th lay-data="{field: 'department', sort: true}">系别</th>
-        <th lay-data="{field: 'createTime', sort: true}">创建时间</th>
-        <th lay-data="{field: 'lastLoginTime', sort: true}">最后登录时间</th>
-        <th lay-data="{field: 'accountNonExpired',unresize: true, width: 110, sort: true, templet: '#checkboxTpl1'}">是否过期</th>
-        <th lay-data="{field: 'accountNonLocked',unresize: true, width: 110, sort: true, templet: '#checkboxTpl2'}">是否锁定</th>
-        <th lay-data="{field: 'credentialsNonExpired',unresize: true, width: 130, sort: true, templet: '#checkboxTpl3'}">证书是否过期</th>
-        <th lay-data="{field: 'enabled',unresize: true, width: 110, sort: true, templet: '#checkboxTpl4'}">是否可用</th>
-        <th lay-data="{fixed: 'right', width:150, align:'center', toolbar: '#barDemo'}"></th>
-    </tr>
-    </thead>
-</table>
+<table class="layui-table" id="test" lay-filter="test"></table>
 
 <!-- 隐藏表单，用于编辑动作 -->
 <form class="layui-form" action="" lay-filter="editIfram" id="editIfram" style="display: none" method="post">
@@ -138,18 +111,77 @@
         })
     }
 
-    layui.use(['table','form'], function () {
+    layui.use(['table','form','upload','element','laytpl'], function () {
         var table = layui.table
+            ,upload = layui.upload
+            ,element = layui.element
+            ,laytpl = layui.laytpl
             ,form = layui.form;
+
+
+        table.render({
+            elem: '#test'
+            ,height: 'full-100'
+            ,url:'/admin/users?role=2'
+            ,limit:20
+            ,page: {
+                layout: ['prev', 'page', 'next', 'skip','count']
+                ,groups: 5
+            }
+            ,toolbar: '#toolbarDemo'
+            , cols: [[
+                {type: 'checkbox', fixed: 'left'}
+                , {field: 'id', title: 'ID', hide:true}
+                , {field: 'username', title: '账号', width: 110, sort: true}
+                , {field: 'realname', title: '姓名', width: 90}
+                , {field: 'department', title: '系别', sort: true}
+                , {field: 'createTime', title: '创建时间', sort: true}
+                , {field: 'lastLoginTime', title: '最后登录时间', sort: true}
+                , {field: 'accountNonExpired', title: '是否过期',unresize: true, width: 110, sort: true, templet: '#checkboxTpl1'}
+                , {field: 'accountNonLocked', title: '是否锁定',unresize: true, width: 110, sort: true, templet: '#checkboxTpl2'}
+                , {field: 'credentialsNonExpired', title: '证书是否过期',unresize: true, width: 130, sort: true, templet: '#checkboxTpl3'}
+                , {field: 'enabled', title: '是否可用',unresize: true, width: 110, sort: true, templet: '#checkboxTpl4'}
+                , {fixed: 'right', width:150, align:'center', toolbar: '#barDemo'}
+            ]]
+            , done: function(){
+                //监听上传按钮，支持拖拽上传
+                upload.render({
+                    elem: '#uploadBtn'
+                    , url: '/admin/excelAdd?role=2'
+                    , method: 'post'
+                    , allDone: function(res){
+                        if (res.code === '0'){
+                            layer.alert(res.msg);
+                        }else if (res.code === '1'){
+                            layer.alert(res.msg+",部分教师已存在，如下<br>"+res.exist)
+                        }else {
+                            layer.alert(res.msg+"<br>成功文件数："+res.successful+"<br>失败文件数："+res.aborted)
+                        }
+                        table.reload('test', {
+                            page: {
+                                curr: 1 //重新从第 1 页开始
+                            }
+                        });
+                    }
+                    , accept: 'file'
+                    , multiple: true
+                    , exts:'xlsx|xls'
+                    , size: 10240
+                });
+            }
+        });
 
         //头工具栏事件
         table.on('toolbar(test)', function (obj) {
             var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
             switch (obj.event) {
-                case 'getCheckData':
+                case 'newUser':
                     var data = checkStatus.data;  //获取选中行数据
-                    JSON.stringify(data);
-                    handleJson(data);
+                    layer.alert(JSON.stringify(data));
+                    break;
+                case 'delUsers':
+                    var data = checkStatus.data;  //获取选中行数据
+                    layer.alert(JSON.stringify(data));
                     break;
             }
         });
