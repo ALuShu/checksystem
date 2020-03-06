@@ -23,7 +23,7 @@ public interface UserService extends UserDetailsService {
     /**
      * 分页查询用户表
      */
-    PageBean<User> selectAllUser(Integer currentPage, Integer pageSize);
+    User selectUserBySort(String type, String keyword);
 
     /**
      * 通过用户名查询，返回用户以及角色信息

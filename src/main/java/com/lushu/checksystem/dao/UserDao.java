@@ -20,13 +20,6 @@ import java.util.List;
 public interface UserDao {
 
     /**
-     * 查询用户列表，分页
-     * @para param
-     * @return
-     */
-    List<User> selectAllUser(HashMap<String, Object> param);
-
-    /**
      * 搜索出数据库里所有账号进行判断操作
      * @return
      */
@@ -99,7 +92,7 @@ public interface UserDao {
      * @param users
      * @return
      */
-    int addUsers(List<User> users);
+    Integer addUsers(List<User> users);
 
     /**
      * 批量删除用户

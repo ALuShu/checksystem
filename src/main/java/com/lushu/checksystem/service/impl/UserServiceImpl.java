@@ -1,5 +1,6 @@
 package com.lushu.checksystem.service.impl;
 
+import com.lushu.checksystem.constant.BasicConstant;
 import com.lushu.checksystem.constant.DatabaseConstant;
 import com.lushu.checksystem.constant.OtherConstant;
 import com.lushu.checksystem.dao.AuthorityDao;
@@ -45,22 +46,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public PageBean<User> selectAllUser(Integer currentPage, Integer pageSize) {
+    public User selectUserBySort(String type, String keyword){
         HashMap<String, Object> pageMap = new HashMap<>(2);
-        PageBean<User> pageBean = new PageBean<>();
-        pageBean.setCurrentPage(currentPage);
-        pageBean.setPageSize(pageSize);
-        int count = userDao.countUsers();
-        pageBean.setTotalRecord(count);
-        if (count % pageSize == 0){
-            pageBean.setTotalPage(count/pageSize);
+        if (BasicConstant.User.USERNAME.getString().equals(type)){
+            User user = userDao.selectUserByUsername(keyword);
+            return user;
+        }else if (BasicConstant.User.REAL_NAME.getString().equals(type)){
+            User user = userDao.selectUserByRealname(keyword);
+            return user;
         }else {
-            pageBean.setTotalPage((count/pageSize) + 1);
+            return new User();
         }
-        pageMap.put("start", (currentPage-1) * pageSize);
-        pageMap.put("limit", pageBean.getPageSize());
-        pageBean.setList(userDao.selectAllUser(pageMap));
-        return pageBean;
     }
 
     @Override
@@ -117,8 +113,14 @@ public class UserServiceImpl implements UserService {
         }
         List<User> users = userDao.selectUsersByRole(pageMap);
         pageBean.setList(users);
-        int count = userDao.countCurrentUsers(roleId);
-        pageBean.setTotalRecord(count);
+        int count = 0;
+        if(roleId != null){
+            count = userDao.countCurrentUsers(roleId);
+            pageBean.setTotalRecord(count);
+        }else {
+            count = userDao.countUsers();
+            pageBean.setTotalRecord(count);
+        }
         if (count % pageSize == 0) {
             pageBean.setTotalPage(count / pageSize);
         } else {
@@ -173,7 +175,7 @@ public class UserServiceImpl implements UserService {
     public HashMap<String, Object> addUsersByExcel(List<User> users, Integer roleId) {
         HashMap<String, Object> res = new HashMap<>(2);
         if (users.size() == 0){
-            log.error("用户集合为空,请检查参数是否正确输入");
+            log.info("用户集合为空,请检查参数是否正确输入");
             return res;
         }else {
             Iterator<User> userIterator = users.iterator();
@@ -191,26 +193,24 @@ public class UserServiceImpl implements UserService {
                 res.put("exist",existUsers);
                 return res;
             } else {
-                int firstId;
-                if (null != userDao.selectLastId()) {
-                    firstId = userDao.selectLastId() + 1;
-                } else {
-                    firstId = 1;
-                }
                 List<Integer> ids = new ArrayList<>();
                 if (roleId == DatabaseConstant.Role.ROLE_TEACHER.ordinal()+1) {
+                    //初始化密码和日期
                     for (User user : users) {
-                        int fileRes = fileService.newTeacherFile(user.getUsername(), user.getRealname(), firstId);
-                        if (fileRes != 1) {
-                            log.error("教师-" + user.getRealname() + "-文件夹已存在");
-                        }
-                        ids.add(firstId);
-                        firstId++;
                         user.setPassword(new BCryptPasswordEncoder().encode("111111"));
                         user.setCreateTime(OtherConstant.DATE_FORMAT.format(new Date()));
                     }
-                    int userRes = userDao.addUsers(users);
-                    int midRes = userDao.addUserRole(ids, roleId);
+                    //用户表添加操作,获得自增长返回的id
+                    Integer userRes = userDao.addUsers(users);
+                    for (User user:users){
+                        ids.add(user.getId());
+                        int fileRes = fileService.newTeacherFile(user.getUsername(), user.getRealname(), user.getId());
+                        if (fileRes != 1) {
+                            log.info("教师-" + user.getRealname() + "-文件夹已存在");
+                        }
+                    }
+                    //中间表添加操作
+                    Integer midRes = userDao.addUserRole(ids, roleId);
                     res.put("res", (userRes + midRes));
                     if (existUsers.size() == 0) {
                         return res;
@@ -222,14 +222,18 @@ public class UserServiceImpl implements UserService {
                         return res;
                     }
                 } else if (roleId == DatabaseConstant.Role.ROLE_STUDENT.ordinal()+1) {
+                    //初始化密码和日期
                     for (User user : users) {
-                        ids.add(firstId);
-                        firstId++;
                         user.setPassword(new BCryptPasswordEncoder().encode("111111"));
                         user.setCreateTime(OtherConstant.DATE_FORMAT.format(new Date()));
                     }
-                    int userRes = userDao.addUsers(users);
-                    int midRes = userDao.addUserRole(ids, roleId);
+                    //用户表添加操作,获得自增长返回的id
+                    Integer userRes = userDao.addUsers(users);
+                    for (User user:users){
+                        ids.add(user.getId());
+                    }
+                    //中间表添加操作
+                    Integer midRes = userDao.addUserRole(ids, roleId);
                     res.put("res", (userRes + midRes));
                     if (existUsers.size() == 0) {
                         return res;
@@ -242,13 +246,15 @@ public class UserServiceImpl implements UserService {
                     }
                 } else {
                     for (User user : users) {
-                        ids.add(firstId);
                         user.setPassword(new BCryptPasswordEncoder().encode("root"));
                         user.setRealname("系统管理员");
                         user.setCreateTime(OtherConstant.DATE_FORMAT.format(new Date()));
                     }
-                    int userRes = userDao.addUsers(users);
-                    int midRes = userDao.addUserRole(ids, roleId);
+                    Integer userRes = userDao.addUsers(users);
+                    for (User user:users){
+                        ids.add(user.getId());
+                    }
+                    Integer midRes = userDao.addUserRole(ids, roleId);
                     res.put("res", (userRes + midRes));
                     return res;
                 }

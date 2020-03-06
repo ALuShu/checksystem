@@ -90,7 +90,7 @@
 
 
     <!-- addUsers：批量增加用户；return：int -->
-    <insert id="addUsers" parameterType="java.util.List">
+    <insert id="addUsers" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="id">
         insert into sys_user (username, password, realname, department, major, create_time,
         account_non_expired, account_non_locked, credentials_non_expired, enabled)
         values

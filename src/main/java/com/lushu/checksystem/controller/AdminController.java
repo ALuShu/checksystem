@@ -3,7 +3,6 @@ package com.lushu.checksystem.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lushu.checksystem.constant.BasicConstant;
 import com.lushu.checksystem.pojo.*;
 import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.service.InformService;
@@ -301,24 +300,28 @@ public class AdminController {
 
 
     /**
-     * 管理员端搜索用户（未完成）
+     * 管理员端搜索用户
      */
-    @RequestMapping(value = "/searchUser", method = RequestMethod.POST)
+    @RequestMapping("/search/{type}/{keyword}")
     @ResponseBody
-    public Map user(@RequestParam String type, @RequestParam String keyword) throws ServletException, JSONException {
-        Map<String, Object> memberMap;
-        if (BasicConstant.User.USERNAME.getString().equals(type)){
-            memberMap = userService.selectUser(keyword);
-        } else if (BasicConstant.User.REAL_NAME.getString().equals(type)) {
-            memberMap = userService.selectUserByRealname(keyword);
-        }else if (BasicConstant.User.DEPARTMENT.getString().equals(type)){
-            memberMap = new HashMap<>();
-            memberMap.put("user", userService.selectUsersByDepartment(keyword));
-        }else {//major
-            memberMap = new HashMap<>();
-            memberMap.put("user", userService.selectUsersByMajor(keyword));
+    public Map searchRes(@PathVariable String type, @PathVariable String keyword){
+        HashMap<String, Object> res = new HashMap<>();
+        User user = userService.selectUserBySort(type, keyword);
+        List<User> users = new ArrayList<>();
+        users.add(user);
+        if (user == null){
+            res.put("code",1);
+            res.put("msg","用户不存在");
+            res.put("count",0);
+            res.put("data",users);
+            return res;
+        }else {
+            res.put("code",0);
+            res.put("msg","");
+            res.put("count",1);
+            res.put("data",users);
+            return res;
         }
-        return memberMap;
     }
 
     /**
@@ -330,34 +333,49 @@ public class AdminController {
         Map<String, Object> res = new HashMap<>();
         ObjectMapper mapper = new ObjectMapper();
         User user = mapper.readValue(jsonUsers, User.class);
-        System.out.println(user+";;;"+roleId);
+        List<User> singleUser = new ArrayList<>();
+        singleUser.add(user);
+        Map<String, Object> addRes = userService.addUsersByExcel(singleUser, roleId);
+        if (addRes.get("exist") != null){
+            res.put("msg","该用户已存在");
+        }else {
+            res.put("msg","添加成功");
+        }
+        res.put("code",0);
         return res;
     }
     @RequestMapping(value = "/deleteUsers", method = RequestMethod.POST)
     @ResponseBody
-    public Map deleteUsers(@RequestBody String jsonUsers, @RequestParam Integer roleId) throws JsonProcessingException {
+    public Map deleteUsers(@RequestBody String jsonUsers) throws JsonProcessingException {
         Map<String, Object> res = new HashMap<>();
+        List<Integer> ids = new ArrayList<>();
         if(jsonUsers.startsWith("[")){
             ObjectMapper mapper = new ObjectMapper();
             List<User> beanList = mapper.readValue(jsonUsers, new TypeReference<List<User>>() {});
-            System.out.println(roleId);
             for (User user : beanList){
-                System.out.println(user);
+                ids.add(user.getId());
             }
         }else {
             ObjectMapper mapper = new ObjectMapper();
             User user = mapper.readValue(jsonUsers, User.class);
-            System.out.println(user+";;;"+roleId);
+            ids.add(user.getId());
         }
+        Integer delRes = userService.deleteUsers(ids);
+        res.put("code",1);
+        res.put("count",delRes);
         return res;
     }
     @RequestMapping(value = "/updateUsers", method = RequestMethod.POST)
     @ResponseBody
-    public Map updateUsers(@RequestBody String jsonUsers, @RequestParam Integer roleId) throws JsonProcessingException {
+    public Map updateUsers(@RequestBody String jsonUsers, @RequestParam(required = false) Integer roleId) throws JsonProcessingException {
         Map<String, Object> res = new HashMap<>();
         ObjectMapper mapper = new ObjectMapper();
         User user = mapper.readValue(jsonUsers, User.class);
-        System.out.println(user+";;;"+roleId);
+        List<User> users = new ArrayList<>();
+        users.add(user);
+        Integer updRes = userService.updateUsers(users);
+        res.put("code",1);
+        res.put("count",updRes);
         return res;
     }
 

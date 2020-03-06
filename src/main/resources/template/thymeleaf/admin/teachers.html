@@ -17,7 +17,7 @@
 </script>
 
 <!-- 数据表格 -->
-<table class="layui-table" id="test" lay-filter="test"></table>
+<table class="layui-table" id="test" lay-filter="test" style="display: none"></table>
 
 <!-- 隐藏表单，用于编辑动作 -->
 <form class="layui-form" action="" lay-filter="editIfram" id="editIfram" style="display: none" method="post">
@@ -65,30 +65,30 @@
 <!-- 模板 -->
 <script type="text/html" id="checkboxTpl1" th:inline="none">
     {{#  if(d.accountNonExpired === true){ }}
-    <span><input type="checkbox" name="accountNonExpired" lay-skin="primary" checked></span>
+    <span><input type="checkbox" name="accountNonExpired" lay-skin="primary" checked disabled></span>
     {{#  } else { }}
-    <span><input type="checkbox" name="accountNonExpired" lay-skin="primary"></span>
+    <span><input type="checkbox" name="accountNonExpired" lay-skin="primary" disabled></span>
     {{#  } }}
 </script>
 <script type="text/html" id="checkboxTpl2" th:inline="none">
     {{#  if(d.accountNonLocked === true){ }}
-    <span><input type="checkbox" name="accountNonLocked" lay-skin="primary" checked></span>
+    <span><input type="checkbox" name="accountNonLocked" lay-skin="primary" checked disabled></span>
     {{#  } else { }}
-    <span><input type="checkbox" name="accountNonLocked" lay-skin="primary"></span>
+    <span><input type="checkbox" name="accountNonLocked" lay-skin="primary" disabled></span>
     {{#  } }}
 </script>
 <script type="text/html" id="checkboxTpl3" th:inline="none">
     {{#  if(d.credentialsNonExpired === true){ }}
-    <span><input type="checkbox" name="credentialsNonExpired" lay-skin="primary" checked></span>
+    <span><input type="checkbox" name="credentialsNonExpired" lay-skin="primary" checked disabled></span>
     {{#  } else { }}
-    <span><input type="checkbox" name="credentialsNonExpired" lay-skin="primary"></span>
+    <span><input type="checkbox" name="credentialsNonExpired" lay-skin="primary" disabled></span>
     {{#  } }}
 </script>
 <script type="text/html" id="checkboxTpl4" th:inline="none">
     {{#  if(d.enabled === true){ }}
-    <span><input type="checkbox" name="enabled" lay-skin="primary" checked></span>
+    <span><input type="checkbox" name="enabled" lay-skin="primary" checked disabled></span>
     {{#  } else { }}
-    <span><input type="checkbox" name="enabled" lay-skin="primary"></span>
+    <span><input type="checkbox" name="enabled" lay-skin="primary" disabled></span>
     {{#  } }}
 </script>
 <script type="text/html" id="barDemo">
@@ -167,11 +167,11 @@
                 , {field: 'realname', title: '姓名', width: 90}
                 , {field: 'department', title: '系别', sort: true}
                 , {field: 'createTime', title: '创建时间', sort: true}
-                , {field: 'lastLoginTime', title: '最后登录时间', sort: true}
-                , {field: 'accountNonExpired', title: '是否过期',unresize: true, width: 110, sort: true, templet: '#checkboxTpl1'}
-                , {field: 'accountNonLocked', title: '是否锁定',unresize: true, width: 110, sort: true, templet: '#checkboxTpl2'}
-                , {field: 'credentialsNonExpired', title: '证书是否过期',unresize: true, width: 130, sort: true, templet: '#checkboxTpl3'}
-                , {field: 'enabled', title: '是否可用',unresize: true, width: 110, sort: true, templet: '#checkboxTpl4'}
+                , {field: 'lastLoginTime', title: '登录时间', sort: true}
+                , {field: 'accountNonExpired', title: '是否过期',unresize: true, width: 100, templet: '#checkboxTpl1'}
+                , {field: 'accountNonLocked', title: '是否锁定',unresize: true, width: 100, templet: '#checkboxTpl2'}
+                , {field: 'credentialsNonExpired', title: '证书是否过期',unresize: true, width: 120, templet: '#checkboxTpl3'}
+                , {field: 'enabled', title: '是否可用',unresize: true, width: 100, templet: '#checkboxTpl4'}
                 , {fixed: 'right', width:150, align:'center', toolbar: '#barDemo'}
             ]]
             , done: function(){
@@ -256,12 +256,14 @@
                 case 'delUsers':
                     var data = checkStatus.data;  //获取选中行数据
                     layer.alert(JSON.stringify(data), {
-                        title: '确认删除？'
+                        title: '确认删除？',
+                        offset: ['50px', '200px'],
+                        area: ['50%', '70%']
                     },function () {
                         layer.confirm('确定删除吗？', function () {
                             //表单提交
                             $.ajax({
-                                url:'/admin/deleteUsers?roleId=2',
+                                url:'/admin/deleteUsers',
                                 data:JSON.stringify(data),
                                 dataType:'json',
                                 headers : {
@@ -287,7 +289,7 @@
                 layer.confirm('真的删除行么', function (index) {
                     //表单提交
                     $.ajax({
-                        url:'/admin/deleteUsers?roleId=2',
+                        url:'/admin/deleteUsers',
                         data:JSON.stringify(data),
                         dataType:'json',
                         headers : {
