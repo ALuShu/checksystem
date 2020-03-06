@@ -326,46 +326,38 @@ public class AdminController {
      */
     @RequestMapping(value = "/manageUsers", method = RequestMethod.POST)
     @ResponseBody
-    public Map addUsers(@RequestParam(required = false) MultipartFile file
-            ,@RequestParam(required = false) String jsonUsers
-            ,@RequestParam Integer roleId) throws InvocationTargetException, InstantiationException, IllegalAccessException, IOException {
+    public Map addUsers(@RequestBody String jsonUsers, @RequestParam Integer roleId) throws InvocationTargetException, InstantiationException, IllegalAccessException, IOException {
         Map<String, Object> res = new HashMap<>();
-        List<User> userList = new ArrayList<>();
-        if (file != null){
-            ExcelUtil<User> users = new ExcelUtil<>(User.class);
-            userList = users.explain(file.getOriginalFilename());
-        }else {
-            ObjectMapper mapper = new ObjectMapper();
-            userList = mapper.readValue(jsonUsers, new TypeReference<ArrayList<User>>() {});
-        }
-        Map<String, Object> addRes = userService.addUsersByExcel(userList, roleId);
-        if (!addRes.containsKey("exist")){
-            res.put("code", 1);
-            res.put("msg","添加成功");
-        }else {
-            log.info("部分数据录入失败");
-            res.put("code", 0);
-            res.put("exist", addRes.get("exist"));
-            res.put("msg","发生错误");
-        }
+        ObjectMapper mapper = new ObjectMapper();
+        User user = mapper.readValue(jsonUsers, User.class);
+        System.out.println(user+";;;"+roleId);
         return res;
     }
     @RequestMapping(value = "/deleteUsers", method = RequestMethod.POST)
     @ResponseBody
-    public Map deleteUsers(@RequestParam String jsonIds) throws JsonProcessingException {
+    public Map deleteUsers(@RequestBody String jsonUsers, @RequestParam Integer roleId) throws JsonProcessingException {
         Map<String, Object> res = new HashMap<>();
-        ObjectMapper mapper = new ObjectMapper();
-        List<Integer> idList = mapper.readValue(jsonIds, new TypeReference<ArrayList<Integer>>() {});
-        userService.deleteUsers(idList);
+        if(jsonUsers.startsWith("[")){
+            ObjectMapper mapper = new ObjectMapper();
+            List<User> beanList = mapper.readValue(jsonUsers, new TypeReference<List<User>>() {});
+            System.out.println(roleId);
+            for (User user : beanList){
+                System.out.println(user);
+            }
+        }else {
+            ObjectMapper mapper = new ObjectMapper();
+            User user = mapper.readValue(jsonUsers, User.class);
+            System.out.println(user+";;;"+roleId);
+        }
         return res;
     }
     @RequestMapping(value = "/updateUsers", method = RequestMethod.POST)
     @ResponseBody
-    public Map updateUsers(@RequestParam String jsonUsers) throws JsonProcessingException {
+    public Map updateUsers(@RequestBody String jsonUsers, @RequestParam Integer roleId) throws JsonProcessingException {
         Map<String, Object> res = new HashMap<>();
         ObjectMapper mapper = new ObjectMapper();
-        List<User> userList = mapper.readValue(jsonUsers, new TypeReference<ArrayList<User>>() {});
-        userService.updateUsers(userList);
+        User user = mapper.readValue(jsonUsers, User.class);
+        System.out.println(user+";;;"+roleId);
         return res;
     }
 

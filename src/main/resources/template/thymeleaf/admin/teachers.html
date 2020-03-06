@@ -21,6 +21,12 @@
 
 <!-- 隐藏表单，用于编辑动作 -->
 <form class="layui-form" action="" lay-filter="editIfram" id="editIfram" style="display: none" method="post">
+    <div class="layui-form-item" id="idBolck">
+        <label class="layui-form-label">ID</label>
+        <div class="layui-input-block">
+            <input type="text" id="tempId" name="id" disabled class="layui-input" value="">
+        </div>
+    </div>
     <div class="layui-form-item">
         <label class="layui-form-label">账号</label>
         <div class="layui-input-block">
@@ -111,6 +117,31 @@
         })
     }
 
+    function fillForm(data){
+        if(data == null){
+            $("#idBolck").css('display','none');
+            $("#tempUsername").val('');
+            $("#tempRealname").val('');
+            $("#tempDepartment").val('');
+            $("#tempMajor").val('');
+            $("#tempAccountNonExpired").prop('checked',false);
+            $("#tempAccountNonLocked").prop('checked',false);
+            $("#tempCredentialsNonExpired").prop('checked',false);
+            $("#tempEnabled").prop('checked',false);
+        }else {
+            $("#idBolck").css('display','block');
+            $("#tempId").val(data.id);
+            $("#tempUsername").val(data.username);
+            $("#tempRealname").val(data.realname);
+            $("#tempDepartment").val(data.department);
+            $("#tempMajor").val(data.major);
+            (data.accountNonExpired === true) ? $("#tempAccountNonExpired").prop('checked', true) : $("#tempAccountNonExpired").prop('checked', false);
+            (data.accountNonLocked === true) ? $("#tempAccountNonLocked").prop('checked', true) : $("#tempAccountNonLocked").prop('checked', false);
+            (data.credentialsNonExpired === true) ? $("#tempCredentialsNonExpired").prop('checked', true) : $("#tempCredentialsNonExpired").prop('checked', false);
+            (data.enabled === true) ? $("#tempEnabled").prop('checked', true) : $("#tempEnabled").prop('checked', false);
+        }
+    }
+
     layui.use(['table','form','upload','element','laytpl'], function () {
         var table = layui.table
             ,upload = layui.upload
@@ -176,12 +207,75 @@
             var checkStatus = table.checkStatus(obj.config.id); //获取选中行状态
             switch (obj.event) {
                 case 'newUser':
-                    var data = checkStatus.data;  //获取选中行数据
-                    layer.alert(JSON.stringify(data));
+                    fillForm(null);
+                    form.render();
+                    layer.open({
+                        type: 1,
+                        title: '编辑教师信息',
+                        shade: 0.4,
+                        content: $("#editIfram"),
+                        resize:false,
+                        offset: ['50px', '200px'],
+                        area: ['50%', '70%'],
+                        btn: ['提交', '取消'],
+                        maxmin: true, //开启最大化最小化按钮
+                        scrollbar: true,//屏蔽浏览器滚动条
+                        yes: function (index, layero) {
+                            //监听submit按钮提交
+                            form.on('submit(submitbtn)', function (data) {
+                                //确认表单信息
+                                layer.alert(JSON.stringify(data.field), {
+                                    title: '最终的提交信息'
+                                },function () {
+                                    //表单提交
+                                    $.ajax({
+                                        url:'/admin/manageUsers?roleId=2',
+                                        data:JSON.stringify(data.field),
+                                        dataType:'json',
+                                        headers : {
+                                            'Content-Type' : 'application/json;charset=utf-8'
+                                        },
+                                        type:'post',
+                                        success:function (result) {
+                                            layer.alert("成功"+result,function () {
+                                                layer.closeAll();
+                                            })
+                                        }
+                                    })
+                                });
+                                return false;
+                            });
+                            //防止表单验证失效
+                            $("#submitbtn").trigger('click');
+                        },
+                        end: function () {
+                            $("#editIfram").css("display", "none");
+                        }
+                    });
                     break;
                 case 'delUsers':
                     var data = checkStatus.data;  //获取选中行数据
-                    layer.alert(JSON.stringify(data));
+                    layer.alert(JSON.stringify(data), {
+                        title: '确认删除？'
+                    },function () {
+                        layer.confirm('确定删除吗？', function () {
+                            //表单提交
+                            $.ajax({
+                                url:'/admin/deleteUsers?roleId=2',
+                                data:JSON.stringify(data),
+                                dataType:'json',
+                                headers : {
+                                    'Content-Type' : 'application/json;charset=utf-8'
+                                },
+                                type:'post',
+                                success:function (result) {
+                                    layer.alert("成功"+result,function () {
+                                        layer.closeAll();
+                                    })
+                                }
+                            })
+                        })
+                    });
                     break;
             }
         });
@@ -191,19 +285,25 @@
             var data = obj.data;
             if (obj.event === 'del') {
                 layer.confirm('真的删除行么', function (index) {
-                    layer.alert(data.id);
-                    layer.close(index);
+                    //表单提交
+                    $.ajax({
+                        url:'/admin/deleteUsers?roleId=2',
+                        data:JSON.stringify(data),
+                        dataType:'json',
+                        headers : {
+                            'Content-Type' : 'application/json;charset=utf-8'
+                        },
+                        type:'post',
+                        success:function (result) {
+                            layer.alert("成功"+result,function () {
+                                layer.closeAll();
+                            })
+                        }
+                    })
                 });
 
             } else if (obj.event === 'edit') {
-                $("#editIfram").css("display", "block");//显示编辑弹层
-                $("#tempUsername").val(data.username);
-                $("#tempRealname").val(data.realname);
-                $("#tempDepartment").val(data.department);
-                (data.accountNonExpired === true)? $("#tempAccountNonExpired").prop('checked',true): $("#tempAccountNonExpired").prop('checked',false);
-                (data.accountNonLocked === true)? $("#tempAccountNonLocked").prop('checked',true): $("#tempAccountNonLocked").prop('checked',false);
-                (data.credentialsNonExpired === true)? $("#tempCredentialsNonExpired").prop('checked',true): $("#tempCredentialsNonExpired").prop('checked',false);
-                (data.enabled === true)? $("#tempEnabled").prop('checked',true): $("#tempEnabled").prop('checked',false);
+                fillForm(data);
                 //因为是动态插入表单，官方解释说要重新渲染
                 form.render();
                 layer.open({
@@ -225,7 +325,20 @@
                                 title: '最终的提交信息'
                             },function () {
                                 //表单提交
-                                $("#editIfram").trigger('submit');
+                                $.ajax({
+                                    url:'/admin/updateUsers?roleId=2',
+                                    data:JSON.stringify(data.field),
+                                    dataType:'json',
+                                    headers : {
+                                        'Content-Type' : 'application/json;charset=utf-8'
+                                    },
+                                    type:'post',
+                                    success:function (result) {
+                                        layer.alert("成功"+result,function () {
+                                            layer.closeAll();
+                                        })
+                                    }
+                                })
                             });
                             return false;
                         });
