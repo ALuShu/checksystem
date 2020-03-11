@@ -1,6 +1,5 @@
 package com.lushu.checksystem.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.lushu.checksystem.constant.BasicConstant;
 import com.lushu.checksystem.pojo.File;
 import com.lushu.checksystem.pojo.Inform;
@@ -105,7 +104,7 @@ public class TeacherController {
      */
     @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
     @ResponseBody
-    public Map updatePassword(@RequestBody Map jsonUsers) throws JsonProcessingException {
+    public Map updatePassword(@RequestBody Map jsonUsers) {
         Map<String, Object> res = new HashMap<>(2);
         String oldPassword = (String) jsonUsers.get("oldPassword");
         String newPassword = (String) jsonUsers.get("newPassword");
@@ -133,7 +132,7 @@ public class TeacherController {
             , @RequestParam(required = false) int limit
             , @RequestParam(required = false) String path) {
         Map<String, Object> res = new HashMap<>();
-        if("\\".equals(path) || path == null || root.equals(path)){
+        if("\\".equals(path) || path == null){
             path = root;
         }else {
             path = root + path;
@@ -171,7 +170,10 @@ public class TeacherController {
             return json;
         }
         Collection<MultipartFile> files = fileMap.values();
-        int res = fileService.addFiles(files, root+path, id);
+        if (root != null){
+            path = root+path;
+        }
+        int res = fileService.addFiles(files, path, id);
         if (res == fileMap.size()){
             json.put("code", 1);
             json.put("msg", "上传成功！");
@@ -195,10 +197,12 @@ public class TeacherController {
     @ResponseBody
     public Map newFile(@RequestParam String name, @RequestParam String path) {
         Map<String, Object> json = new HashMap<>();
-        if("\\".equals(path) || path == null || root.equals(path)){
-            path = root;
-        }else {
-            path = root + path;
+        if (root != null){
+            if("\\".equals(path) || path == null || root.equals(path)){
+                path = root;
+            }else {
+                path = root + path;
+            }
         }
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         int res = fileService.addDirectory(name, path, user.getId());
@@ -221,10 +225,12 @@ public class TeacherController {
     public Map delFile(@RequestParam(value = "name[]") String[] name, @RequestParam String path) {
         Map<String, Object> json = new HashMap<>();
         HashMap<String, Object> param = new HashMap<>();
-        if("\\".equals(path) || path == null || root.equals(path)){
-            path = root;
-        }else {
-            path = root + path;
+        if (root != null){
+            if("\\".equals(path) || path == null || root.equals(path)){
+                path = root;
+            }else {
+                path = root + path;
+            }
         }
         param.put("fileName", name);
         param.put("path", path);
@@ -330,7 +336,12 @@ public class TeacherController {
      */
     @RequestMapping(value = "/downloadFile", method = RequestMethod.GET)
     public ResponseEntity<byte[]> download(HttpServletRequest request, @RequestParam String name, @RequestParam String path) throws IOException {
-        String real = realPath+root+path;
+        String real ;
+        if (root != null){
+            real = realPath+root+path;
+        }else {
+            real = realPath+path;
+        }
         java.io.File file = new java.io.File(real, name);
         HttpHeaders headers = new HttpHeaders();
         String downloadFileName = null;

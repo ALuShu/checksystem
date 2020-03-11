@@ -325,7 +325,7 @@ public class AdminController {
     }
 
     /**
-     * 管理员端批量管理用户（未完成）
+     * 管理员端批量管理用户
      */
     @RequestMapping(value = "/manageUsers", method = RequestMethod.POST)
     @ResponseBody
