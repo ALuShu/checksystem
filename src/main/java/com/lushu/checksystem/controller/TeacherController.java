@@ -133,7 +133,7 @@ public class TeacherController {
             , @RequestParam(required = false) int limit
             , @RequestParam(required = false) String path) {
         Map<String, Object> res = new HashMap<>();
-        if("\\".equals(path) || path == null){
+        if("\\".equals(path) || path == null || root.equals(path)){
             path = root;
         }else {
             path = root + path;
@@ -195,7 +195,7 @@ public class TeacherController {
     @ResponseBody
     public Map newFile(@RequestParam String name, @RequestParam String path) {
         Map<String, Object> json = new HashMap<>();
-        if("\\".equals(path) || path == null){
+        if("\\".equals(path) || path == null || root.equals(path)){
             path = root;
         }else {
             path = root + path;
@@ -221,7 +221,7 @@ public class TeacherController {
     public Map delFile(@RequestParam(value = "name[]") String[] name, @RequestParam String path) {
         Map<String, Object> json = new HashMap<>();
         HashMap<String, Object> param = new HashMap<>();
-        if("\\".equals(path) || path == null){
+        if("\\".equals(path) || path == null || root.equals(path)){
             path = root;
         }else {
             path = root + path;

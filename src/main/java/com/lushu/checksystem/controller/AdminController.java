@@ -40,7 +40,7 @@ public class AdminController {
     private UserService userService;
     private FileService fileService;
     private InformService informService;
-    private User user = user = new User();
+    private User user = new User();
 
     public AdminController(UserService userService, FileService fileService, InformService informService) {
         this.userService = userService;
