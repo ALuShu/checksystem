@@ -139,7 +139,7 @@ public class StudentController {
     }
 
     /**
-     * 修改密码（后续优化：将旧密码的确认做成异步）
+     * 修改密码
      */
     @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
     @ResponseBody

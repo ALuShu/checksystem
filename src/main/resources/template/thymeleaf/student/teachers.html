@@ -114,9 +114,13 @@
     }
 
     //layui官方方法
-    layui.use(['table','element'], function () {
+    layui.use(['table', 'tree', 'util', 'element', 'laytpl', 'upload', 'form'], function () {
         var table = layui.table
-            , element = layui.element;
+            , upload = layui.upload
+            , layer = layui.layer
+            , element = layui.element
+            , form = layui.form
+            , laytpl = layui.laytpl;
 
         //layui数据表格
         table.render({
@@ -139,7 +143,8 @@
 
         //layui表格点击文件事件
         table.on('row(teachers)', function (obj) {
-            layer.msg("点击事件")
+            let data = obj.data;
+            console.log(JSON.stringify(data));
         });
 
         //监听下拉选择框（未完成）
