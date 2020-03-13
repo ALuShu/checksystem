@@ -19,6 +19,10 @@
                 <a href="/teacher/personal" style="color: #393D49">
                     <img src="http://t.cn/RCzsdCq" class="layui-nav-img"><span th:text="${current.realname}"></span>
                 </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="/teacher/informs">发布通知</a></dd>
+                    <dd><a href="/teacher/update">修改密码</a></dd>
+                </dl>
             </li>
             <li class="layui-nav-item"><a id="logout" href="javascript:;" style="color: #393D49">注销</a></li>
         </ul>
@@ -32,7 +36,7 @@
                     <div class="layui-row grid-demo">
 
                         <!-- 搜索框 -->
-                        <div class="layui-col-md12">
+                        <div class="layui-col-md12" style="display: none">
                             <form class="layui-form" action="" id="searchForm">
                                 <div class="layui-form-item" style="margin: 0 auto">
 
@@ -124,7 +128,7 @@
 </script>
 
 <script type="text/html" id="barDemo">
-    <a class="layui-btn layui-btn-xs" lay-event="renameFile">重命名</a>
+    <a id="renameId" class="layui-btn layui-btn-xs layui-disabled" lay-event="renameFile">重命名</a>
     <a class="layui-btn layui-btn-xs" lay-event="downloadFile">下载</a>
     <a class="layui-btn layui-btn-xs" lay-event="lookFile">查看</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delFile">删除</a>
@@ -192,7 +196,8 @@
             elem: '#test'
             , url: url
             , limit: 15
-            , height: 'full-170'
+            //, height: 'full-170'
+            ,height: 'full-135'
             ,toolbar: '#toolbarDemo'
             , page: {
                 layout: ['prev', 'page', 'next', 'skip', 'count']

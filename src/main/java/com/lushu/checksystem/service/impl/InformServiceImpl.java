@@ -124,7 +124,7 @@ public class InformServiceImpl implements InformService {
     public Integer addInforms(List<Inform> list) {
         for (int i =0;i < list.size(); i++){
             Inform current = list.get(i);
-            if (current.getPath() != null) {
+            if (current.getPath() != null && !"".equals(current.getPath())) {
                 current.setPath(root+current.getPath());
             }
             current.setDate(OtherConstant.DATE_FORMAT.format(new Date()));

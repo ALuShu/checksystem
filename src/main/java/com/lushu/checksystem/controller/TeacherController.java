@@ -64,17 +64,6 @@ public class TeacherController {
             return "/teacher/index";
         }
     }
-    @RequestMapping("/edit")
-    public String inform(Model model){
-        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if ("anonymousUser".equals(a.toString())){
-            return "redirect:/logout";
-        }else {
-            user = (User) a;
-            model.addAttribute("current", user);
-            return "/teacher/edit";
-        }
-    }
     @RequestMapping("/personal")
     public String personal(Model model){
         Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -95,6 +84,17 @@ public class TeacherController {
             User user = (User) a;
             model.addAttribute("current", user);
             return "/teacher/update";
+        }
+    }
+    @RequestMapping("/informs")
+    public String informs(Model model){
+        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())){
+            return "redirect:/logout";
+        }else {
+            User user = (User) a;
+            model.addAttribute("current", user);
+            return "/teacher/informs";
         }
     }
 
@@ -436,9 +436,15 @@ public class TeacherController {
      */
     @RequestMapping(value = "/recentInforms", method = RequestMethod.GET)
     @ResponseBody
-    public Map recentInforms(){
-        Map<String, Object> json = new HashMap<>();
-        return json;
+    public Map recentInforms(@RequestParam int page,@RequestParam int limit){
+        Map<String, Object> res = new HashMap<>();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        PageBean<Inform> informs = informService.selectInforms(user.getUsername(), page, limit);
+        res.put("code",0);
+        res.put("count",informs.getTotalRecord());
+        res.put("data",informs.getList());
+        res.put("msg","");
+        return res;
     }
 
 
