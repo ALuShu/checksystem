@@ -105,7 +105,7 @@
             <if test="date != null and date != ''">
                 date=#{date},
             </if>
-            <if test="path != null and path != ''">
+            <if test="path != null">
                 path=#{path},
             </if>
             <if test="type != null and type != ''">

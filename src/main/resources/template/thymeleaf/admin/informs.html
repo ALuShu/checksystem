@@ -211,7 +211,28 @@
                     });
                     break;
                 case 'delInform':
-                    layer.msg("enen");
+                    var data = checkStatus.data
+                        ,idParam = [];
+                    for (let i = 0; i < data.length; i++) {
+                        idParam[i] = data[i].id;
+                    }
+                    layer.confirm('确认删除？', function(index){
+                        $.ajax({
+                            url:'/teacher/delInform',
+                            data:{
+                                "idParam":idParam
+                            },
+                            method: 'POST',
+                            success:function (result) {
+                                layer.close(index);
+                                table.reload('test',{
+                                    page: {
+                                        curr: 1
+                                    }
+                                })
+                            }
+                        });
+                    });
                     break;
                 //自定义头工具栏右侧图标 - 提示
                 case 'LAYTABLE_TIPS':
@@ -243,19 +264,15 @@
                     scrollbar: true,//屏蔽浏览器滚动条
                     yes: function (index, layero) {
                         //监听submit按钮提交
-                        form.on('submit(submitbtn)', function (data) {
+                        form.on('submit(submitbtn)', function (formDara) {
                             //确认表单信息
-                            layer.alert(JSON.stringify(data.field), {
+                            layer.alert(JSON.stringify(formDara.field), {
                                 title: '最终的提交信息'
                             },function () {
                                 //表单提交
                                 $.ajax({
-                                    url:'',
-                                    data:JSON.stringify(data.field),
-                                    dataType:'json',
-                                    headers : {
-                                        'Content-Type' : 'application/json;charset=utf-8'
-                                    },
+                                    url:'/teacher/editInform',
+                                    data:formDara.field,
                                     type:'post',
                                     success:function (result) {
                                         layer.alert("成功"+result,function () {
@@ -274,7 +291,25 @@
                     }
                 });
             } else if(obj.event === 'delInform'){
-                layer.msg("hi3");
+                let idParam = [];
+                idParam[0] = data[0].id;
+                layer.confirm('确认删除？', function(index){
+                    $.ajax({
+                        url:'/teacher/delInform',
+                        data:{
+                            "idParam":idParam
+                        },
+                        method: 'POST',
+                        success:function (result) {
+                            layer.close(index);
+                            table.reload('test',{
+                                page: {
+                                    curr: 1
+                                }
+                            })
+                        }
+                    });
+                });
             }
         });
 

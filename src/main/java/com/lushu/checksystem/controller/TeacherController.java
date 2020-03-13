@@ -388,6 +388,48 @@ public class TeacherController {
         return resMap;
     }
 
+    /**
+     * 教师端通知编辑
+     */
+    @RequestMapping(value = "/editInform", method = RequestMethod.POST)
+    @ResponseBody
+    public Map editInform(Inform inform){
+        HashMap<String,Object> resMap = new HashMap<>();
+        Integer updRes = informService.updateInform(inform);
+        if (updRes == 1){
+            resMap.put("code",0);
+            resMap.put("msg","更新成功");
+        }else {
+            resMap.put("code",1);
+            resMap.put("msg","更新失败");
+        }
+        return resMap;
+    }
+
+    /**
+     * 教师端通知删除
+     */
+    @RequestMapping(value = "/delInform", method = RequestMethod.POST)
+    @ResponseBody
+    public Map delInform(@RequestParam(name = "idParam[]") String[] idParam){
+        HashMap<String,Object> resMap = new HashMap<>();
+        List<Integer> ids = new ArrayList<>();
+        for(String id : idParam){
+            ids.add(Integer.valueOf(id));
+        }
+        int delRes = informService.deleteInforms(ids);
+        if (delRes == idParam.length){
+            resMap.put("code",0);
+            resMap.put("msg","删除成功");
+        }else if (delRes < idParam.length && delRes > 0){
+            resMap.put("code",1);
+            resMap.put("msg","删除成功，部分删除不成功");
+        }else {
+            resMap.put("code",-1);
+            resMap.put("msg","删除失败");
+        }
+        return resMap;
+    }
 
     /**
      * 个人中心最近通知(查看更多)
