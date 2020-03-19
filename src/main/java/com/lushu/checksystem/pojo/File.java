@@ -3,7 +3,7 @@ package com.lushu.checksystem.pojo;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.List;
 
 @Data
 public class File implements Serializable {
@@ -29,8 +29,8 @@ public class File implements Serializable {
   private Integer status;
   private String sign;
   /**
-   * 海明距离{"文件名":1000001010101}
+   * 海明距离{{"filename":"text.docx"},{"distance":1000001010101}}
    */
-  private HashMap<String, Integer> distances;
+  private List<HaiMingDistance> distances;
 
 }

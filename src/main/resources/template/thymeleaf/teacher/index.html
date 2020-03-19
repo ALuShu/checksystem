@@ -375,8 +375,16 @@
                             },
                             method: 'post',
                             success: function (result) {
-                                var resData = result.data;
-                                layer.alert(JSON.stringify(resData));
+                                var resData = result.data,
+                                    distanceList = [];
+                                for (let i = 0; i < resData.length; i++) {
+                                    distanceList[i] = {
+                                        "name":resData[i].name,
+                                        "distances":resData[i].distances
+                                    };
+                                }
+
+                                layer.alert();
                                 table.reload('test', {
                                     page: {
                                         curr: 1

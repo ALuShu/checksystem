@@ -6,6 +6,7 @@ import com.lushu.checksystem.constant.OtherConstant;
 import com.lushu.checksystem.dao.FileDao;
 import com.lushu.checksystem.dao.UserDao;
 import com.lushu.checksystem.pojo.File;
+import com.lushu.checksystem.pojo.HaiMingDistance;
 import com.lushu.checksystem.pojo.PageBean;
 import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.util.SimHash;
@@ -418,14 +419,45 @@ public class FileServiceImpl implements FileService {
         Integer updRes = fileDao.updateFiles(files);
         //存放海明距离
         for (int i = 0; i < files.size()-1; i++){
-            HashMap<String, Integer> distanceMap = new HashMap<>();
+            List<HaiMingDistance> distanceList = new ArrayList<>();
             String currentSign = files.get(i).getSign().toString();
             for (int j = i+1; j < files.size(); j++){
                 String compareSign = files.get(j).getSign().toString();
                 int distance = hashes.get(i).getDistance(currentSign, compareSign);
-                distanceMap.put(files.get(j).getName(),distance);
+                HaiMingDistance haiMingDistance = new HaiMingDistance();
+                haiMingDistance.setFilename(files.get(j).getName());
+                haiMingDistance.setDistance(distance);
+                distanceList.add(haiMingDistance);
             }
-            files.get(i).setDistances(distanceMap);
+            files.get(i).setDistances(distanceList);
+        }
+        //将海明距离平铺至每个File对象
+        for (int i = files.size()-1; i > 0; i--) {
+            String currentFilename = files.get(i).getName();
+            List<HaiMingDistance> currentDistanceList;
+            if (i == files.size()-1){
+                currentDistanceList = new ArrayList<>();
+            }else {
+                currentDistanceList = files.get(i).getDistances();
+            }
+            for (int j = i - 1; j > -1; j--) {
+                String beforeFilename = files.get(j).getName();
+                List<HaiMingDistance> beforeDistanceList = files.get(j).getDistances();
+                Iterator<HaiMingDistance> iterator = beforeDistanceList.iterator();
+                while (iterator.hasNext()){
+                    HaiMingDistance distance = iterator.next();
+                    if (currentFilename.equals(distance.getFilename())){
+                        HaiMingDistance newHaiMingDistance = new HaiMingDistance();
+                        newHaiMingDistance.setFilename(beforeFilename);
+                        newHaiMingDistance.setDistance(distance.getDistance());
+                        currentDistanceList.add(newHaiMingDistance);
+                        break;
+                    }
+                }
+            }
+            if (i == files.size()-1){
+                files.get(i).setDistances(currentDistanceList);
+            }
         }
         return files;
     }
