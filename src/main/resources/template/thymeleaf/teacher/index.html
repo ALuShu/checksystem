@@ -90,6 +90,7 @@
         </div>
     </div>
 
+    <div id="test5" class="demo-tree-more"></div>
 </div>
 
 
@@ -170,14 +171,15 @@
     }
 
     //layui官方方法
-    layui.use(['table', 'tree', 'util', 'element', 'laytpl', 'upload', 'form'], function () {
+    layui.use(['table', 'tree', 'util', 'element', 'laytpl', 'upload', 'form','tree'], function () {
         var table = layui.table
             , upload = layui.upload
             , layer = layui.layer
             , element = layui.element
             , form = layui.form
-            , laytpl = layui.laytpl;
-        let url = '/teacher/teacherList';
+            , laytpl = layui.laytpl
+            , tree = layui.tree;
+        let url = '/file/show';
         //用于与后端交互，异步更新url
         let path = [];
         //面包屑导航多一个root元素以便返回根目录
@@ -216,7 +218,7 @@
                 //监听上传按钮，支持拖拽上传
                 upload.render({
                     elem: '#uploadBtn'
-                    , url: '/teacher/uploadFile'
+                    , url: '/file/uploadFile'
                     , method: 'post'
                     , allDone: function(res){
                         console.log(res.successful); //请求成功的文件数
@@ -375,16 +377,12 @@
                             },
                             method: 'post',
                             success: function (result) {
-                                var resData = result.data,
-                                    distanceList = [];
-                                for (let i = 0; i < resData.length; i++) {
-                                    distanceList[i] = {
-                                        "name":resData[i].name,
-                                        "distances":resData[i].distances
-                                    };
-                                }
-
-                                layer.alert();
+                                var resData = result.data;
+                                tree.render({
+                                    elem: '#test5'
+                                    ,data: resData
+                                    ,showLine: false  //是否开启连接线
+                                })
                                 table.reload('test', {
                                     page: {
                                         curr: 1

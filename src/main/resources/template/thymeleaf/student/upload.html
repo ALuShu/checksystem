@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <title>提交作业</title>
-    <link rel="stylesheet" href="../layui/css/layui.css" type="text/css">
+    <link rel="stylesheet" href="../../layui/css/layui.css" type="text/css">
 </head>
 <body class="layui-layout-body">
 <div class="layui-layout layui-layout-admin">
-<input id="currentPath" th:value="${currentPath}" style="display: none"/>
     <div class="layui-header layui-bg-gray">
 
         <div class="layui-logo" style="font-size: 20px; color: #393D49; cursor: pointer" onclick="index()">作业查重系统学生端</div>
@@ -63,12 +62,10 @@
 
 
 <!-- 方法 -->
-<script src="../webjars/jquery/3.4.1/jquery.js"></script>
-<script src="../layui/layui.js" type="text/javascript"></script>
+<script src="../../webjars/jquery/3.4.1/jquery.js"></script>
+<script src="../../layui/layui.js" type="text/javascript"></script>
 <script th:inline="none">
 
-    //当前路径
-    let currentPath = $('#currentPath').val();
 
     function index(){
         window.location="/student/index"
@@ -81,7 +78,7 @@
             , layer = layui.layer
             , element = layui.element
             , laytpl = layui.laytpl;
-        let url = '/student/studentList';
+        let url = '/file/show';
         //用于与后端交互，异步更新url
         let path = [];
         //面包屑导航多一个root元素以便返回根目录
@@ -198,7 +195,7 @@
         //拖拽上传
         upload.render({
             elem: '#uploadBtn'
-            ,url: '/student/uploadFile'
+            ,url: '/file/uploadFile'
             ,method:'post'
             ,done: function(res){
                 if(res.code === 0 || res.code === 1 || res.code === -1 || res.code === 2){

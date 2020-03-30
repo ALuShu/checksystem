@@ -178,6 +178,7 @@ public class UserServiceImpl implements UserService {
             log.info("用户集合为空,请检查参数是否正确输入");
             return res;
         }else {
+            //这里先把待添加的用户做一次遍历，若已有相同用户记录则移至另一用户集合existUsers，后面一起返回
             Iterator<User> userIterator = users.iterator();
             List<String> oldRecord = userDao.checkUsernames();
             List<User> existUsers = new ArrayList<>();
@@ -189,10 +190,12 @@ public class UserServiceImpl implements UserService {
                     userIterator.remove();
                 }
             }
+            //若检查完待添加的用户集合已空，则直接返回existUsers
             if (users.size() == 0) {
                 res.put("exist",existUsers);
                 return res;
             } else {
+                //开始就传进来的角色编号roleId做添加操作
                 List<Integer> ids = new ArrayList<>();
                 if (roleId == DatabaseConstant.Role.ROLE_TEACHER.ordinal()+1) {
                     //初始化密码和日期

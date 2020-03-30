@@ -10,7 +10,6 @@ import com.lushu.checksystem.service.UserService;
 import com.lushu.checksystem.util.ExcelUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -140,34 +138,6 @@ public class AdminController {
         }
     }
 
-
-    /**
-     * 管理员端展示文件列表
-     */
-    @RequestMapping(value = "/adminList", method = RequestMethod.GET)
-    @ResponseBody
-    public Map list(@RequestParam int page
-            , @RequestParam int limit
-            , @RequestParam(required = false) String path) throws ServletException, JSONException {
-        Map<String, Object> res = new HashMap<>();
-        if (path == null) {
-            path = "/";
-        }
-
-        PageBean<Map<String, Object>> fileList = fileService.showFileList(path, page, limit);
-        if (fileList == null){
-            res.put("data",null);
-            res.put("code",0);
-            res.put("msg","");
-            res.put("count",0);
-        }else {
-            res.put("data", fileList.getList());
-            res.put("code", 0);
-            res.put("msg", "");
-            res.put("count", fileList.getTotalRecord());
-        }
-        return res;
-    }
 
     /**
      * 管理员端展示用户列表

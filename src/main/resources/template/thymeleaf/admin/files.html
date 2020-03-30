@@ -132,7 +132,7 @@
             , element = layui.element
             , form = layui.form
             , laytpl = layui.laytpl;
-        let url = '/admin/adminList';
+        let url = '/file/show';
         //用于与后端交互，动态更新url
         let path = [];
         //面包屑导航多一个root元素以便返回根目录
@@ -170,7 +170,7 @@
                 //监听上传按钮，支持拖拽上传
                 upload.render({
                     elem: '#uploadBtn'
-                    , url: '/teacher/uploadFile'
+                    , url: '/file/uploadFile'
                     , method: 'post'
                     , allDone: function(res){
                         console.log(res.successful); //请求成功的文件数

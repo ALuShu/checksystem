@@ -206,11 +206,15 @@
                     }
                 });
             } else {
-                var requestPath = detailJson.path;
-                var index = requestPath.indexOf('root') + 5;
-                requestPath = requestPath.slice(index);
-                requestPath = (requestPath).replace(/\\/, '/');
-                window.location.href = '/student/upload?requestPath=' + requestPath;
+                $.ajax({
+                    type: "post",
+                    url: "/student/upload",
+                    async: true,
+                    data: detailJson,
+                    success: function (data) {
+                        window.location.href = '/student/upload/' + data.id;
+                    }
+                });
             }
         });
 

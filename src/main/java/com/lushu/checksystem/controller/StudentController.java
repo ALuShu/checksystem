@@ -10,17 +10,11 @@ import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.service.InformService;
 import com.lushu.checksystem.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +27,7 @@ import java.util.Map;
 @RequestMapping("/student")
 public class StudentController {
 
-    private String current;
+    static StringBuffer current;
     private UserService userService;
     private FileService fileService;
     private InformService informService;
@@ -59,16 +53,24 @@ public class StudentController {
             return "/student/index";
         }
     }
-    @RequestMapping("/upload")
-    public String upload(@RequestParam String requestPath, Model model) {
+    @PostMapping("/upload")
+    @ResponseBody
+    public Map redirectUpload(Inform detailJson) {
+        HashMap<String,Object> resMap = new HashMap<>();
+        resMap.put("code",1);
+        resMap.put("id",detailJson.getId());
+        return resMap;
+    }
+    @RequestMapping("/upload/{id}")
+    public String upload(@PathVariable Integer id, Model model) {
         Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())){
             return "redirect:/logout";
         }else {
             user = (User) a;
+            Inform inform = informService.selectInform(id);
             model.addAttribute("current", user);
-            model.addAttribute("currentPath", current);
-            current = requestPath;
+            current = new StringBuffer(inform.getPath());
             return "/student/upload";
         }
     }
@@ -160,76 +162,6 @@ public class StudentController {
             res.put("msg", "success");
         }
         return res;
-    }
-
-    /**
-     * 学生端显示文件列表
-     */
-    @RequestMapping(value = "/studentList", method = RequestMethod.GET)
-    @ResponseBody
-    public Map list(@RequestParam int page
-            , @RequestParam int limit
-            , @RequestParam(required = false) String path) throws ServletException, JSONException {
-        Map<String, Object> res = new HashMap<>();
-        if ((current != null && !"".equals(current) && path == null) || "/".equals(path)){
-            path = current;
-        }else if (current == null || "".equals(current)){
-            path = "/test";
-        }else {
-            path = current + path;
-        }
-        PageBean<Map<String, Object>> fileList = fileService.showFileList(path, page, limit);
-        if (fileList == null){
-            res.put("data",null);
-            res.put("code",0);
-            res.put("msg","");
-            res.put("count",0);
-        }else {
-            res.put("data", fileList.getList());
-            res.put("code", 0);
-            res.put("msg", "");
-            res.put("count", fileList.getTotalRecord());
-        }
-        return res;
-    }
-
-
-    /**
-     * 学生端上传文件方法（后续优化：多文件上传时不像现在的要请求多次此方法；Windows的"/"在数据库里取出来不好弄）
-     */
-    @PostMapping("/uploadFile")
-    @ResponseBody
-    public Map upload(HttpServletRequest request, @RequestParam("path") String path) {
-        Map<String, Object> json = new HashMap<>();
-        if (current != null && !"".equals(current) || "/".equals(path)){
-            path = current;
-        }else if (current == null || "".equals(current)){
-            path = "/test";
-        }
-        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-        Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Integer id = user.getId();
-        if (fileMap == null || fileMap.size() == 0) {
-            json.put("code", 0);
-            json.put("msg", "请选择作业文件!");
-            return json;
-        }
-        Collection<MultipartFile> files = fileMap.values();
-        int res = fileService.addFiles(files, path, id);
-        if (res == fileMap.size()){
-            json.put("code", 1);
-            json.put("msg", "上传成功！");
-            return json;
-        }else if (res == 0){
-            json.put("code", 2);
-            json.put("msg", "覆盖操作！");
-            return json;
-        }else {
-            json.put("code", -1);
-            json.put("msg", "上传失败！");
-            return json;
-        }
     }
 
 
