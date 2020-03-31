@@ -317,7 +317,7 @@
                                 //确认表单信息
                                 layer.alert(JSON.stringify(data.field), function (index) {
                                     $.ajax({
-                                        url:'/teacher/newFile',
+                                        url:'/file/newFile',
                                         data: {
                                             "name": data.field.name,
                                             "path": path.join('\\')+ '\\'
@@ -344,7 +344,7 @@
                         , nameColumn = getNameColumn(data);
                     layer.confirm('确认删除？(暂不支持删除非空文件夹)', function(index){
                         $.ajax({
-                            url:'/teacher/delFile',
+                            url:'/file/delFile',
                             data:{
                                 "name":nameColumn,
                                 "path": path.join('\\')+ '\\'
@@ -370,7 +370,7 @@
                         layer.msg("查重操作要2个以上文档")
                     }else {
                         $.ajax({
-                            url: '/teacher/checkFile',
+                            url: '/file/checkFile',
                             data: {
                                 "name": nameColumn,
                                 "path": path.join('\\') + '\\'
@@ -444,7 +444,7 @@
                 }else if (data.type === 'dir'){
                     layer.msg("暂不支持多个文件的下载")
                 }else {
-                    window.location.href="/teacher/downloadFile?path="+path.join('/')+"&name="+data.name
+                    window.location.href="/file/downloadFile?path="+path.join('/')+"&name="+data.name
                 }
             } else if(obj.event === 'lookFile'){
                 layer.alert(JSON.stringify(data));
@@ -454,7 +454,7 @@
                 arr.push(data.name);
                 layer.confirm('确认删除？(暂不支持删除非空文件夹)', function(index){
                     $.ajax({
-                        url:'/teacher/delFile',
+                        url:'/file/delFile',
                         data:{
                             "name": arr,
                             "path": path.join('\\')+ '\\'

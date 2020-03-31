@@ -6,19 +6,11 @@ import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.service.InformService;
 import com.lushu.checksystem.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,8 +25,6 @@ import java.util.Map;
 @RequestMapping("/teacher")
 public class TeacherController {
 
-    @Value("${checksystem.root}")
-    private String realPath;
     private StringBuffer root;
     private User user = new User();
     private FileService fileService;
@@ -125,62 +115,6 @@ public class TeacherController {
 
 
     /**
-     * 创建文件夹
-     */
-    @PostMapping("/newFile")
-    @ResponseBody
-    public Map newFile(@RequestParam String name, @RequestParam String path) {
-        Map<String, Object> json = new HashMap<>();
-        if (root != null) {
-            if ("\\".equals(path) || root.equals(path)) {
-                path = root.toString();
-            } else {
-                path = root + path;
-            }
-        }
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        int res = fileService.addDirectory(name, path, user.getId());
-        if (res == 1) {
-            json.put("code", 1);
-            json.put("msg", "创建成功！");
-            return json;
-        } else {
-            json.put("code", 0);
-            json.put("msg", "创建失败！");
-            return json;
-        }
-    }
-
-    /**
-     * 删除文件
-     */
-    @PostMapping("/delFile")
-    @ResponseBody
-    public Map delFile(@RequestParam(value = "name[]") String[] name, @RequestParam String path) {
-        Map<String, Object> json = new HashMap<>();
-        HashMap<String, Object> param = new HashMap<>();
-        if (root != null) {
-            if ("\\".equals(path) || path == null || root.equals(path)) {
-                path = root.toString();
-            } else {
-                path = root + path;
-            }
-        }
-        param.put("fileName", name);
-        param.put("path", path);
-        int res = fileService.deleteFile(param);
-        if (res == 1) {
-            json.put("code", 1);
-            json.put("msg", "创建成功！");
-            return json;
-        } else {
-            json.put("code", 0);
-            json.put("msg", "创建失败！");
-            return json;
-        }
-    }
-
-    /**
      * 重命名文件
      */
     @PostMapping("/renameFile")
@@ -261,72 +195,6 @@ public class TeacherController {
         json.put("msg", "");
         json.put("count", pageBean.getTotalRecord());
         return json;
-    }
-
-
-    /**
-     * 文件下载
-     */
-    @RequestMapping(value = "/downloadFile", method = RequestMethod.GET)
-    public ResponseEntity<byte[]> download(HttpServletRequest request
-            , @RequestParam String name
-            , @RequestParam String path) throws IOException {
-        String real;
-        if (root != null) {
-            real = realPath + root + path;
-        } else {
-            real = realPath + path;
-        }
-        java.io.File file = new java.io.File(real, name);
-        HttpHeaders headers = new HttpHeaders();
-        String downloadFileName = null;
-        downloadFileName = new String(name.getBytes("UTF-8"), "iso-8859-1");
-        headers.setContentDispositionFormData("attachment", downloadFileName);
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-
-        return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.CREATED);
-    }
-
-    /**
-     * 教师端作业查重
-     */
-    @RequestMapping(value = "/checkFile", method = RequestMethod.POST)
-    @ResponseBody
-    public Map checkFile(@RequestParam(value = "name[]") String[] name, @RequestParam String path) {
-        HashMap<String, Object> resMap = new HashMap<>();
-        List<File> resFiles = fileService.checkMethod(name, root + path);
-        List<LayuiDtree> dtrees = new ArrayList<>();
-        for (int i = 1; i <= resFiles.size(); i++) {
-            File currentFile = resFiles.get(i - 1);
-            List<HaiMingDistance> currentDistances = currentFile.getDistances();
-            LayuiDtree node = new LayuiDtree();
-            node.setId(i + "");
-            node.setTitle(currentFile.getName());
-            List<LayuiDtree> children = new ArrayList<>();
-            if (currentDistances.size() > 0) {
-                for (int j = 1; j <= currentDistances.size(); j++) {
-                    LayuiDtree childrenNode = new LayuiDtree();
-                    childrenNode.setId(i * 100 + j + "");
-                    String res ;
-                    if (currentDistances.get(j - 1).getDistance() <= 3) {
-                        res = "高相似";
-                    }else if (currentDistances.get(j - 1).getDistance() >= 4 && currentDistances.get(j - 1).getDistance() <= 6){
-                        res = "中相似";
-                    }else {
-                        res = "低相似";
-                    }
-                    childrenNode.setTitle(currentDistances.get(j - 1).getFilename() + "\u0020\u0020\u0020\u0020" + res);
-                    children.add(childrenNode);
-                }
-            }
-            node.setChildren(children);
-            dtrees.add(node);
-        }
-        resMap.put("code", 0);
-        resMap.put("msg", "查重成功");
-        resMap.put("count", dtrees.size());
-        resMap.put("data", dtrees);
-        return resMap;
     }
 
 

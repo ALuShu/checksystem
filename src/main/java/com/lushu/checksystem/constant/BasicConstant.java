@@ -43,7 +43,9 @@ public interface BasicConstant {
         //移动
         MOVE("MOVE"),
         //批改
-        CORRECT("CORRECT");
+        CORRECT("CORRECT"),
+        //复制
+        COPY("COPY");
 
         private String string;
 

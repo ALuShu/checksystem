@@ -1,9 +1,15 @@
 package com.lushu.checksystem.controller;
 
-import com.lushu.checksystem.pojo.PageBean;
-import com.lushu.checksystem.pojo.User;
+import com.lushu.checksystem.constant.BasicConstant;
+import com.lushu.checksystem.pojo.*;
 import com.lushu.checksystem.service.FileService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -13,10 +19,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @author ALuShu
@@ -28,6 +32,8 @@ import java.util.Map;
 @RequestMapping("/file")
 public class FileController {
 
+    @Value("${checksystem.root}")
+    private String realPath;
     private FileService fileService;
 
     public FileController(FileService fileService) {
@@ -43,7 +49,6 @@ public class FileController {
             , @RequestParam(required = false) int limit
             , @RequestParam(required = false) String path) {
         Map<String, Object> res = new HashMap<>();
-        User user;
         Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())) {
             res.put("data", null);
@@ -51,25 +56,25 @@ public class FileController {
             res.put("msg", "身份验证过期，请重新登录");
             res.put("count", 0);
         } else {
-            user = (User) a;
+            User user = (User) a;
             List<GrantedAuthority> grantedAuthorities = user.getAuthorities();
-            if (grantedAuthorities.contains(new SimpleGrantedAuthority("ROLE_ADMIN"))){
+            if (grantedAuthorities.contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
                 if (path == null) {
                     path = "/";
                 }
-            }else if (grantedAuthorities.contains(new SimpleGrantedAuthority("ROLE_TEACHER"))){
+            } else if (grantedAuthorities.contains(new SimpleGrantedAuthority("ROLE_TEACHER"))) {
                 if ("\\".equals(path) || "/".equals(path) || path == null) {
                     path = user.getUsername() + "_" + user.getRealname() + "\\";
                 } else {
                     path = user.getUsername() + "_" + user.getRealname() + "\\" + path;
                 }
-            }else {
+            } else {
                 StringBuffer current = StudentController.current;
-                if ("\\".equals(path) || "/".equals(path) || path == null){
+                if ("\\".equals(path) || "/".equals(path) || path == null) {
                     path = current.toString();
-                }else if ("".equals(current.toString())){
+                } else if ("".equals(current.toString())) {
                     path = "/test";
-                }else {
+                } else {
                     path = current + path;
                 }
             }
@@ -94,7 +99,7 @@ public class FileController {
      */
     @PreAuthorize("hasAnyRole('STUDENT') or hasAnyRole('TEACHER') or hasAnyRole('ADMIN')")
     @PostMapping("/uploadFile")
-    public Map upload(HttpServletRequest request, @RequestParam("path") String path){
+    public Map upload(HttpServletRequest request, @RequestParam("path") String path) {
         Map<String, Object> json = new HashMap<>();
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         Map<String, MultipartFile> fileMap = multipartRequest.getFileMap();
@@ -114,19 +119,19 @@ public class FileController {
             List<GrantedAuthority> grantedAuthorities = user.getAuthorities();
             Integer id = user.getId();
             Collection<MultipartFile> files = fileMap.values();
-            if (grantedAuthorities.contains(new SimpleGrantedAuthority("ROLE_TEACHER"))){
+            if (grantedAuthorities.contains(new SimpleGrantedAuthority("ROLE_TEACHER"))) {
                 if ("\\".equals(path) || path.equals(user.getUsername() + "_" + user.getRealname() + "\\")) {
                     path = user.getUsername() + "_" + user.getRealname() + "\\";
                 } else {
                     path = user.getUsername() + "_" + user.getRealname() + "\\" + path;
                 }
-            }else if(grantedAuthorities.contains(new SimpleGrantedAuthority("ROLE_STUDENT"))){
+            } else if (grantedAuthorities.contains(new SimpleGrantedAuthority("ROLE_STUDENT"))) {
                 StringBuffer current = StudentController.current;
-                if ("\\".equals(path) || "/".equals(path) || path == null){
+                if ("\\".equals(path) || "/".equals(path) || path == null) {
                     path = current.toString();
-                }else if ("".equals(current.toString())){
+                } else if ("".equals(current.toString())) {
                     path = "/test";
-                }else {
+                } else {
                     path = current + path;
                 }
             }
@@ -144,4 +149,200 @@ public class FileController {
         }
         return json;
     }
+
+    /**
+     * 创建文件夹
+     */
+    @PostMapping("/newFile")
+    public Map newFile(@RequestParam String name, @RequestParam String path) {
+        Map<String, Object> json = new HashMap<>();
+        Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())) {
+            json.put("data", null);
+            json.put("code", 0);
+            json.put("msg", "身份验证过期，请重新登录");
+            json.put("count", 0);
+        } else {
+            User user = (User) a;
+            List<GrantedAuthority> grantedAuthorities = user.getAuthorities();
+            if (grantedAuthorities.contains(new SimpleGrantedAuthority("ROLE_TEACHER"))) {
+                if ("\\".equals(path) || path.equals(user.getUsername() + "_" + user.getRealname() + "\\")) {
+                    path = user.getUsername() + "_" + user.getRealname() + "\\";
+                } else {
+                    path = user.getUsername() + "_" + user.getRealname() + "\\" + path;
+                }
+            }
+            int res = fileService.addDirectory(name, path, user.getId());
+            if (res == 1) {
+                json.put("code", 1);
+                json.put("msg", "创建成功！");
+            } else {
+                json.put("code", 0);
+                json.put("msg", "创建失败！");
+            }
+        }
+        return json;
+    }
+
+    /**
+     * 删除文件
+     */
+    @PostMapping("/delFile")
+    public Map delFile(@RequestParam(value = "name[]") String[] name, @RequestParam String path) {
+        Map<String, Object> json = new HashMap<>();
+        HashMap<String, Object> param = new HashMap<>();
+        Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())) {
+            json.put("data", null);
+            json.put("code", 0);
+            json.put("msg", "身份验证过期，请重新登录");
+            json.put("count", 0);
+        } else {
+            User user = (User) a;
+            List<GrantedAuthority> grantedAuthorities = user.getAuthorities();
+            if (grantedAuthorities.contains(new SimpleGrantedAuthority("ROLE_TEACHER"))) {
+                if ("\\".equals(path) || path.equals(user.getUsername() + "_" + user.getRealname() + "\\")) {
+                    path = user.getUsername() + "_" + user.getRealname() + "\\";
+                } else {
+                    path = user.getUsername() + "_" + user.getRealname() + "\\" + path;
+                }
+            }
+            param.put("fileName", name);
+            param.put("path", path);
+            int res = fileService.deleteFile(param);
+            if (res == 1) {
+                json.put("code", 1);
+                json.put("msg", "创建成功！");
+            } else {
+                json.put("code", 0);
+                json.put("msg", "创建失败！");
+            }
+        }
+        return json;
+    }
+
+
+    /**
+     * 文件下载
+     */
+    @GetMapping("/downloadFile")
+    public ResponseEntity<byte[]> download(HttpServletRequest request
+            , @RequestParam String name
+            , @RequestParam String path) throws IOException {
+        String real;
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<GrantedAuthority> grantedAuthorities = user.getAuthorities();
+        if (grantedAuthorities.contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+            if ("\\".equals(path) || "/".equals(path)) {
+                real = realPath;
+            } else {
+                real = realPath + path;
+            }
+        } else {
+            real = realPath + user.getUsername() + "_" + user.getRealname() + "\\" + path;
+        }
+        java.io.File file = new java.io.File(real, name);
+        HttpHeaders headers = new HttpHeaders();
+        String downloadFileName = null;
+        downloadFileName = new String(name.getBytes("UTF-8"), "iso-8859-1");
+        headers.setContentDispositionFormData("attachment", downloadFileName);
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+
+        return new ResponseEntity<byte[]>(FileUtils.readFileToByteArray(file), headers, HttpStatus.CREATED);
+    }
+
+
+    /**
+     * 作业查重
+     */
+    @PostMapping("/checkFile")
+    public Map checkFile(@RequestParam(value = "name[]") String[] name, @RequestParam String path) {
+        HashMap<String, Object> resMap = new HashMap<>();
+        Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())) {
+            resMap.put("data", null);
+            resMap.put("code", 0);
+            resMap.put("msg", "身份验证过期，请重新登录");
+            resMap.put("count", 0);
+        } else {
+            User user = (User) a;
+            List<GrantedAuthority> grantedAuthorities = user.getAuthorities();
+            List<File> resFiles = fileService.checkMethod(name, user.getUsername() + "_" + user.getRealname() + "\\" + path);
+            List<LayuiDtree> dtrees = new ArrayList<>();
+            for (int i = 1; i <= resFiles.size(); i++) {
+                File currentFile = resFiles.get(i - 1);
+                List<HaiMingDistance> currentDistances = currentFile.getDistances();
+                LayuiDtree node = new LayuiDtree();
+                node.setId(i + "");
+                node.setTitle(currentFile.getName());
+                List<LayuiDtree> children = new ArrayList<>();
+                if (currentDistances.size() > 0) {
+                    for (int j = 1; j <= currentDistances.size(); j++) {
+                        LayuiDtree childrenNode = new LayuiDtree();
+                        childrenNode.setId(i * 100 + j + "");
+                        String res;
+                        if (currentDistances.get(j - 1).getDistance() <= 3) {
+                            res = "高相似";
+                        } else if (currentDistances.get(j - 1).getDistance() >= 4 && currentDistances.get(j - 1).getDistance() <= 6) {
+                            res = "中相似";
+                        } else {
+                            res = "低相似";
+                        }
+                        childrenNode.setTitle(currentDistances.get(j - 1).getFilename() + "\u0020\u0020\u0020\u0020" + res);
+                        children.add(childrenNode);
+                    }
+                }
+                node.setChildren(children);
+                dtrees.add(node);
+            }
+            resMap.put("code", 0);
+            resMap.put("msg", "查重成功");
+            resMap.put("count", dtrees.size());
+            resMap.put("data", dtrees);
+        }
+        return resMap;
+    }
+
+
+    /**
+     * 重命名文件
+     */
+    @PostMapping("/renameFile")
+    @ResponseBody
+    public Map renameFile(@RequestParam String name, @RequestParam String path) {
+        Map<String, Object> json = new HashMap<>();
+        Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())) {
+            json.put("data", null);
+            json.put("code", 0);
+            json.put("msg", "身份验证过期，请重新登录");
+            json.put("count", 0);
+        } else {
+            User user = (User) a;
+            List<GrantedAuthority> grantedAuthorities = user.getAuthorities();
+            path = user.getUsername() + "_" + user.getRealname() + "\\" + path;
+            int index = path.lastIndexOf("\\");
+            String tmpPath;
+            if (index == path.indexOf("\\") + 1) {
+                tmpPath = path.substring(0, index);
+            } else {
+                tmpPath = path.substring(0, index) + "\\";
+            }
+            String tmpName = path.substring(index + 1);
+            HashMap<String, Object> param = new HashMap<>();
+            param.put("newName", name);
+            param.put("resourcePath", tmpPath);
+            param.put("resourceName", tmpName);
+            int res = fileService.updateFiles(param, BasicConstant.FileAction.RENAME.getString());
+            if (res == 1) {
+                json.put("code", 1);
+                json.put("msg", "创建成功！");
+            } else {
+                json.put("code", 0);
+                json.put("msg", "创建失败！");
+            }
+        }
+        return json;
+    }
+
 }
