@@ -9,7 +9,8 @@
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header layui-bg-gray">
 
-        <div class="layui-logo" style="font-size: 20px; color: #393D49; cursor: pointer" onclick="index()">作业查重系统学生端</div>
+        <div class="layui-logo" style="font-size: 20px; color: #393D49; cursor: pointer" onclick="index()">作业查重系统学生端
+        </div>
         <ul class="layui-nav layui-layout-right">
             <li class="layui-nav-item">
                 <a href="/student/personal">
@@ -22,33 +23,50 @@
     </div>
 </div>
 <div>
-    <form id="form" class="layui-form" action="" method="post">
-        <div class="layui-form-item">
-            <label class="layui-form-label">旧密码</label>
-            <div class="layui-input-inline">
-                <input type="password" id="oldPassword" name="oldPassword" required lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+    <div class="layui-bg-green">
+        <div style="padding: 5px; width: 80%; margin: auto">
+                <div class="layui-row layui-col-space5 layui-bg-gray">
+                    <div class="layui-col-md12">
+                        <div class="layui-row grid-demo">
+                            <form id="form" class="layui-form" action="" method="post">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">旧密码</label>
+                                    <div class="layui-input-inline">
+                                        <input type="password" id="oldPassword" name="oldPassword" required
+                                               lay-verify="required"
+                                               placeholder="请输入密码" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">新的密码</label>
+                                    <div class="layui-input-inline">
+                                        <input type="password" id="newPassword" name="newPassword" required
+                                               lay-verify="required|pass"
+                                               placeholder="请输入密码" autocomplete="off" class="layui-input">
+                                    </div>
+                                    <div class="layui-form-mid layui-word-aux">长度为6至15，数字、大小写字母组成</div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label">新密码确认</label>
+                                    <div class="layui-input-inline">
+                                        <input type="password" id="correctPassword" name="correctPassword" required
+                                               lay-verify="required|pass|correctPass" placeholder="请输入密码"
+                                               autocomplete="off"
+                                               class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <div class="layui-input-block">
+                                        <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
+                                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                </div>
             </div>
         </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">新的密码</label>
-            <div class="layui-input-inline">
-                <input type="password" id="newPassword" name="newPassword" required lay-verify="required|pass" placeholder="请输入密码" autocomplete="off" class="layui-input">
-            </div>
-            <div class="layui-form-mid layui-word-aux">长度为6至15，数字、大小写字母组成</div>
-        </div>
-        <div class="layui-form-item">
-            <label class="layui-form-label">新密码确认</label>
-            <div class="layui-input-inline">
-                <input type="password" id="correctPassword" name="correctPassword" required lay-verify="required|pass|correctPass" placeholder="请输入密码" autocomplete="off" class="layui-input">
-            </div>
-        </div>
-        <div class="layui-form-item">
-            <div class="layui-input-block">
-                <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
-                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-            </div>
-        </div>
-    </form>
+    </div>
 </div>
 
 <!-- 方法 -->
@@ -56,58 +74,58 @@
 <script src="../layui/layui.js" type="text/javascript"></script>
 <script th:inline="none">
 
-    function index(){
-        window.location="/student/index"
+    function index() {
+        window.location = "/student/index"
     }
 
     $('#logout').click(function () {
-        layer.confirm('确定退出系统吗',function () {
-            window.location="/logout";
+        layer.confirm('确定退出系统吗', function () {
+            window.location = "/logout";
         })
     });
 
-    layui.use(['form', 'table','element'], function () {
+    layui.use(['form', 'table', 'element'], function () {
         var form = layui.form
             , element = layui.element
             , table = layui.table;
 
         form.verify({
-            pass:function(value, item) {
-                if(!new RegExp("^[a-zA-Z0-9]+$").test(value)){
+            pass: function (value, item) {
+                if (!new RegExp("^[a-zA-Z0-9]+$").test(value)) {
                     return '密码不能有特殊字符';
                 }
-                if (!new RegExp("^.{6,15}$").test(value)){
+                if (!new RegExp("^.{6,15}$").test(value)) {
                     return '密码必须6到15位';
                 }
-            },correctPass:function (value, item) {
-                if (value !== $('#newPassword').val()){
+            }, correctPass: function (value, item) {
+                if (value !== $('#newPassword').val()) {
                     return '确认密码与新密码不一致';
                 }
             }
         });
 
-        form.on('submit(formDemo)', function(data){
+        form.on('submit(formDemo)', function (data) {
             $.ajax({
                 url: '/student/updatePassword',
                 data: JSON.stringify(data.field),
                 type: 'POST',
                 dataType: 'json',
                 async: false,
-                headers : {
-                    'Content-Type' : 'application/json;charset=utf-8'
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
                 },
-                success:function (data) {
-                    if (data.code === -1 ){
+                success: function (data) {
+                    if (data.code === -1) {
                         alert("旧密码不正确")
-                    }else if (data.code === 1){
+                    } else if (data.code === 1) {
                         alert("修改成功，请重新登录");
-                        window.location='/logout'
-                    }else {
+                        window.location = '/logout'
+                    } else {
                         alert("修改失败")
                     }
                 },
-                error:function (data) {
-                    alert(JSON.stringify(data)+"===unknown error");
+                error: function (data) {
+                    alert(JSON.stringify(data) + "===unknown error");
                 }
             });
         });

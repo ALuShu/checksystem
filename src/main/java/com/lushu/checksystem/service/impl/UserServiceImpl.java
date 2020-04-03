@@ -101,8 +101,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public PageBean<User> selectUsersByRole(Integer currentPage, Integer pageSize, Integer roleId) {
-        HashMap<String, Object> pageMap = new HashMap<>(3);
+    public PageBean<User> selectUsersByRole(Integer currentPage, Integer pageSize, Integer roleId, HashMap<String,String> keywordMap) {
+        HashMap<String, Object> pageMap = new HashMap<>();
         PageBean<User> pageBean = new PageBean<>();
         pageBean.setCurrentPage(currentPage);
         pageBean.setPageSize(pageSize);
@@ -110,6 +110,12 @@ public class UserServiceImpl implements UserService {
         pageMap.put("limit", pageBean.getPageSize());
         if (roleId != null) {
             pageMap.put("roleId", roleId);
+        }
+        if (keywordMap.size() > 0){
+            Set<String> set = keywordMap.keySet();
+            for (String key : set){
+                pageMap.put(key, keywordMap.get(key));
+            }
         }
         List<User> users = userDao.selectUsersByRole(pageMap);
         pageBean.setList(users);

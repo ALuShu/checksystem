@@ -148,7 +148,7 @@ public class AdminController {
             ,@RequestParam("limit") int limit
             ,@RequestParam(required = false, value = "role") Integer role){
         Map<String, Object> memberMap = new HashMap<>(4);
-        PageBean<User> res = userService.selectUsersByRole(page, limit, role);
+        PageBean<User> res = userService.selectUsersByRole(page, limit, role, new HashMap<>());
         memberMap.put("data",res.getList());
         memberMap.put("code",0);
         memberMap.put("msg","");

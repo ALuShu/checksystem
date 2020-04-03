@@ -46,7 +46,7 @@ public interface UserService extends UserDetailsService {
     /**
      * 三个如同名字的方法
      */
-    PageBean<User> selectUsersByRole(Integer currentPage, Integer pageSize, Integer roleId);
+    PageBean<User> selectUsersByRole(Integer currentPage, Integer pageSize, Integer roleId, HashMap<String,String> keywordMap);
     List<User> selectUsersByDepartment(String department);
     List<User> selectUsersByMajor(String major);
 

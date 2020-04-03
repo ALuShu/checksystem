@@ -32,7 +32,7 @@
                 </div>
                 <div class="layui-inline" style="width: 80%">
                     <div class="layui-input-inline" style="width: 90%">
-                        <input type="text" name="title" lay-verify="title" autocomplete="off" placeholder="输入教师工号"
+                        <input type="text" name="username" lay-verify="title" autocomplete="off" placeholder="输入教师工号"
                                class="layui-input">
                     </div>
                     <div class="layui-input-inline" style="width: 5%">
@@ -149,14 +149,24 @@
 
         //监听下拉选择框（未完成）
         form.on('select(departmentSelect)', function (data) {
-            var tmpParam = $("#typeSelect").val();
-            table.reload('demo', {
+            table.reload('teachers', {
                 url: '/student/showTeachers?department=' + data.value
                 , page: {
                     curr: 1 //重新从第 1 页开始
                 }
             });
             layer.msg(data.value); //得到被选中的值
+        });
+
+        //监听提交
+        form.on('submit(searchBtn)', function (data) {
+            table.reload('teachers', {
+                url: '/student/showTeachers?department=' + data.field.department+'&username=' + data.field.username
+                , page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+            });
+            return false;
         });
 
     });

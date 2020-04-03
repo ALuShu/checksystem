@@ -66,11 +66,19 @@
     <!-- selectUserByRole：根据角色搜索用户群（用户与角色n:1）；return：List<User> -->
     <select id="selectUsersByRole" parameterType="Map" resultType="User">
         SELECT *
-        FROM sys_user
+        FROM sys_user u
         <if test="roleId != null and roleId != ''">
-            WHERE id IN
-            (SELECT user_id FROM sys_user_role WHERE role_id = #{roleId})
+            inner join sys_user_role ur
+            on u.id = ur.user_id and ur.role_id = #{roleId}
         </if>
+        <where>
+            <if test="department != null and department != ''">
+                and u.department = #{department}
+            </if>
+            <if test="username != null and username != ''">
+                and u.username = #{username}
+            </if>
+        </where>
         limit #{start},#{limit}
     </select>
 

@@ -44,29 +44,31 @@ public class StudentController {
      */
     @RequestMapping("/index")
     public String index(Model model) {
-        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if ("anonymousUser".equals(a.toString())){
+        Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())) {
             return "redirect:/logout";
-        }else {
+        } else {
             user = (User) a;
             model.addAttribute("current", user);
             return "/student/index";
         }
     }
+
     @PostMapping("/upload")
     @ResponseBody
     public Map redirectUpload(Inform detailJson) {
-        HashMap<String,Object> resMap = new HashMap<>();
-        resMap.put("code",1);
-        resMap.put("id",detailJson.getId());
+        HashMap<String, Object> resMap = new HashMap<>();
+        resMap.put("code", 1);
+        resMap.put("id", detailJson.getId());
         return resMap;
     }
+
     @RequestMapping("/upload/{id}")
     public String upload(@PathVariable Integer id, Model model) {
-        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if ("anonymousUser".equals(a.toString())){
+        Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())) {
             return "redirect:/logout";
-        }else {
+        } else {
             user = (User) a;
             Inform inform = informService.selectInform(id);
             model.addAttribute("current", user);
@@ -74,51 +76,67 @@ public class StudentController {
             return "/student/upload";
         }
     }
+
     @RequestMapping("/personal")
     public String personal(Model model) {
-        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if ("anonymousUser".equals(a.toString())){
+        Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())) {
             return "redirect:/logout";
-        }else {
+        } else {
             user = (User) a;
             model.addAttribute("current", user);
             return "/student/personal";
         }
     }
+
     @RequestMapping("/update")
     public String update(Model model) {
-        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if ("anonymousUser".equals(a.toString())){
+        Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())) {
             return "redirect:/logout";
-        }else {
+        } else {
             user = (User) a;
             model.addAttribute("current", user);
             return "/student/update";
         }
     }
+
     @RequestMapping("/search")
     public String teachers(Model model) {
-        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if ("anonymousUser".equals(a.toString())){
+        Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())) {
             return "redirect:/logout";
-        }else {
+        } else {
             user = (User) a;
             model.addAttribute("current", user);
             return "/student/teachers";
         }
     }
+
     @RequestMapping("/search/{username}")
     public String teacher(Model model, @PathVariable String username) {
-        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if ("anonymousUser".equals(a.toString())){
+        Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())) {
             return "redirect:/logout";
-        }else {
+        } else {
             user = (User) a;
             User searchRes = (User) userService.selectUser(username).get("user");
             model.addAttribute("current", user);
             model.addAttribute("res", searchRes);
             return "/student/teachers";
         }
+    }
+    /**
+     * 学生端搜索教师
+     */
+    @RequestMapping(value = "/searchTeacher", method = RequestMethod.GET)
+    @ResponseBody
+    public Map searchTeacher(String username) {
+        HashMap<String, Object> des = new HashMap<>();
+        des.put("code",1);
+        des.put("msg","转发");
+        des.put("username",username);
+        return des;
     }
 
 
@@ -151,13 +169,13 @@ public class StudentController {
         String newPassword = (String) jsonUsers.get("newPassword");
         User oldUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         int updRes = userService.updatePassword(newPassword, oldPassword, oldUser);
-        if (updRes == 0){
+        if (updRes == 0) {
             res.put("code", 0);
             res.put("msg", "error");
-        }else if (updRes == -1){
+        } else if (updRes == -1) {
             res.put("code", -1);
             res.put("msg", "old password error");
-        }else {
+        } else {
             res.put("code", 1);
             res.put("msg", "success");
         }
@@ -166,26 +184,23 @@ public class StudentController {
 
 
     /**
-     * 学生端搜索教师
-     */
-    @RequestMapping(value = "/searchTeacher", method = RequestMethod.GET)
-    @ResponseBody
-    public Map searchTeacher(String username) {
-        HashMap<String, Object> des = new HashMap<>();
-        des.put("code",1);
-        des.put("msg","转发");
-        des.put("username",username);
-        return des;
-    }
-
-    /**
      * 教师列表
      */
     @RequestMapping(value = "/showTeachers", method = RequestMethod.GET)
     @ResponseBody
-    public Map showTeachers(@RequestParam int page, @RequestParam int limit) {
+    public Map showTeachers(@RequestParam int page
+            , @RequestParam int limit
+            , @RequestParam(required = false) String department
+            , @RequestParam(required = false) String username) {
         Map<String, Object> map = new HashMap<>();
-        PageBean<User> res = userService.selectUsersByRole(page, limit, DatabaseConstant.Role.ROLE_TEACHER.ordinal() + 1);
+        HashMap<String, String> param = new HashMap<>();
+        if (department != null){
+            param.put("department",department);
+        }
+        if (username != null){
+            param.put("username", username);
+        }
+        PageBean<User> res = userService.selectUsersByRole(page, limit, DatabaseConstant.Role.ROLE_TEACHER.ordinal() + 1, param);
         map.put("data", res.getList());
         map.put("code", 0);
         map.put("msg", "");
@@ -198,16 +213,16 @@ public class StudentController {
      */
     @RequestMapping(value = "/showOldWorks", method = RequestMethod.GET)
     @ResponseBody
-    public Map showOldWorks(@RequestParam int page, @RequestParam int limit,Model model) {
+    public Map showOldWorks(@RequestParam int page, @RequestParam int limit, Model model) {
         Map<String, Object> map = new HashMap<>();
-        Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if ("anonymousUser".equals(a.toString())){
+        Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())) {
             map.put("data", "");
             map.put("code", 1);
             map.put("msg", "验证信息失效，请重新登录");
             map.put("count", 0);
             return map;
-        }else {
+        } else {
             User user = (User) a;
             PageBean<File> res = fileService.selectOldSubmitted(user.getId(), page, limit);
             map.put("data", res.getList());
