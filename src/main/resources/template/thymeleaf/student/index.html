@@ -22,7 +22,7 @@
                         <input type="text" name="username" autocomplete="off" placeholder="输入教师工号" class="layui-input">
                     </div>
                     <div class="layui-input-inline" style="width: 5%">
-                        <button type="submit" class="layui-btn" lay-submit="" lay-filter="searchBtn"><i class="layui-icon layui-icon-search"></i></button>
+                        <button type="submit" class="layui-btn layui-btn-normal" lay-submit="" lay-filter="searchBtn"><i class="layui-icon layui-icon-search"></i></button>
                     </div>
                 </div>
             </form>
@@ -44,7 +44,7 @@
     </div>
 
     <!-- 内容主体区域 -->
-    <div class="layui-bg-green">
+    <div class="layui-bg-blue">
         <div style="padding: 5px; width: 80%; margin: auto">
             <div class="layui-row layui-col-space5 layui-bg-gray">
                 <div class="layui-col-md12">
@@ -86,6 +86,7 @@
                                        ,page: {
                                            layout: ['prev', 'page', 'next', 'skip','count']
                                            ,groups: 5
+                                           ,theme:'#1E9FFF'
                                        }
                                        ,id:'demo'
                                        ,initSort:{field: 'date',type: 'desc'}}">
