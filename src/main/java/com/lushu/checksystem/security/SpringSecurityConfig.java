@@ -74,10 +74,13 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 //开放给前端的页面<iframe>引用
                 .headers().frameOptions().sameOrigin()
             .and()
+                .rememberMe()/* 有点问题，无法记住用户，待维护*/
+                .tokenValiditySeconds(60*60*24)
+            .and()
                 .csrf().disable()
-                /*.sessionManagement()
+                .sessionManagement()
                 .maximumSessions(1)
-                .expiredUrl("/login")*/;
+                .expiredUrl("/public/login");
     }
 
     @Override
