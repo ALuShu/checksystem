@@ -267,38 +267,11 @@ public class FileController {
         } else {
             User user = (User) a;
             List<GrantedAuthority> grantedAuthorities = user.getAuthorities();
-            List<File> resFiles = fileService.checkMethod(name, user.getUsername() + "_" + user.getRealname() + "\\" + path);
-            List<LayuiDtree> dtrees = new ArrayList<>();
-            for (int i = 1; i <= resFiles.size(); i++) {
-                File currentFile = resFiles.get(i - 1);
-                List<HaiMingDistance> currentDistances = currentFile.getDistances();
-                LayuiDtree node = new LayuiDtree();
-                node.setId(i + "");
-                node.setTitle(currentFile.getName());
-                List<LayuiDtree> children = new ArrayList<>();
-                if (currentDistances.size() > 0) {
-                    for (int j = 1; j <= currentDistances.size(); j++) {
-                        LayuiDtree childrenNode = new LayuiDtree();
-                        childrenNode.setId(i * 100 + j + "");
-                        String res;
-                        if (currentDistances.get(j - 1).getDistance() <= 3) {
-                            res = "高相似";
-                        } else if (currentDistances.get(j - 1).getDistance() >= 4 && currentDistances.get(j - 1).getDistance() <= 6) {
-                            res = "中相似";
-                        } else {
-                            res = "低相似";
-                        }
-                        childrenNode.setTitle(currentDistances.get(j - 1).getFilename() + "\u0020\u0020\u0020\u0020" + res);
-                        children.add(childrenNode);
-                    }
-                }
-                node.setChildren(children);
-                dtrees.add(node);
-            }
+            List<LayuiDtree> resFiles = fileService.checkMethod(name, user.getUsername() + "_" + user.getRealname() + "\\" + path);
             resMap.put("code", 0);
             resMap.put("msg", "查重成功");
-            resMap.put("count", dtrees.size());
-            resMap.put("data", dtrees);
+            resMap.put("count", resFiles.size());
+            resMap.put("data", resFiles);
         }
         return resMap;
     }

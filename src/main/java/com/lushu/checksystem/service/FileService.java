@@ -1,6 +1,7 @@
 package com.lushu.checksystem.service;
 
 import com.lushu.checksystem.pojo.File;
+import com.lushu.checksystem.pojo.LayuiDtree;
 import com.lushu.checksystem.pojo.PageBean;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -73,5 +74,5 @@ public interface FileService {
     /**
      * 文档simHash查重，返回File集合中，每个File对象有一个都有一个映射记录着和其他文档的海明距离
      */
-    List<File> checkMethod(String[] names, String path);
+    List<LayuiDtree> checkMethod(String[] names, String path);
 }

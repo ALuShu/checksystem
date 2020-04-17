@@ -7,6 +7,7 @@ import com.lushu.checksystem.dao.FileDao;
 import com.lushu.checksystem.dao.UserDao;
 import com.lushu.checksystem.pojo.File;
 import com.lushu.checksystem.pojo.HaiMingDistance;
+import com.lushu.checksystem.pojo.LayuiDtree;
 import com.lushu.checksystem.pojo.PageBean;
 import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.util.SimHash;
@@ -419,11 +420,13 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public List<File> checkMethod(String[] names, String path) {
+    public List<LayuiDtree> checkMethod(String[] names, String path) {
         ArrayList<File> files = new ArrayList<>();
         ArrayList<SimHash> hashes = new ArrayList<>();
         String pathParam = root + path;
         for (int i = 0; i < names.length; i++) {
+            //根据传参的n个文件名和1个路径，分别生成每个文件的签名（sign）和检查状态，入库
+            //将生产的simHash加到集合，以便后面求海明距离
             File tmpFile = fileDao.checkFile(names[i], pathParam);
             try {
                 SimHash tmpHash = new SimHash(WordUtil.readWord(pathParam + "\\" + names[i]), 64);
@@ -438,7 +441,7 @@ public class FileServiceImpl implements FileService {
         }
         //更新sign字段
         Integer updRes = fileDao.updateFiles(files);
-        //存放海明距离
+        //为每个File对象存放海明距离集合
         for (int i = 0; i < files.size() - 1; i++) {
             List<HaiMingDistance> distanceList = new ArrayList<>();
             String currentSign = files.get(i).getSign().toString();
@@ -452,34 +455,58 @@ public class FileServiceImpl implements FileService {
             }
             files.get(i).setDistances(distanceList);
         }
-        //将海明距离平铺至每个File对象
-        for (int i = files.size() - 1; i > 0; i--) {
-            String currentFilename = files.get(i).getName();
-            List<HaiMingDistance> currentDistanceList;
-            if (i == files.size() - 1) {
-                currentDistanceList = new ArrayList<>();
-            } else {
-                currentDistanceList = files.get(i).getDistances();
-            }
-            for (int j = i - 1; j > -1; j--) {
-                String beforeFilename = files.get(j).getName();
-                List<HaiMingDistance> beforeDistanceList = files.get(j).getDistances();
-                Iterator<HaiMingDistance> iterator = beforeDistanceList.iterator();
-                while (iterator.hasNext()) {
-                    HaiMingDistance distance = iterator.next();
-                    if (currentFilename.equals(distance.getFilename())) {
-                        HaiMingDistance newHaiMingDistance = new HaiMingDistance();
-                        newHaiMingDistance.setFilename(beforeFilename);
-                        newHaiMingDistance.setDistance(distance.getDistance());
-                        currentDistanceList.add(newHaiMingDistance);
-                        break;
+        //新建一个LayuiDtree的结果集,父节点只有高相似->中相似->低相似
+        List<LayuiDtree> res = new ArrayList<>();
+        LayuiDtree top = new LayuiDtree();
+        LayuiDtree mid = new LayuiDtree();
+        LayuiDtree low = new LayuiDtree();
+
+        top.setId("1");
+        top.setTitle("<label style=\"color:#FF5722\">高相似（相似度高于70%）</label>");
+        //列表展开属性
+        top.setSpread(true);
+        mid.setId("2");
+        mid.setTitle("<label style=\"color:#FFB800\">中相似（相似度高于40%）</label>");
+        low.setId("3");
+        low.setTitle("<label style=\"color:#5FB878\">低相似（相似度低于40%）</label>");
+
+        List<LayuiDtree> topChildren = new ArrayList<>();
+        List<LayuiDtree> midChildren = new ArrayList<>();
+        List<LayuiDtree> lowChildren = new ArrayList<>();
+
+        int topId = 1;
+        int midId = 1;
+        int lowId = 1;
+        Iterator<File> fileIterator = files.iterator();
+        while (fileIterator.hasNext()){
+            File current = fileIterator.next();
+            List<HaiMingDistance> distanceList = current.getDistances();
+            if (distanceList != null){
+                for (HaiMingDistance distance : distanceList){
+                    LayuiDtree childTree = new LayuiDtree();
+                    childTree.setTitle(current.getName()+"——"+distance.getFilename());
+                    if (distance.getDistance() <= 3){
+                        childTree.setId(String.valueOf(Integer.parseInt(top.getId())*1000+topId));
+                        topId++;
+                        topChildren.add(childTree);
+                    }else if (distance.getDistance() >= 4 && distance.getDistance() <= 6){
+                        childTree.setId(String.valueOf(Integer.parseInt(mid.getId())*1000+midId));
+                        midId++;
+                        midChildren.add(childTree);
+                    }else {
+                        childTree.setId(String.valueOf(Integer.parseInt(low.getId())*1000+lowId));
+                        lowId++;
+                        lowChildren.add(childTree);
                     }
                 }
             }
-            if (i == files.size() - 1) {
-                files.get(i).setDistances(currentDistanceList);
-            }
         }
-        return files;
+        top.setChildren(topChildren);
+        mid.setChildren(midChildren);
+        low.setChildren(lowChildren);
+        res.add(top);
+        res.add(mid);
+        res.add(low);
+        return res;
     }
 }

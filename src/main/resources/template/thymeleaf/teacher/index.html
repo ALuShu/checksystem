@@ -90,7 +90,7 @@
         </div>
     </div>
 
-    <div id="test5" class="demo-tree-more"></div>
+    <div id="test5" class="demo-tree-more" style="display: none"></div>
 </div>
 
 
@@ -382,7 +382,22 @@
                                     elem: '#test5'
                                     ,data: resData
                                     ,showLine: false  //是否开启连接线
-                                })
+                                    ,text: {
+                                        defaultNodeName: '未命名' //节点默认名称
+                                        ,none: '无数据' //数据为空时的提示文本
+                                    }
+                                });
+                                layer.open({
+                                    type: 1,
+                                    title: '查重结果',
+                                    shade: 0.4,
+                                    content: $("#test5"),
+                                    resize:false,
+                                    offset: ['100px', '350px'],
+                                    area: ['50%', '70%'],
+                                    maxmin: true, //开启最大化最小化按钮
+                                    scrollbar: true,//屏蔽浏览器滚动条
+                                });
                                 table.reload('test', {
                                     page: {
                                         curr: 1
