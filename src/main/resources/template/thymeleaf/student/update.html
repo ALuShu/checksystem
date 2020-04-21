@@ -119,7 +119,8 @@
                         alert("旧密码不正确")
                     } else if (data.code === 1) {
                         alert("修改成功，请重新登录");
-                        window.location = '/logout'
+                        window.location = '/logout';
+                        window.location = '/public/login'
                     } else {
                         alert("修改失败")
                     }

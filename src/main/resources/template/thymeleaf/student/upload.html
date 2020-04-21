@@ -33,7 +33,6 @@
                         <div class="layui-col-md12 layui-form-item" style="padding-left: 20px">
                             <span id="view" class="layui-breadcrumb" lay-filter="breaddemo">
                                 <script id="bread" type="text/html">
-                                    {{# console.log(d);}}
                                     {{# layui.each(d.bread, function (i, e) { }}
                                     <a href="javascript:;" onclick="breadOn('{{e.name}}');" style="font-size: 20px">{{ e.name }}</a>
                                     <span lay-separator>/</span>
@@ -44,7 +43,7 @@
 
                         <!-- 头部工具栏 -->
                         <div class="layui-btn-group demoTable">
-                            <button class="layui-btn" id="uploadBtn"><i class="layui-icon"></i></button>
+                            <button class="layui-btn layui-btn-normal" id="uploadBtn"><i class="layui-icon"></i></button>
                         </div>
 
                         <!-- 数据表格 -->

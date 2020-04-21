@@ -462,13 +462,10 @@ public class FileServiceImpl implements FileService {
         LayuiDtree low = new LayuiDtree();
 
         top.setId("1");
-        top.setTitle("<label style=\"color:#FF5722\">高相似（相似度高于70%）</label>");
         //列表展开属性
         top.setSpread(true);
         mid.setId("2");
-        mid.setTitle("<label style=\"color:#FFB800\">中相似（相似度高于40%）</label>");
         low.setId("3");
-        low.setTitle("<label style=\"color:#5FB878\">低相似（相似度低于40%）</label>");
 
         List<LayuiDtree> topChildren = new ArrayList<>();
         List<LayuiDtree> midChildren = new ArrayList<>();
@@ -501,6 +498,9 @@ public class FileServiceImpl implements FileService {
                 }
             }
         }
+        top.setTitle("<label style=\"color:#FF5722\">高相似（相似度 ≥ 70%）—— 共"+(topId-1)+"份</label>");
+        mid.setTitle("<label style=\"color:#FFB800\">中相似（40% ≤ 相似度 < 70%）—— 共"+(midId-1)+"份</label>");
+        low.setTitle("<label style=\"color:#5FB878\">低相似（相似度 < 40%）—— 共"+(lowId-1)+"份</label>");
         top.setChildren(topChildren);
         mid.setChildren(midChildren);
         low.setChildren(lowChildren);

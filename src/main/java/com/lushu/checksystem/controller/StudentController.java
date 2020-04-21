@@ -56,10 +56,20 @@ public class StudentController {
 
     @PostMapping("/upload")
     @ResponseBody
-    public Map redirectUpload(Inform detailJson) {
+    public Map redirectUploadByInform(Inform detailJson) {
         HashMap<String, Object> resMap = new HashMap<>();
         resMap.put("code", 1);
         resMap.put("id", detailJson.getId());
+        resMap.put("username", detailJson.getPublisher());
+        return resMap;
+    }
+
+    @PostMapping("/uploadByTeacher")
+    @ResponseBody
+    public Map redirectUploadByUser(User data) {
+        HashMap<String, Object> resMap = new HashMap<>();
+        resMap.put("code", 1);
+        resMap.put("username", data.getUsername());
         return resMap;
     }
 
@@ -76,6 +86,22 @@ public class StudentController {
             return "/student/upload";
         }
     }
+
+    @RequestMapping("/uploadByTeacher/{username}")
+    public String upload(@PathVariable String username, Model model) {
+        Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())) {
+            return "redirect:/logout";
+        } else {
+            user = (User) a;
+            HashMap<String, Object> res = userService.selectUser(username);
+            model.addAttribute("current", user);
+            User user = (User) res.get("user");
+            current = new StringBuffer(user.getUsername()+"_"+user.getRealname()+"\\");
+            return "/student/upload";
+        }
+    }
+
 
     @RequestMapping("/personal")
     public String personal(Model model) {

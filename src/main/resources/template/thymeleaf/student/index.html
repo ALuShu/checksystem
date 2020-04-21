@@ -131,7 +131,7 @@
 <script src="../layui/layui.js" type="text/javascript"></script>
 <script th:inline="none">
 
-    let departmentSelect = $("#departmentSelect").val();
+    let departmentSelect = $("#currentDepartment").val();
     let typeSelect = $("#typeSelect").val();
     let selectElement = document.getElementById("departmentSelect");
 
@@ -199,7 +199,19 @@
         table.on('tool(test)', function (obj) {
             var detailJson = obj.data;
             if (obj.event === 'showUser') {
-                layer.msg("展示用户")
+                if (detailJson.publisher.length !== 4 || detailJson.publisher === 'root'){
+                    layer.msg("没有相关目录或用户")
+                }else {
+                    $.ajax({
+                        type: "post",
+                        url: "/student/upload",
+                        async: true,
+                        data: detailJson,
+                        success: function (data) {
+                            window.location.href = '/student/uploadByTeacher/' + data.username;
+                        }
+                    });
+                }
             } else if (obj.event === 'showInform') {
                 $.ajax({
                     type: "get",

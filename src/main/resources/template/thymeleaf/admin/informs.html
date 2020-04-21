@@ -11,7 +11,7 @@
 <table class="layui-table" lay-filter="test" id="test"></table>
 
 <!-- 隐藏表单，用于编辑动作 -->
-<form class="layui-form" action="" lay-filter="editIfram" id="editIfram" style="display: none" method="post">
+<form class="layui-form layui-form-pane" action="" lay-filter="editIfram" id="editIfram" style="display: none;margin: 15px" method="post">
     <div class="layui-form-item" id="idBolck">
         <label class="layui-form-label">ID</label>
         <div class="layui-input-block">
@@ -19,33 +19,44 @@
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">发布人</label>
-        <div class="layui-input-block">
-            <input type="text" id="tempPublisher" name="publisher" lay-verify="required" autocomplete="off" class="layui-input" value="">
+        <label class="layui-form-label">发布人工号</label>
+        <div class="layui-input-inline">
+            <input type="text" id="tempPublisher" name="publisher" th:value="${current.username}" disabled class="layui-input layui-disabled">
         </div>
     </div>
     <div class="layui-form-item">
         <label class="layui-form-label">标题</label>
-        <div class="layui-input-block">
-            <input type="text" id="tempTitle" name="title" lay-verify="required" autocomplete="off" class="layui-input" value="">
+        <div class="layui-input-inline">
+            <input type="text" id="tempTitle" name="title" autocomplete="off" class="layui-input">
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">系别</label>
-        <div class="layui-input-block">
-            <input type="text" id="tempDepartment" name="department" lay-verify="required" autocomplete="off" class="layui-input" value="">
+        <label class="layui-form-label">通知系别</label>
+        <div class="layui-input-inline">
+            <select name="department" id="departmentSelect" lay-filter="departmentSelect">
+                <option value="">选择系别</option>
+                <option value="计算机系">计算机系</option>
+                <option value="软件系">软件系</option>
+                <option value="外语系">外语系</option>
+                <option value="国贸系">国贸系</option>
+                <option value="市场营销系">市场营销系</option>
+                <option value="电子系">电子系</option>
+                <option value="数码媒体系">数码媒体系</option>
+                <option value="游戏系">游戏系</option>
+            </select>
         </div>
     </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">内容</label>
+    <div class="layui-form-item layui-form-text">
+        <label class="layui-form-label">通知内容</label>
         <div class="layui-input-block">
-            <input type="text" id="tempContent" name="content" lay-verify="required" autocomplete="off" class="layui-input">
+            <textarea id="tempContent" rows="10" placeholder="请输入内容" name="content" class="layui-textarea"></textarea>
         </div>
     </div>
-    <div class="layui-form-item">
-        <label class="layui-form-label">类型</label>
-        <div class="layui-input-block">
-            <input type="text" id="tempType" name="type" lay-verify="required" autocomplete="off" class="layui-input">
+    <div class="layui-form-item" pane="">
+        <label class="layui-form-label">通知类型</label>
+        <div class="layui-input-inline">
+            <input type="radio" name="type" lay-filter="typeRadio" value="1" title="必修" checked="">
+            <input type="radio" name="type" lay-filter="typeRadio" value="0" title="选修">
         </div>
     </div>
     <div class="layui-form-item" id="dateBlock">
@@ -55,10 +66,11 @@
         </div>
     </div>
     <div class="layui-form-item">
-        <label class="layui-form-label">通知路径</label>
-        <div class="layui-input-block">
-            <textarea id="tempPath" name="path" placeholder="请输入" class="layui-textarea"></textarea>
+        <label class="layui-form-label">提交路径</label>
+        <div class="layui-input-inline">
+            <input type="text" id="tempPath" name="path" class="layui-input">
         </div>
+        <div class="layui-form-mid layui-word-aux">路径格式：某某某\实验一\</div>
     </div>
     <!-- 隐藏提交按钮 -->
     <div class="layui-form-item">
@@ -99,9 +111,7 @@
         if(data == null){
             $("#idBolck").css('display','none');
             $("#dateBlock").css('display','none');
-            $("#tempPublisher").val('');
             $("#tempTitle").val('');
-            $("#tempDepartment").val('');
             $("#tempContent").val('');
             $("#tempType").val('');
             $("#tempPath").val('');
@@ -111,7 +121,6 @@
             $("#tempId").val(data.id);
             $("#tempPublisher").val(data.publisher);
             $("#tempTitle").val(data.title);
-            $("#tempDepartment").val(data.department);
             $("#tempContent").val(data.content);
             $("#tempType").val(data.type);
             $("#tempDate").val(data.date);
@@ -177,7 +186,7 @@
                         content: $("#editIfram"),
                         resize:false,
                         offset: ['50px', '200px'],
-                        area: ['50%', '70%'],
+                        area: ['70%', '70%'],
                         btn: ['提交', '取消'],
                         maxmin: true, //开启最大化最小化按钮
                         scrollbar: true,//屏蔽浏览器滚动条

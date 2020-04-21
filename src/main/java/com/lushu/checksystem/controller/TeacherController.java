@@ -98,8 +98,8 @@ public class TeacherController {
         Map<String, Object> res = new HashMap<>(2);
         String oldPassword = (String) jsonUsers.get("oldPassword");
         String newPassword = (String) jsonUsers.get("newPassword");
-        user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        int updRes = userService.updatePassword(newPassword, oldPassword, user);
+        User oldUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        int updRes = userService.updatePassword(newPassword, oldPassword, oldUser);
         if (updRes == 0) {
             res.put("code", 0);
             res.put("msg", "error");

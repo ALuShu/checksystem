@@ -72,12 +72,13 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr style="cursor: pointer;" onclick="openSingle()">
+                            <tr style="cursor: pointer;" onclick="openSingle(res)">
                                 <td><span th:text="${res.getRealname()}"></span> </td>
                                 <td><span th:text="${res.getUsername()}"></span></td>
                                 <td><span th:text="${res.getDepartment()}"></span></td>
                                 <td><span th:text="${res.getLastLoginTime()}"></span></td>
                             </tr>
+                            <tr style="display: none"><input id="tempRes" th:value="${res.username}" style="display: none"></tr>
                             </tbody>
                         </table>
 
@@ -109,8 +110,10 @@
         window.location = "/student/index"
     }
 
-    function openSingle(){
-        layer.msg("点击事件");
+    let res = $('#tempRes').val();
+
+    function openSingle(data){
+        window.location.href = '/student/uploadByTeacher/' + data;
     }
 
     //layui官方方法
@@ -145,7 +148,15 @@
         //layui表格点击文件事件
         table.on('row(teachers)', function (obj) {
             let data = obj.data;
-            console.log(JSON.stringify(data));
+            $.ajax({
+                type: "post",
+                url: "/student/uploadByTeacher",
+                async: true,
+                data: data,
+                success: function (res) {
+                    window.location.href = '/student/uploadByTeacher/' + res.username;
+                }
+            });
         });
 
         //监听下拉选择框（未完成）
