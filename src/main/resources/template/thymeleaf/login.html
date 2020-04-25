@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Login Form</title>
-    <link rel="stylesheet" href="../layui/css/layui.css" type="text/css">
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../../layui/css/layui.css" type="text/css">
+    <link rel="stylesheet" href="../../css/style.css">
 </head>
 
 <body class="layui-layout-body layui-bg-green">
@@ -18,8 +18,8 @@
         </div>
     </div>
     <div class="form">
-        <div class="thumbnail"><img src="../image/hat.svg"/></div>
-        <form class="login-form layui-form" method="post">
+        <div class="thumbnail"><img src="../../image/hat.svg"/></div>
+        <form class="login-form layui-form">
             <input type="text" class="form-control" name="username" placeholder="Username"
                    required="" autofocus="" autocomplete="off"/>
             <input type="password" class="form-control" name="password" placeholder="Password"
@@ -27,18 +27,39 @@
             <label>
                 <input type="checkbox" name="remember-me" title="记住我" lay-skin="primary">
             </label>
-            <button class="layui-btn layui-btn-danger layui-btn-radius" type="submit">Login</button>
+            <button class="layui-btn layui-btn-danger layui-btn-radius" lay-submit lay-filter="*">Login</button>
         </form>
     </div>
 
 
 </div>
-<script src="../webjars/jquery/3.4.1/jquery.js"></script>
-<script src="../layui/layui.js" type="text/javascript"></script>
+<script src="../../webjars/jquery/3.4.1/jquery.js"></script>
+<script src="../../layui/layui.js" type="text/javascript"></script>
 <script>
     //layui官方方法
     layui.use('form', function () {
         var form = layui.form;
+
+        form.on('submit(*)', function(data){
+            $.ajax({
+                url:'/public/loginCheck',
+                data:data.field,
+                type:"POST",
+                error:function(XMLHttpRequest, textStatus, errorThrown){
+                    let text = JSON.parse(XMLHttpRequest.responseText);
+                    if (text.exception === 'Bad credentials'){
+                        layer.msg('账号或密码不匹配')
+                    }
+                },
+                complete:function (res) {
+                    if("true" === res.getResponseHeader("REDIRECT")){ //若HEADER中含有REDIRECT说明后端想重定向，
+                        window.location.href = res.getResponseHeader("CONTENTPATH");//将后端重定向的地址取出来,使用win.location.href去实现重定向的要求
+                    }
+                }
+            });
+            //console.log(data.field);//当前容器的全部表单字段，名值对形式：{name: value}
+            return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+        });
     });
 </script>
 </body>

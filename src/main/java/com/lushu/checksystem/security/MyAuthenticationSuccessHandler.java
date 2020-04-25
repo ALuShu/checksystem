@@ -30,12 +30,20 @@ public class MyAuthenticationSuccessHandler implements AuthenticationSuccessHand
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         User user = (User) authentication.getPrincipal();
         String role = userService.selectRoleByUsername(user.getUsername()).getName();
-        if (DatabaseConstant.Role.ROLE_ADMIN.getRole().equals(role)) {
-            response.sendRedirect("/admin/index");
-        } else if (DatabaseConstant.Role.ROLE_TEACHER.getRole().equals(role)) {
-            response.sendRedirect("/teacher/index");
-        } else if (DatabaseConstant.Role.ROLE_STUDENT.getRole().equals(role)) {
-            response.sendRedirect("/student/index");
+
+        if("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))){
+            //前端需要判断是否是重定向
+            response.setHeader("REDIRECT", "true");
+            //根据查询到的角色名指向性跳转
+            if (DatabaseConstant.Role.ROLE_ADMIN.getRole().equals(role)) {
+                response.setHeader("CONTENTPATH", "/admin/index");
+            } else if (DatabaseConstant.Role.ROLE_TEACHER.getRole().equals(role)) {
+                response.setHeader("CONTENTPATH", "/teacher/index");
+            } else if (DatabaseConstant.Role.ROLE_STUDENT.getRole().equals(role)) {
+                response.setHeader("CONTENTPATH", "/student/index");
+            }
+        }else{
+            response.sendRedirect("/public/login");
         }
     }
 }

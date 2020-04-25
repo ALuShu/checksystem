@@ -3,6 +3,7 @@ package com.lushu.checksystem.controller;
 import com.lushu.checksystem.pojo.Inform;
 import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.InformService;
+import com.lushu.checksystem.service.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,9 +23,11 @@ import java.util.Map;
 @RequestMapping("/public")
 public class LoginCheckController {
 
+    private UserService userService;
     private InformService informService;
 
-    public LoginCheckController(InformService informService) {
+    public LoginCheckController(UserService userService, InformService informService) {
+        this.userService = userService;
         this.informService = informService;
     }
 
@@ -35,26 +38,36 @@ public class LoginCheckController {
     public String login(){
         return "/login";
     }
-    @RequestMapping("/perError")
-    public String perError(){
-        return "/permissionerror";
+    @RequestMapping("/forbiddenError")
+    public String forbiddenError(){
+        return "forbiddenError";
     }
-    @RequestMapping("/serError")
-    public String serError(){
+    @RequestMapping("/serverError")
+    public String serverError(){
         return "/servererror";
     }
-    @RequestMapping("/norError")
-    public String error(){
-        return "/error";
+    @RequestMapping("/notFoundError")
+    public String notFoundError(){
+        return "/notFoundError";
     }
-    @GetMapping("/sayhello")
-    public String say(Model model){
-        model.addAttribute("msg","你好啊");
-        return "/sayhello";
+    @RequestMapping("/unavailableError")
+    public String unavailableError(){
+        return "/unavailableError";
+    }
+    @RequestMapping("/norError")
+    public String norError(){
+        return "/error";
     }
 
     /**
-     * 下面两个方法服务于ajax跳转
+     * 自定义登录接口
+     */
+    @PostMapping("/loginCheck")
+    @ResponseBody
+    public void loginCheck(){}
+
+    /**
+     * 通知详情的ajax跳转
      */
     @RequestMapping(value = "/inform", method = RequestMethod.GET)
     @ResponseBody

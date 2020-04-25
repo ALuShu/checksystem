@@ -82,7 +82,7 @@ public class StudentController {
             user = (User) a;
             Inform inform = informService.selectInform(id);
             model.addAttribute("current", user);
-            current = new StringBuffer(inform.getPath());
+            current = new StringBuffer(inform.getPath().substring(inform.getPath().indexOf("root")+5));
             return "/student/upload";
         }
     }
