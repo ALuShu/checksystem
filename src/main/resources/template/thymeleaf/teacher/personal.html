@@ -46,20 +46,20 @@
 
                         <!-- 右侧内容 -->
                         <div class="layui-col-md5  grid-demo">
-                                <fieldset class="layui-elem-field">
-                                    <legend>未批改</legend>
-                                    <div class="layui-field-box">
-                                        <table id="fileTable" class="layui-table" lay-filter="informTable"></table>
-                                        <a href="javascript:;" style="float: right; color: #FF5722">>>查看更多</a>
-                                    </div>
-                                </fieldset>
-                                <fieldset class="layui-elem-field">
-                                    <legend>最近提交</legend>
-                                    <div class="layui-field-box">
-                                        <table id="uploadTable" class="layui-table" lay-filter="uploadTable"></table>
-                                        <a href="javascript:;" style="float: right; color: #FF5722">>>查看更多</a>
-                                    </div>
-                                </fieldset>
+                            <fieldset class="layui-elem-field">
+                                <legend>未批改</legend>
+                                <div class="layui-field-box">
+                                    <table id="fileTable" class="layui-table" lay-filter="informTable"></table>
+                                    <a href="javascript:;" style="float: right; color: #FF5722">>>查看更多</a>
+                                </div>
+                            </fieldset>
+                            <fieldset class="layui-elem-field">
+                                <legend>最近提交</legend>
+                                <div class="layui-field-box">
+                                    <table id="uploadTable" class="layui-table" lay-filter="uploadTable"></table>
+                                    <a href="javascript:;" style="float: right; color: #FF5722">>>查看更多</a>
+                                </div>
+                            </fieldset>
                         </div>
 
                     </div>
@@ -83,6 +83,17 @@
     选修
     {{#  } }}
 </script>
+<script type="text/html" id="statusTpl" th:inline="none">
+    {{#  if(d.status === 0){ }}
+    未查阅
+    {{#  } else if(d.status === 1) { }}
+    及格
+    {{#  } else if(d.status === 2) { }}
+    已查阅
+    {{#  } else { }}
+    未及格
+    {{#  } }}
+</script>
 
 <!-- 方法 -->
 <script src="../webjars/jquery/3.4.1/jquery.js"></script>
@@ -94,28 +105,28 @@
     }
 
     $('#logout').click(function () {
-        layer.confirm('确定退出系统吗',function () {
-            window.location="/logout";
+        layer.confirm('确定退出系统吗', function () {
+            window.location = "/logout";
         })
     });
 
-    layui.use(['form','table','element'], function () {
+    layui.use(['form', 'table', 'element'], function () {
         var form = layui.form
-            ,element = layui.element
-            ,table = layui.table;
+            , element = layui.element
+            , table = layui.table;
 
         table.render({
             elem: '#fileTable'
-            , url: ''
-            , limit: 15
-            , height: 210
-            , skin :'nob'
-            , size :'sm'
+            , url: '/teacher/recentWorks'
+            , limit: 7
+            , width: 465
+            , skin: 'nob'
+            , size: 'sm'
             , cols: [[
-                {field: 'name', title: '文件名', sort: true}
-                , {field: 'updateTime', title: '修改日期', sort: true}
-                , {field: 'size', title: '文件大小', sort: true}
-                , {field: 'type', title: '文件类型'}
+                {field: 'name', title: '文件名', unresize: true}
+                , {field: 'updateTime', title: '修改日期', unresize: true}
+                , {field: 'status', title: '状态', unresize: true, templet: '#statusTpl'}
+                , {field: 'submitter', title: '提交人', unresize: true}
             ]]
         });
 
@@ -124,45 +135,45 @@
             , url: '/teacher/recentInform'
             , limit: 15
             , height: 'full-170'
+            , width: 705
             , page: {
                 layout: ['prev', 'page', 'next', 'skip', 'count']
                 , groups: 5
             }
             , cols: [[
-                {field: 'content', title:'内容'}
-                , {field: 'date', title:'日期'}
-                , {field: 'type', title:'类型', width:60, templet: '#typeTpl'}
+                {field: 'content', title: '内容', unresize: true}
+                , {field: 'date', title: '日期', unresize: true}
+                , {field: 'type', title: '类型', width: 60, unresize: true, templet: '#typeTpl'}
             ]]
         });
 
         table.render({
             elem: '#uploadTable'
-            , url: ''
-            , limit: 6
-            , height: 210
-            , width: 450
-            , skin :'nob'
-            , size :'sm'
+            , url: '/teacher/recentSubmit'
+            , limit: 8
+            , width: 465
+            , skin: 'nob'
+            , size: 'sm'
             , cols: [[
-                {field: 'name', title:'文件名'}
-                , {field: 'updateTime', title:'提交时间'}
-                , {field: 'size', title:'大小'}
-                , {field: 'type', title:'类型'}
+                {field: 'name', title: '文件名', unresize: true}
+                , {field: 'updateTime', title: '提交时间', unresize: true}
+                , {field: 'status', title: '状态', unresize: true, templet: '#statusTpl'}
+                , {field: 'submitter', title: '提交人', unresize: true}
             ]]
         });
 
         //监听行单击事件
-        table.on('row(fileTable)', function(obj){
+        table.on('row(fileTable)', function (obj) {
             layer.alert(JSON.stringify(obj.data)) //得到当前行数据
         });
 
         //监听行单击事件
-        table.on('row(informTable)', function(obj){
+        table.on('row(informTable)', function (obj) {
             layer.alert(JSON.stringify(obj.data)) //得到当前行数据
         });
 
         //监听行单击事件
-        table.on('row(uploadTable)', function(obj){
+        table.on('row(uploadTable)', function (obj) {
             layer.alert(JSON.stringify(obj.data)) //得到当前行数据
         });
 

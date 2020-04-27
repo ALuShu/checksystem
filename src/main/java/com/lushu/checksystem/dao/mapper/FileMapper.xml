@@ -31,7 +31,7 @@
         from sys_file
         where owner=#{owner}
         <if test="modern != null and modern != ''">
-            order by #{modern} desc
+            order by ${modern} desc
         </if>
         limit #{start},#{limit}
     </select>

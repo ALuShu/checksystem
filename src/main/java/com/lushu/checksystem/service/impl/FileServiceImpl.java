@@ -74,6 +74,13 @@ public class FileServiceImpl implements FileService {
             pageMap.put("modern", modern);
         }
         List<File> files = fileDao.selectFileByOwner(pageMap);
+        Iterator<File> iterator = files.iterator();
+        while (iterator.hasNext()){
+            File current = iterator.next();
+            if (current.getType().equals(DatabaseConstant.File.DIRECTORY_FILE.getFlag())){
+                iterator.remove();
+            }
+        }
         pageBean.setList(files);
         return pageBean;
     }
@@ -151,7 +158,7 @@ public class FileServiceImpl implements FileService {
         if("\\".equals(path) || "/".equals(path)){
             ownerUsername = "root";
             path = "";
-        }else if (!path.matches("^[0-9]{4}_{1}[A-Za-z\u4e00-\u9fa5]{0,}$")){
+        }else if (!path.matches("^[0-9]{4}_{1}\\S{0,}$")){
             ownerUsername = "root";
         }else {
             ownerUsername = path.substring(0, 4);

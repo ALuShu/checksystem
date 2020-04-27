@@ -1,6 +1,7 @@
 package com.lushu.checksystem.controller;
 
 import com.lushu.checksystem.constant.BasicConstant;
+import com.lushu.checksystem.constant.DatabaseConstant;
 import com.lushu.checksystem.pojo.*;
 import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.service.InformService;
@@ -11,10 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author lushu
@@ -148,7 +146,7 @@ public class TeacherController {
 
 
     /**
-     * 个人中心展示最近批改作业列表owner,最新更新时间
+     * 个人中心展示最近未批改
      */
     @RequestMapping(value = "/recentWorks", method = RequestMethod.GET)
     @ResponseBody
@@ -156,7 +154,15 @@ public class TeacherController {
         Map<String, Object> json = new HashMap<>();
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         PageBean<File> pageBean = fileService.selectRecent(user.getId(), page, limit, "update_time");
-        json.put("data", pageBean.getList());
+        List<File> list = pageBean.getList();
+        Iterator<File> iterator = list.iterator();
+        while (iterator.hasNext()){
+            File current = iterator.next();
+            if (!current.getStatus().equals(DatabaseConstant.File.UNCHECKED.getFlag())){
+                iterator.remove();
+            }
+        }
+        json.put("data", list);
         json.put("code", 0);
         json.put("msg", "");
         json.put("count", pageBean.getTotalRecord());
