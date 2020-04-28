@@ -55,13 +55,16 @@
 
                             <!-- 头部工具栏 -->
                             <form class="layui-form" action="" method="get" style="padding-left: 20px">
+                                <div id="filterLabel" class="layui-form-mid layui-word-aux" style="float:left">筛选通知
+                                </div>
+                                <div class="layui-inline">
+                                    <input id="toolName"  type="text" name="realname" placeholder="教师名" oninput="listen()" autocomplete="off" class="layui-input">
+                                </div>
                                 <div class="layui-inline">
                                     <select id="typeSelect" name="type" lay-verify="" lay-filter="typeSelect">
                                         <option value="1" selected>必修</option>
                                         <option value="0">选修</option>
                                     </select>
-                                </div>
-                                <div id="filterLabel" class="layui-form-mid layui-word-aux" style="float:left">筛选通知
                                 </div>
                                 <div id="selectDiv" class="layui-inline" style="display: none">
                                     <select id="departmentSelect" name="department" lay-verify=""
@@ -148,6 +151,17 @@
             window.location = "/logout";
         })
     });
+
+    function listen() {
+        var text = $('#toolName').val();
+        console.log(text);
+        layui.table.reload('demo', {
+            url: '/student/showInforms?type='+typeSelect+'&department='+departmentSelect+'&realname='+text
+            , page: {
+                curr: 1 //重新从第 1 页开始
+            }
+        });
+    }
 
     function index() {
         window.location = "/student/index"

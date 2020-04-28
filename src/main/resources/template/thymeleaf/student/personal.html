@@ -25,7 +25,6 @@
                     <span style="color: black" th:text="${current.realname}"></span>
                 </a>
                 <dl class="layui-nav-child">
-<!--                    <dd><a href="">基本资料</a></dd>-->
                     <dd><a href="/student/update">修改密码</a></dd>
                 </dl>
             </li>
@@ -40,6 +39,9 @@
                 <div class="layui-col-md12">
                     <div class="layui-row grid-demo">
 
+                        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                            <legend>我的提交</legend>
+                        </fieldset>
                         <!-- 列表 -->
                         <div class="layui-col-md12">
                             <table class="layui-table" id="oldWorks" lay-filter="oldWorks"></table>

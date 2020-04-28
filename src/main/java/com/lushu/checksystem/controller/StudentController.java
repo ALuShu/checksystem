@@ -16,6 +16,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -82,7 +84,7 @@ public class StudentController {
             user = (User) a;
             Inform inform = informService.selectInform(id);
             model.addAttribute("current", user);
-            current = new StringBuffer(inform.getPath().substring(inform.getPath().indexOf("root")+5));
+            current = new StringBuffer(inform.getPath().substring(inform.getPath().indexOf("root") + 5));
             return "/student/upload";
         }
     }
@@ -97,7 +99,7 @@ public class StudentController {
             HashMap<String, Object> res = userService.selectUser(username);
             model.addAttribute("current", user);
             User user = (User) res.get("user");
-            current = new StringBuffer(user.getUsername()+"_"+user.getRealname()+"\\");
+            current = new StringBuffer(user.getUsername() + "_" + user.getRealname() + "\\");
             return "/student/upload";
         }
     }
@@ -152,6 +154,7 @@ public class StudentController {
             return "/student/teachers";
         }
     }
+
     /**
      * 学生端搜索教师
      */
@@ -159,9 +162,9 @@ public class StudentController {
     @ResponseBody
     public Map searchTeacher(String username) {
         HashMap<String, Object> des = new HashMap<>();
-        des.put("code",1);
-        des.put("msg","转发");
-        des.put("username",username);
+        des.put("code", 1);
+        des.put("msg", "转发");
+        des.put("username", username);
         return des;
     }
 
@@ -173,10 +176,29 @@ public class StudentController {
     @ResponseBody
     public Map showInforms(@RequestParam(value = "type", required = false) int type
             , @RequestParam(value = "department", required = false) String department
+            , @RequestParam(value = "realname", required = false) String realname
             , @RequestParam(value = "page") int page
             , @RequestParam(value = "limit") int limit) {
         HashMap<String, Object> informMap = new HashMap<>(4);
         PageBean<Inform> pageBean = informService.selectInformsBySort(type, page, limit, department);
+        if (realname != null) {
+            User teacher = (User) userService.selectUserByRealname(realname.trim()).get("user");
+            if (teacher == null) {
+                pageBean.getList().clear();
+                pageBean.setTotalRecord(0);
+            } else {
+                List<Inform> informs = pageBean.getList();
+                Iterator<Inform> iterator = informs.iterator();
+                while (iterator.hasNext()) {
+                    Inform current = iterator.next();
+                    if (!current.getPublisher().equals(teacher.getUsername())) {
+                        iterator.remove();
+                    }
+                }
+                pageBean.setList(informs);
+                pageBean.setTotalRecord(informs.size());
+            }
+        }
         informMap.put("data", pageBean.getList());
         informMap.put("msg", "");
         informMap.put("code", 0);
@@ -220,10 +242,10 @@ public class StudentController {
             , @RequestParam(required = false) String username) {
         Map<String, Object> map = new HashMap<>();
         HashMap<String, String> param = new HashMap<>();
-        if (department != null){
-            param.put("department",department);
+        if (department != null) {
+            param.put("department", department);
         }
-        if (username != null){
+        if (username != null) {
             param.put("username", username);
         }
         PageBean<User> res = userService.selectUsersByRole(page, limit, DatabaseConstant.Role.ROLE_TEACHER.ordinal() + 1, param);
@@ -239,7 +261,9 @@ public class StudentController {
      */
     @RequestMapping(value = "/showOldWorks", method = RequestMethod.GET)
     @ResponseBody
-    public Map showOldWorks(@RequestParam int page, @RequestParam int limit, Model model) {
+    public Map showOldWorks(@RequestParam int page
+            , @RequestParam int limit
+            , Model model) {
         Map<String, Object> map = new HashMap<>();
         Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())) {
