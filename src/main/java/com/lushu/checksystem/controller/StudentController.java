@@ -15,10 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author lushu
@@ -252,18 +249,17 @@ public class StudentController {
         map.put("data", res.getList());
         map.put("code", 0);
         map.put("msg", "");
-        map.put("count", res.getTotalRecord());
+        map.put("count", res.getList().size());
         return map;
     }
 
     /**
-     * 以往作业列表（未完成）
+     * 以往作业列表
      */
     @RequestMapping(value = "/showOldWorks", method = RequestMethod.GET)
     @ResponseBody
     public Map showOldWorks(@RequestParam int page
-            , @RequestParam int limit
-            , Model model) {
+            , @RequestParam int limit) {
         Map<String, Object> map = new HashMap<>();
         Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())) {
@@ -277,11 +273,49 @@ public class StudentController {
             PageBean<File> res = fileService.selectOldSubmitted(user.getId(), page, limit);
             map.put("data", res.getList());
             map.put("code", 0);
-            map.put("msg", "你还没提交过作业哦");
+            map.put("msg", "查询成功");
             map.put("count", res.getTotalRecord());
             return map;
         }
     }
 
 
+    /**
+     * 最近选择的教师
+     */
+    @RequestMapping(value = "/recentTeacher", method = RequestMethod.GET)
+    @ResponseBody
+    public Map recentTeacher(@RequestParam int page
+            , @RequestParam int limit) {
+        Map<String, Object> map = new HashMap<>();
+        Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if ("anonymousUser".equals(a.toString())) {
+            map.put("data", "");
+            map.put("code", 1);
+            map.put("msg", "验证信息失效，请重新登录");
+            map.put("count", 0);
+            return map;
+        } else {
+            User user = (User) a;
+            List<File> res = fileService.selectOldSubmitted(user.getId(), page, limit).getList();
+            HashMap<Integer,Integer> record = new HashMap<>();
+            for (File current : res){
+                if (!record.containsKey(current.getOwner())){
+                    record.put(current.getOwner(),1);
+                }else {
+                    record.put(current.getOwner(),record.get(current.getOwner())+1);
+                }
+            }
+            ArrayList<Integer> ids = new ArrayList<>();
+            for (Integer id : record.keySet()){
+                ids.add(id);
+            }
+            List<User> teachers = userService.selectUsersByIds(ids);
+            map.put("data", teachers);
+            map.put("code", 0);
+            map.put("msg", "查询成功");
+            map.put("count", teachers.size());
+            return map;
+        }
+    }
 }

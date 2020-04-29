@@ -70,6 +70,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<User> selectUsersByIds(List<Integer> ids) {
+        return userDao.selectByIds(ids);
+    }
+
+    @Override
     public HashMap<String, Object> selectUserByRealname(String realname) {
         User user = userDao.selectUserByRealname("%"+realname+"%");
         List<Role> role = roleDao.selectRole(user.getUsername());

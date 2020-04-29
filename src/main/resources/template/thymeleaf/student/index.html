@@ -51,7 +51,7 @@
                     <div class="layui-row grid-demo">
 
                         <!-- 左边内容 -->
-                        <div class="layui-col-md12">
+                        <div class="layui-col-md8">
 
                             <!-- 头部工具栏 -->
                             <form class="layui-form" action="" method="get" style="padding-left: 20px">
@@ -86,6 +86,7 @@
                                        url:'/student/showInforms?type='+typeSelect+'&department='+departmentSelect
                                        ,limit:15
                                        ,height:'full-130'
+                                       ,width:780
                                        ,page: {
                                            layout: ['prev', 'page', 'next', 'skip','count']
                                            ,groups: 5
@@ -99,7 +100,7 @@
                                         发布人
                                     </th>
                                     <th lay-data="{field: 'content', width :400, event: 'showInform', style:'cursor: pointer;'}">
-                                        内容
+                                        通知内容
                                     </th>
                                     <th lay-data="{field: 'type', width:60 , templet: '#typeTpl'}">类型</th>
                                     <th lay-data="{field: 'date'}">日期</th>
@@ -109,6 +110,22 @@
                                 </thead>
                             </table>
 
+                        </div>
+
+                        <!-- 右边内容 -->
+                        <div class="layui-col-md4">
+                            <div class="layui-row grid-demo">
+
+                                <fieldset class="layui-elem-field layui-field-title" style="margin-top: 30px;">
+                                    <legend>最近选择教师</legend>
+                                </fieldset>
+                                <!-- 列表 -->
+                                <div class="layui-col-md12">
+                                    <table class="layui-table" id="recentTeacher" lay-filter="recentTeacher"></table>
+                                </div>
+
+
+                            </div>
                         </div>
 
 
@@ -175,6 +192,33 @@
         var form = layui.form
             , element = layui.element
             , table = layui.table;
+
+
+        //layui数据表格
+        table.render({
+            elem: '#recentTeacher'
+            , url: '/student/recentTeacher'
+            ,skin:'nob'
+            ,limit:10
+            , cols: [[
+                {field: 'realname', title: '教师名',unresize:true}
+                , {field: 'username', title: '教师工号',unresize:true}
+                , {field: 'path', title: '教师系别',unresize:true}
+            ]]
+        });
+
+        table.on('row(recentTeacher)', function (obj) {
+            let data = obj.data;
+            $.ajax({
+                type: "post",
+                url: "/student/uploadByTeacher",
+                async: true,
+                data: data,
+                success: function (res) {
+                    window.location.href = '/student/uploadByTeacher/' + res.username;
+                }
+            });
+        });
 
 
         //监听下拉选择框

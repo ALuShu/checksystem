@@ -26,6 +26,11 @@ public interface UserService extends UserDetailsService {
     User selectUserBySort(String type, String keyword);
 
     /**
+     * id搜索用户群
+     */
+    List<User> selectUsersByIds(List<Integer> ids);
+
+    /**
      * 通过用户名查询，返回用户以及角色信息
      */
     HashMap<String, Object> selectUser(String username);
