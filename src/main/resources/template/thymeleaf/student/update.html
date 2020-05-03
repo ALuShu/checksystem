@@ -5,11 +5,6 @@
     <title>Edit Password</title>
     <link rel="stylesheet" href="../layui/css/layui.css" type="text/css">
 </head>
-<style>
-    .layui-layer-dialog .layui-layer-content{
-        color: black;
-    }
-</style>
 <body style="background-color: #1E9FFF !important;">
 <div class="layui-layout layui-layout-admin">
     <div class="layui-header layui-bg-gray">
@@ -22,6 +17,9 @@
                     <img src="http://t.cn/RCzsdCq" class="layui-nav-img">
                     <span style="color: black" th:text="${current.realname}"></span>
                 </a>
+                <dl class="layui-nav-child">
+                    <dd><a href="/student/update">修改密码</a></dd>
+                </dl>
             </li>
             <li class="layui-nav-item"><a id="logout" href="javascript:" style="color: black">注销</a></li>
         </ul>
@@ -30,44 +28,48 @@
 <div>
     <div>
         <div style="width: 80%; margin:20px auto 20px auto">
-                <div class="layui-row layui-col-space5 layui-bg-gray">
-                    <div class="layui-col-md12">
-                        <div class="layui-row grid-demo">
-                            <form id="form" class="layui-form" action="" method="post">
-                                <div class="layui-form-item">
-                                    <label class="layui-form-label">旧密码</label>
-                                    <div class="layui-input-inline">
-                                        <input type="password" id="oldPassword" name="oldPassword" required
-                                               lay-verify="required"
-                                               placeholder="请输入密码" autocomplete="off" class="layui-input">
-                                    </div>
+            <div class="layui-row layui-col-space5 layui-bg-gray">
+                <div class="layui-col-md12">
+                    <div class="layui-row grid-demo">
+
+                        <fieldset class="layui-elem-field layui-field-title" style="margin-top: 50px;">
+                            <legend>修改密码</legend>
+                        </fieldset>
+                        <form id="form" class="layui-form" action="" method="post" style="padding-bottom: 310px; margin-left: 20px">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">旧密码</label>
+                                <div class="layui-input-inline">
+                                    <input type="password" id="oldPassword" name="oldPassword" required
+                                           lay-verify="required" placeholder="请输入密码" autocomplete="off"
+                                           class="layui-input">
                                 </div>
-                                <div class="layui-form-item">
-                                    <label class="layui-form-label">新的密码</label>
-                                    <div class="layui-input-inline">
-                                        <input type="password" id="newPassword" name="newPassword" required
-                                               lay-verify="required|pass"
-                                               placeholder="请输入密码" autocomplete="off" class="layui-input">
-                                    </div>
-                                    <div class="layui-form-mid layui-word-aux">长度为6至15，数字、大小写字母组成</div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">新的密码</label>
+                                <div class="layui-input-inline">
+                                    <input type="password" id="newPassword" name="newPassword" required
+                                           lay-verify="required|pass" placeholder="请输入密码" autocomplete="off"
+                                           class="layui-input">
                                 </div>
-                                <div class="layui-form-item">
-                                    <label class="layui-form-label">新密码确认</label>
-                                    <div class="layui-input-inline">
-                                        <input type="password" id="correctPassword" name="correctPassword" required
-                                               lay-verify="required|pass|correctPass" placeholder="请输入密码"
-                                               autocomplete="off"
-                                               class="layui-input">
-                                    </div>
+                                <div class="layui-form-mid layui-word-aux">长度为6至15，数字、大小写字母组成</div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">新密码确认</label>
+                                <div class="layui-input-inline">
+                                    <input type="password" id="correctPassword" name="correctPassword" required
+                                           lay-verify="required|pass|correctPass" placeholder="请输入密码" autocomplete="off"
+                                           class="layui-input">
                                 </div>
-                                <div class="layui-form-item">
-                                    <div class="layui-input-block">
-                                        <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">立即提交</button>
-                                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-                                    </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                    <button class="layui-btn layui-btn-normal" lay-submit lay-filter="formDemo">立即提交</button>
+                                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
                                 </div>
-                            </form>
-                        </div>
+                            </div>
+                        </form>
+
+                    </div>
                 </div>
             </div>
         </div>
@@ -129,8 +131,8 @@
                         alert("旧密码不正确")
                     } else if (data.code === 1) {
                         alert("修改成功，请重新登录");
-                        window.location = '/logout';
-                        window.location = '/public/login'
+                        window.location.href = '/logout';
+                        window.open('/public/login','_self')
                     } else {
                         alert("修改失败")
                     }

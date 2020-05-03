@@ -38,13 +38,16 @@ public class Doc2PdfUtil {
      */
     public File doc2Pdf(StringBuffer fileName,String name) throws ConnectException {
         File docFile = new File(fileName.toString());
-        int pointIndex = fileName.lastIndexOf(".");
         if (name.endsWith("doc")){
             name = name.replaceAll("doc","pdf");
         }else {
             name = name.replaceAll("docx","pdf");
         }
-        File pdfFile = new File(OtherConstant.REALPATH + "临时文件文件夹" + File.separator + name);
+        File officeFile = new File(OtherConstant.REALPATH ,"pdf临时文件夹");
+        if (!officeFile.exists()){
+            officeFile.mkdir();
+        }
+        File pdfFile = new File(OtherConstant.REALPATH ,"pdf临时文件夹" + File.separator + name);
         if (docFile.exists()) {
             if (!pdfFile.exists()) {
                 OpenOfficeConnection connection = new SocketOpenOfficeConnection(openOfficeHost, openOfficePort);

@@ -466,8 +466,7 @@
                     window.location.href="/file/downloadFile?path="+path.join('/')+"&name="+data.name
                 }
             } else if(obj.event === 'lookFile'){
-                layer.alert(JSON.stringify(data));
-                //页面上显示office文档，后续待做
+                window.open("../pdf/web/viewer.html?file="+encodeURIComponent('/file/doc2pdf?path='+path.join('/')+'/&name='+data.name));
             } else if(obj.event === 'delFile'){
                 var arr = [];
                 arr.push(data.name);

@@ -122,7 +122,7 @@ public class InformServiceImpl implements InformService {
         for (int i =0;i < list.size(); i++){
             Inform current = list.get(i);
             if (current.getPath() != null && !"".equals(current.getPath())) {
-                current.setPath(OtherConstant.REALPATH+current.getPath());
+                current.setPath(new java.io.File(OtherConstant.REALPATH).getAbsolutePath() + java.io.File.separator + current.getPath());
             }
             current.setDate(OtherConstant.DATE_FORMAT.format(new Date()));
         }

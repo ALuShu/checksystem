@@ -31,7 +31,4 @@ build/
 .vscode/
 
 **/src/main/resources/rebel.xml
-**/src/main/resources/excel
-**/src/main/resources/word
-**/src/main/resources/root/**
-**/src/main/webapp/upload
+!**/src/main/resources/static/**

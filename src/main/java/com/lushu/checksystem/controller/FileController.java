@@ -248,10 +248,10 @@ public class FileController {
             if ("\\".equals(path) || "/".equals(path)) {
                 real = OtherConstant.REALPATH;
             } else {
-                real = OtherConstant.REALPATH + path;
+                real = OtherConstant.REALPATH + File.separator + path;
             }
         } else {
-            real = OtherConstant.REALPATH + user.getUsername() + "_" + user.getRealname() + File.separator + path;
+            real = OtherConstant.REALPATH + File.separator + user.getUsername() + "_" + user.getRealname() + File.separator + path;
         }
         java.io.File file = new java.io.File(real, name);
         HttpHeaders headers = new HttpHeaders();
@@ -292,7 +292,7 @@ public class FileController {
      * office查看：word转pdf
      * 参考：https://www.cnblogs.com/ph7seven/p/10158489.html
      */
-    @PostMapping("/doc2pdf")
+    @RequestMapping("/doc2pdf")
     public void doc2pdf(@RequestParam String name
             , @RequestParam String path
             , HttpServletResponse response){
@@ -302,12 +302,12 @@ public class FileController {
         List<GrantedAuthority> grantedAuthorities = user.getAuthorities();
         if (grantedAuthorities.contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
             if ("\\".equals(path) || "/".equals(path)) {
-                fileName = new StringBuffer(OtherConstant.REALPATH + name);
+                fileName = new StringBuffer(OtherConstant.REALPATH + File.separator + name);
             } else {
-                fileName = new StringBuffer(OtherConstant.REALPATH + path + name);
+                fileName = new StringBuffer(OtherConstant.REALPATH + File.separator + path + name);
             }
         } else {
-            fileName = new StringBuffer(OtherConstant.REALPATH + user.getUsername() + "_" + user.getRealname() + File.separator + path + name);
+            fileName = new StringBuffer(OtherConstant.REALPATH + File.separator + user.getUsername() + "_" + user.getRealname() + File.separator + path + name);
         }
 
         java.io.File pdfFile = null;

@@ -336,17 +336,7 @@
                     window.location.href="/file/downloadFile?path="+path.join('/')+"&name="+data.name
                 }
             } else if(obj.event === 'lookFile'){
-                $.ajax({
-                    type:'post',
-                    async:false,
-                    mimeType: 'text/plain; charset=x-user-defined',
-                    url:'/file/doc2pdf',
-                    data:{'path':path.join('/')+'/','name':data.name},
-                    success:function(res){
-                        console.log(res)
-                    }
-                });
-                //页面上显示office文档，后续待做
+                window.open("../pdf/web/viewer.html?file="+encodeURIComponent('/file/doc2pdf?path='+path.join('/')+'/&name='+data.name));
             } else if(obj.event === 'delFile'){
                 var arr = [];
                 arr.push(data.name);

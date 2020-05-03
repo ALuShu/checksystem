@@ -310,11 +310,18 @@ public class StudentController {
             for (Integer id : record.keySet()){
                 ids.add(id);
             }
-            List<User> teachers = userService.selectUsersByIds(ids);
-            map.put("data", teachers);
-            map.put("code", 0);
-            map.put("msg", "查询成功");
-            map.put("count", teachers.size());
+            if (ids.size() == 0){
+                map.put("data", null);
+                map.put("code", 0);
+                map.put("msg", "查询成功");
+                map.put("count", 0);
+            }else {
+                List<User> teachers = userService.selectUsersByIds(ids);
+                map.put("data", teachers);
+                map.put("code", 0);
+                map.put("msg", "查询成功");
+                map.put("count", teachers.size());
+            }
             return map;
         }
     }

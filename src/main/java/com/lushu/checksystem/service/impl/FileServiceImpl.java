@@ -87,9 +87,9 @@ public class FileServiceImpl implements FileService {
         List<Map<String, Object>> fileList = new ArrayList<>();
         //利用nio包的文件相关接口，此处生成一个对应目录下所有文件的Path集合，在for循环中遍历至自定义的结果集PageBean<T>中
         //PageBean<T>是分页实体类，包装了总页数、总记录数和数据集合等信息
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(OtherConstant.REALPATH + path))) {
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(new java.io.File(OtherConstant.REALPATH).getAbsolutePath() ,path))) {
             //此处的File为自定义实体类，须和io下的File区分，用于查询数据库中，同一目录下所有File记录
-            List<File> files = fileDao.checkFiles(OtherConstant.REALPATH + path);
+            List<File> files = fileDao.checkFiles(new java.io.File(OtherConstant.REALPATH).getAbsolutePath() + java.io.File.separator + path);
             for (Path pathObj : directoryStream) {
                 //遍历每个Path对象，同readAttributes()读取基础属性，存进单个Map中
                 BasicFileAttributes attrs = Files.readAttributes(pathObj, BasicFileAttributes.class);
@@ -129,18 +129,18 @@ public class FileServiceImpl implements FileService {
         String teacherRoot = username + "_" + realname;
         teacherFile.setName(teacherRoot);
         teacherFile.setOwner(id);
-        teacherFile.setPath(OtherConstant.REALPATH);
+        teacherFile.setPath(new java.io.File(OtherConstant.REALPATH).getAbsolutePath() + java.io.File.separator);
         teacherFile.setPermission("-rw--rwx-rwx");
         teacherFile.setType(DatabaseConstant.File.DIRECTORY_FILE.getFlag());
         teacherFile.setUpdateTime(OtherConstant.DATE_FORMAT.format(new Date()));
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(OtherConstant.REALPATH, "/"))) {
+        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(new java.io.File(OtherConstant.REALPATH).getAbsolutePath(), "/"))) {
             for (Path pathObject : directoryStream) {
                 if (pathObject.getFileName().toString().equals(teacherRoot)) {
                     log.info("已有同名文件夹:" + pathObject.getFileName().toString());
                     return 0;
                 }
             }
-            Files.createDirectory(Paths.get(OtherConstant.REALPATH + teacherRoot));
+            Files.createDirectory(Paths.get(new java.io.File(OtherConstant.REALPATH).getAbsolutePath() ,teacherRoot));
             return fileDao.addFile(teacherFile);
         } catch (IOException e) {
             log.error("教师:" + username + "创建文件夹失败!", e);
@@ -161,7 +161,7 @@ public class FileServiceImpl implements FileService {
             ownerUsername = path.substring(0, 4);
         }
         if (files.size() == 1) {
-            File preFile = addMethod(fileIterator.next(), new File(), OtherConstant.REALPATH + path, ownerUsername, submitter);
+            File preFile = addMethod(fileIterator.next(), new File(), new java.io.File(OtherConstant.REALPATH).getAbsolutePath() + java.io.File.separator + path, ownerUsername, submitter);
             File isExist = fileDao.checkFile(preFile.getName(), preFile.getPath());
             if (isExist == null) {
                 return (preFile != null) ? fileDao.addFile(preFile) : -1;
@@ -172,7 +172,7 @@ public class FileServiceImpl implements FileService {
         } else {
             List<File> preFiles = new ArrayList<>();
             while (fileIterator.hasNext()) {
-                File current = addMethod(fileIterator.next(), new File(), OtherConstant.REALPATH + path, ownerUsername, submitter);
+                File current = addMethod(fileIterator.next(), new File(), new java.io.File(OtherConstant.REALPATH).getAbsolutePath() + java.io.File.separator + path, ownerUsername, submitter);
                 if (current == null) {
                     preFiles.clear();
                     break;
@@ -190,43 +190,24 @@ public class FileServiceImpl implements FileService {
         String fileName = paramFile.getOriginalFilename();
         if (fileName != null) {
             java.io.File dest = new java.io.File(path, fileName);
-            /*判断是file还是dir*/
-            if (dest.isFile()) {
-                if (dest.exists()) {
-                    log.info("添加覆盖操作");
-                    boolean res = dest.delete();
-                    if (!res) {
-                        log.error("覆盖失败，请检查文件夹是否非空");
-                        return null;
-                    }
-                }
-                destFile.setType(DatabaseConstant.File.WORD_FILE.getFlag());
-                destFile.setPermission("-rwx-rwx-r-x");
-                destFile.setSubmitter(submitter);
-                destFile.setStatus(DatabaseConstant.File.UNCHECKED.getFlag());
-                try {
-                    paramFile.transferTo(dest);
-                } catch (IOException e) {
-                    log.error("添加保存失败", e);
+            /*判断是file还是dir,dest对象还没在服务器上,所以用isFile()或isDirectory()都会返回false*/
+            if (dest.exists()) {
+                log.info("添加覆盖操作");
+                boolean res = dest.delete();
+                if (!res) {
+                    log.error("覆盖失败，请检查文件夹是否非空");
                     return null;
                 }
-            } else {
-                destFile.setType(DatabaseConstant.File.DIRECTORY_FILE.getFlag());
-                destFile.setPermission("-rwx-rwx-rw-");
-                if (dest.exists()) {
-                    log.info("添加覆盖操作");
-                    boolean res = dest.delete();
-                    if (!res) {
-                        log.error("覆盖失败，请检查文件夹是否非空");
-                        return null;
-                    }
-                }
-                try {
-                    Files.createDirectory(Paths.get(path, fileName));
-                } catch (IOException e) {
-                    log.error("创建新文件夹失败", e);
-                    return null;
-                }
+            }
+            destFile.setType(DatabaseConstant.File.WORD_FILE.getFlag());
+            destFile.setPermission("-rwx-rwx-r-x");
+            destFile.setSubmitter(submitter);
+            destFile.setStatus(DatabaseConstant.File.UNCHECKED.getFlag());
+            try {
+                paramFile.transferTo(dest);
+            } catch (IOException e) {
+                log.error("添加保存失败", e);
+                return null;
             }
         }
         destFile.setName(fileName);
@@ -242,11 +223,11 @@ public class FileServiceImpl implements FileService {
         Path direction;
         File tempFile = new File();
         if("\\".equals(path) || "/".equals(path)){
-            direction = Paths.get(OtherConstant.REALPATH, name);
-            tempFile.setPath(OtherConstant.REALPATH);
+            direction = Paths.get(new java.io.File(OtherConstant.REALPATH).getAbsolutePath(), name);
+            tempFile.setPath(new java.io.File(OtherConstant.REALPATH).getAbsolutePath() + java.io.File.separator);
         }else {
-            direction = Paths.get(OtherConstant.REALPATH + path, name);
-            tempFile.setPath(OtherConstant.REALPATH + path);
+            direction = Paths.get(new java.io.File(OtherConstant.REALPATH).getAbsolutePath(), path, name);
+            tempFile.setPath(new java.io.File(OtherConstant.REALPATH).getAbsolutePath() + java.io.File.separator + path);
         }
         try {
             Files.createDirectory(direction);
@@ -267,7 +248,7 @@ public class FileServiceImpl implements FileService {
         if (BasicConstant.FileAction.RENAME.getString().equals(action)) {
             String path = (String) updateParam.get("resourcePath");
             String oldName = (String) updateParam.get("resourceName");
-            Path resource = Paths.get(OtherConstant.REALPATH, path + java.io.File.separator + oldName);
+            Path resource = Paths.get(new java.io.File(OtherConstant.REALPATH).getAbsolutePath(), path, oldName);
             String newName = (String) updateParam.get("newName");
             try {
                 if (Files.exists(resource)) {
@@ -275,7 +256,7 @@ public class FileServiceImpl implements FileService {
                     Files.move(resource, resource.resolveSibling(newName));
                     param.put("name", newName);
                     param.put("updateTime", OtherConstant.DATE_FORMAT.format(new Date()));
-                    param.put("resourcePath", OtherConstant.REALPATH + path);
+                    param.put("resourcePath", new java.io.File(OtherConstant.REALPATH).getAbsolutePath() + java.io.File.separator + path);
                     param.put("resourceName", oldName);
                     return fileDao.updateFile(param);
                 }
@@ -332,7 +313,7 @@ public class FileServiceImpl implements FileService {
             FileTime fileTime = FileTime.fromMillis(time);
             String path = (String) updateParam.get("resourcePath");
             String name = (String) updateParam.get("resourceName");
-            Path resource = Paths.get(OtherConstant.REALPATH, path + name);
+            Path resource = Paths.get(new java.io.File(OtherConstant.REALPATH).getAbsolutePath(), path, name);
             Integer status = (Integer) updateParam.get("status");
             try {
                 Files.setAttribute(resource, "basic:lastModifiedTime", fileTime);
@@ -390,7 +371,7 @@ public class FileServiceImpl implements FileService {
             path = "";
         }
         for (int i = 0; i < name.length; i++) {
-            File current = deleteMethod(OtherConstant.REALPATH + path, name[i]);
+            File current = deleteMethod(new java.io.File(OtherConstant.REALPATH).getAbsolutePath() + java.io.File.separator + path, name[i]);
             delRes += fileDao.deleteFile(current);
         }
         return delRes;
@@ -427,7 +408,7 @@ public class FileServiceImpl implements FileService {
     public List<LayuiDtree> checkMethod(String[] names, String path) {
         ArrayList<File> files = new ArrayList<>();
         ArrayList<SimHash> hashes = new ArrayList<>();
-        String pathParam = OtherConstant.REALPATH + path;
+        String pathParam = new java.io.File(OtherConstant.REALPATH).getAbsolutePath() + java.io.File.separator + path;
         for (int i = 0; i < names.length; i++) {
             //根据传参的n个文件名和1个路径，分别生成每个文件的签名（sign）和检查状态，入库
             //将生产的simHash加到集合，以便后面求海明距离

@@ -119,7 +119,7 @@ public class TeacherController {
     @ResponseBody
     public Map renameFile(@RequestParam String name, @RequestParam String path) {
         Map<String, Object> json = new HashMap<>();
-        path = OtherConstant.REALPATH + path;
+        path = new java.io.File(OtherConstant.REALPATH).getAbsolutePath() + java.io.File.separator + path;
         int index = path.lastIndexOf(java.io.File.separator);
         String tmpPath;
         if (index == path.indexOf(java.io.File.separator) + 1) {

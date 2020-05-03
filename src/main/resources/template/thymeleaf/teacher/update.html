@@ -19,8 +19,7 @@
                     <img src="http://t.cn/RCzsdCq" class="layui-nav-img"><span th:text="${current.realname}"></span>
                 </a>
                 <dl class="layui-nav-child">
-<!--                    <dd><a href="javascript:;">基本资料</a></dd>-->
-                    <dd><a href="/teacher/edit">发布通知</a></dd>
+                    <dd><a href="/teacher/informs">发布通知</a></dd>
                     <dd><a href="/teacher/update">修改密码</a></dd>
                 </dl>
             </li>
@@ -137,8 +136,8 @@
                         alert("旧密码不正确")
                     } else if (data.code === 1) {
                         alert("修改成功，请重新登录");
-                        window.location = '/logout';
-                        window.location = '/public/login'
+                        window.location.href = '/logout';
+                        window.open('/public/login','_self')
                     } else {
                         alert("修改失败")
                     }

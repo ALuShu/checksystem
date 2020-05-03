@@ -35,6 +35,7 @@ public class initializationBean {
         root.add(user);
         userService.addUsersByExcel(root, DatabaseConstant.Role.ROLE_ADMIN.ordinal()+1);
         File programRoot = new File(OtherConstant.REALPATH);
+        log.info("文件系统根目录为:"+programRoot.getAbsolutePath());
         if (!programRoot.exists()){
             programRoot.mkdir();
         }

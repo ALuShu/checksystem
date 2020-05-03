@@ -168,7 +168,7 @@ public class AdminController {
             MultipartFile currentFile = fileMap.get(string);
             String fileName = currentFile.getOriginalFilename();
             String suffixName = fileName.substring(fileName.lastIndexOf("."));
-            java.io.File upload = new java.io.File(OtherConstant.REALPATH+"excel");
+            java.io.File upload = new java.io.File(OtherConstant.REALPATH, "excel临时文件夹");
             if(!upload.exists()){
                 upload.mkdirs();
             }
