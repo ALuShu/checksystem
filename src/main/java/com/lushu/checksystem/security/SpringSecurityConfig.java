@@ -87,6 +87,6 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         //坑，这里是把layui放在src/main/resources/static下面，而且直接"/static/**"行不通，除非你静态文件就放在static下面
-        web.ignoring().antMatchers("/css/**","/js/**","/layui/**","/image/**","/webjars/**");
+        web.ignoring().antMatchers("/css/**","/js/**","/layui/**","/image/**","/webjars/**","/pdf/**");
     }
 }

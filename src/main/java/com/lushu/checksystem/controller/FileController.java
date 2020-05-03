@@ -1,8 +1,12 @@
 package com.lushu.checksystem.controller;
 
 import com.lushu.checksystem.constant.BasicConstant;
-import com.lushu.checksystem.pojo.*;
+import com.lushu.checksystem.constant.OtherConstant;
+import com.lushu.checksystem.pojo.LayuiDtree;
+import com.lushu.checksystem.pojo.PageBean;
+import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.FileService;
+import com.lushu.checksystem.util.Doc2PdfUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,8 +23,14 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.*;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.net.ConnectException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
 
 /**
  * @author ALuShu
@@ -32,8 +42,10 @@ import java.util.*;
 @RequestMapping("/file")
 public class FileController {
 
-    @Value("${checksystem.root}")
-    private String realPath;
+    @Value("${openoffice.host}")
+    private String openOfficeHost;
+    @Value("${openoffice.port}")
+    private Integer openOfficePort;
     private FileService fileService;
 
     public FileController(FileService fileService) {
@@ -64,16 +76,16 @@ public class FileController {
                 }
             } else if (grantedAuthorities.contains(new SimpleGrantedAuthority("ROLE_TEACHER"))) {
                 if ("\\".equals(path) || "/".equals(path) || path == null) {
-                    path = user.getUsername() + "_" + user.getRealname() + "\\";
+                    path = user.getUsername() + "_" + user.getRealname() + File.separator;
                 } else {
-                    path = user.getUsername() + "_" + user.getRealname() + "\\" + path;
+                    path = user.getUsername() + "_" + user.getRealname() + File.separator + path;
                 }
             } else {
                 StringBuffer current = StudentController.current;
                 if ("\\".equals(path) || "/".equals(path) || path == null) {
                     path = current.toString();
                 } else if ("".equals(current.toString())) {
-                    path = "/test";
+                    path = File.separator + "test";
                 } else {
                     path = current + path;
                 }
@@ -121,16 +133,16 @@ public class FileController {
             Collection<MultipartFile> files = fileMap.values();
             if (grantedAuthorities.contains(new SimpleGrantedAuthority("ROLE_TEACHER"))) {
                 if ("\\".equals(path) || path.equals(user.getUsername() + "_" + user.getRealname() + "\\")) {
-                    path = user.getUsername() + "_" + user.getRealname() + "\\";
+                    path = user.getUsername() + "_" + user.getRealname() + File.separator;
                 } else {
-                    path = user.getUsername() + "_" + user.getRealname() + "\\" + path;
+                    path = user.getUsername() + "_" + user.getRealname() + File.separator + path;
                 }
             } else if (grantedAuthorities.contains(new SimpleGrantedAuthority("ROLE_STUDENT"))) {
                 StringBuffer current = StudentController.current;
                 if ("\\".equals(path) || "/".equals(path) || path == null) {
                     path = current.toString();
                 } else if ("".equals(current.toString())) {
-                    path = "/test";
+                    path = File.separator + "test";
                 } else {
                     path = current + path;
                 }
@@ -167,9 +179,9 @@ public class FileController {
             List<GrantedAuthority> grantedAuthorities = user.getAuthorities();
             if (grantedAuthorities.contains(new SimpleGrantedAuthority("ROLE_TEACHER"))) {
                 if ("\\".equals(path) || path.equals(user.getUsername() + "_" + user.getRealname() + "\\")) {
-                    path = user.getUsername() + "_" + user.getRealname() + "\\";
+                    path = user.getUsername() + "_" + user.getRealname() + File.separator;
                 } else {
-                    path = user.getUsername() + "_" + user.getRealname() + "\\" + path;
+                    path = user.getUsername() + "_" + user.getRealname() + File.separator + path;
                 }
             }
             int res = fileService.addDirectory(name, path, user.getId());
@@ -202,9 +214,9 @@ public class FileController {
             List<GrantedAuthority> grantedAuthorities = user.getAuthorities();
             if (grantedAuthorities.contains(new SimpleGrantedAuthority("ROLE_TEACHER"))) {
                 if ("\\".equals(path) || path.equals(user.getUsername() + "_" + user.getRealname() + "\\")) {
-                    path = user.getUsername() + "_" + user.getRealname() + "\\";
+                    path = user.getUsername() + "_" + user.getRealname() + File.separator;
                 } else {
-                    path = user.getUsername() + "_" + user.getRealname() + "\\" + path;
+                    path = user.getUsername() + "_" + user.getRealname() + File.separator + path;
                 }
             }
             param.put("fileName", name);
@@ -234,12 +246,12 @@ public class FileController {
         List<GrantedAuthority> grantedAuthorities = user.getAuthorities();
         if (grantedAuthorities.contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
             if ("\\".equals(path) || "/".equals(path)) {
-                real = realPath;
+                real = OtherConstant.REALPATH;
             } else {
-                real = realPath + path;
+                real = OtherConstant.REALPATH + path;
             }
         } else {
-            real = realPath + user.getUsername() + "_" + user.getRealname() + "\\" + path;
+            real = OtherConstant.REALPATH + user.getUsername() + "_" + user.getRealname() + File.separator + path;
         }
         java.io.File file = new java.io.File(real, name);
         HttpHeaders headers = new HttpHeaders();
@@ -267,7 +279,7 @@ public class FileController {
         } else {
             User user = (User) a;
             List<GrantedAuthority> grantedAuthorities = user.getAuthorities();
-            List<LayuiDtree> resFiles = fileService.checkMethod(name, user.getUsername() + "_" + user.getRealname() + "\\" + path);
+            List<LayuiDtree> resFiles = fileService.checkMethod(name, user.getUsername() + "_" + user.getRealname() + File.separator + path);
             resMap.put("code", 0);
             resMap.put("msg", "查重成功");
             resMap.put("count", resFiles.size());
@@ -276,6 +288,68 @@ public class FileController {
         return resMap;
     }
 
+    /**
+     * office查看：word转pdf
+     * 参考：https://www.cnblogs.com/ph7seven/p/10158489.html
+     */
+    @PostMapping("/doc2pdf")
+    public void doc2pdf(@RequestParam String name
+            , @RequestParam String path
+            , HttpServletResponse response){
+        StringBuffer fileName;
+        path = path.replaceAll("/",Matcher.quoteReplacement(File.separator));
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<GrantedAuthority> grantedAuthorities = user.getAuthorities();
+        if (grantedAuthorities.contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+            if ("\\".equals(path) || "/".equals(path)) {
+                fileName = new StringBuffer(OtherConstant.REALPATH + name);
+            } else {
+                fileName = new StringBuffer(OtherConstant.REALPATH + path + name);
+            }
+        } else {
+            fileName = new StringBuffer(OtherConstant.REALPATH + user.getUsername() + "_" + user.getRealname() + File.separator + path + name);
+        }
+
+        java.io.File pdfFile = null;
+        OutputStream outputStream = null;
+        BufferedInputStream bufferedInputStream = null;
+
+        Doc2PdfUtil doc2PdfUtil = new Doc2PdfUtil(openOfficeHost, openOfficePort);
+
+        try {
+            //doc转pdf，返回pdf文件
+            pdfFile = doc2PdfUtil.doc2Pdf(fileName,name);
+            response.setContentType("application/pdf;charset=UTF-8");
+            bufferedInputStream = new BufferedInputStream(new FileInputStream(pdfFile));
+            byte[] buffBytes = new byte[1024];
+            outputStream = response.getOutputStream();
+            int read = 0;
+            while ((read = bufferedInputStream.read(buffBytes)) != -1) {
+                outputStream.write(buffBytes, 0, read);
+            }
+        } catch (ConnectException e) {
+            log.info("****调用Doc2PdfUtil doc转pdf失败****");
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }  finally {
+            if(outputStream != null){
+                try {
+                    outputStream.flush();
+                    outputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if(bufferedInputStream != null){
+                try {
+                    bufferedInputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
     /**
      * 重命名文件
@@ -293,13 +367,13 @@ public class FileController {
         } else {
             User user = (User) a;
             List<GrantedAuthority> grantedAuthorities = user.getAuthorities();
-            path = user.getUsername() + "_" + user.getRealname() + "\\" + path;
-            int index = path.lastIndexOf("\\");
+            path = user.getUsername() + "_" + user.getRealname() + File.separator + path;
+            int index = path.lastIndexOf(File.separator);
             String tmpPath;
-            if (index == path.indexOf("\\") + 1) {
+            if (index == path.indexOf(File.separator) + 1) {
                 tmpPath = path.substring(0, index);
             } else {
-                tmpPath = path.substring(0, index) + "\\";
+                tmpPath = path.substring(0, index) + File.separator;
             }
             String tmpName = path.substring(index + 1);
             HashMap<String, Object> param = new HashMap<>();

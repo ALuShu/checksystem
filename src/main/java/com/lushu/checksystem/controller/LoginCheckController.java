@@ -3,7 +3,6 @@ package com.lushu.checksystem.controller;
 import com.lushu.checksystem.pojo.Inform;
 import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.InformService;
-import com.lushu.checksystem.service.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,11 +22,9 @@ import java.util.Map;
 @RequestMapping("/public")
 public class LoginCheckController {
 
-    private UserService userService;
     private InformService informService;
 
-    public LoginCheckController(UserService userService, InformService informService) {
-        this.userService = userService;
+    public LoginCheckController(InformService informService) {
         this.informService = informService;
     }
 
@@ -36,7 +33,7 @@ public class LoginCheckController {
      */
     @RequestMapping("/login")
     public String login(){
-        return "/login";
+        return "login";
     }
     @RequestMapping("/forbiddenError")
     public String forbiddenError(){
@@ -44,19 +41,19 @@ public class LoginCheckController {
     }
     @RequestMapping("/serverError")
     public String serverError(){
-        return "/servererror";
+        return "servererror";
     }
     @RequestMapping("/notFoundError")
     public String notFoundError(){
-        return "/notFoundError";
+        return "notFoundError";
     }
     @RequestMapping("/unavailableError")
     public String unavailableError(){
-        return "/unavailableError";
+        return "unavailableError";
     }
     @RequestMapping("/norError")
     public String norError(){
-        return "/error";
+        return "error";
     }
 
     /**
@@ -82,13 +79,13 @@ public class LoginCheckController {
         //超时会变成匿名用户anonymousUser，重定向到注销状态
         Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())){
-            return "redirect:/logout";
+            return "redirect:logout";
         }else {
             User user = (User)a;
             Inform inform = informService.selectInform(id);
             model.addAttribute("detail", inform);
             model.addAttribute("current", user);
-            return "/informDetail";
+            return "informDetail";
         }
     }
 

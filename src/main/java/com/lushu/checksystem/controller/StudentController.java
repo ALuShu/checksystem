@@ -45,11 +45,11 @@ public class StudentController {
     public String index(Model model) {
         Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())) {
-            return "redirect:/logout";
+            return "redirect:logout";
         } else {
             user = (User) a;
             model.addAttribute("current", user);
-            return "/student/index";
+            return "student/index";
         }
     }
 
@@ -76,13 +76,13 @@ public class StudentController {
     public String upload(@PathVariable Integer id, Model model) {
         Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())) {
-            return "redirect:/logout";
+            return "redirect:logout";
         } else {
             user = (User) a;
             Inform inform = informService.selectInform(id);
             model.addAttribute("current", user);
             current = new StringBuffer(inform.getPath().substring(inform.getPath().indexOf("root") + 5));
-            return "/student/upload";
+            return "student/upload";
         }
     }
 
@@ -90,14 +90,14 @@ public class StudentController {
     public String upload(@PathVariable String username, Model model) {
         Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())) {
-            return "redirect:/logout";
+            return "redirect:logout";
         } else {
             user = (User) a;
             HashMap<String, Object> res = userService.selectUser(username);
             model.addAttribute("current", user);
             User user = (User) res.get("user");
-            current = new StringBuffer(user.getUsername() + "_" + user.getRealname() + "\\");
-            return "/student/upload";
+            current = new StringBuffer(user.getUsername() + "_" + user.getRealname() + java.io.File.separator);
+            return "student/upload";
         }
     }
 
@@ -106,11 +106,11 @@ public class StudentController {
     public String personal(Model model) {
         Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())) {
-            return "redirect:/logout";
+            return "redirect:logout";
         } else {
             user = (User) a;
             model.addAttribute("current", user);
-            return "/student/personal";
+            return "student/personal";
         }
     }
 
@@ -118,11 +118,11 @@ public class StudentController {
     public String update(Model model) {
         Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())) {
-            return "redirect:/logout";
+            return "redirect:logout";
         } else {
             user = (User) a;
             model.addAttribute("current", user);
-            return "/student/update";
+            return "student/update";
         }
     }
 
@@ -130,11 +130,11 @@ public class StudentController {
     public String teachers(Model model) {
         Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())) {
-            return "redirect:/logout";
+            return "redirect:logout";
         } else {
             user = (User) a;
             model.addAttribute("current", user);
-            return "/student/teachers";
+            return "student/teachers";
         }
     }
 
@@ -142,13 +142,13 @@ public class StudentController {
     public String teacher(Model model, @PathVariable String username) {
         Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())) {
-            return "redirect:/logout";
+            return "redirect:logout";
         } else {
             user = (User) a;
             User searchRes = (User) userService.selectUser(username).get("user");
             model.addAttribute("current", user);
             model.addAttribute("res", searchRes);
-            return "/student/teachers";
+            return "student/teachers";
         }
     }
 

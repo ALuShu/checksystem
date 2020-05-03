@@ -6,7 +6,6 @@ import com.lushu.checksystem.pojo.Inform;
 import com.lushu.checksystem.pojo.PageBean;
 import com.lushu.checksystem.service.InformService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -24,8 +23,6 @@ import java.util.List;
 @Slf4j
 public class InformServiceImpl implements InformService {
 
-    @Value("${checksystem.root}")
-    private String root;
     private InformDao informDao;
     public InformServiceImpl(InformDao informDao) {
         this.informDao = informDao;
@@ -125,7 +122,7 @@ public class InformServiceImpl implements InformService {
         for (int i =0;i < list.size(); i++){
             Inform current = list.get(i);
             if (current.getPath() != null && !"".equals(current.getPath())) {
-                current.setPath(root+current.getPath());
+                current.setPath(OtherConstant.REALPATH+current.getPath());
             }
             current.setDate(OtherConstant.DATE_FORMAT.format(new Date()));
         }

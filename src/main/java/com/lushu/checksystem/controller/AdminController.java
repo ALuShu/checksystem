@@ -3,13 +3,12 @@ package com.lushu.checksystem.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.lushu.checksystem.constant.OtherConstant;
 import com.lushu.checksystem.pojo.*;
-import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.service.InformService;
 import com.lushu.checksystem.service.UserService;
 import com.lushu.checksystem.util.ExcelUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -33,16 +33,12 @@ import java.util.*;
 @SuppressWarnings("unchecked")
 public class AdminController {
 
-    @Value("${checksystem.root}")
-    private String root;
     private UserService userService;
-    private FileService fileService;
     private InformService informService;
     private User user = new User();
 
-    public AdminController(UserService userService, FileService fileService, InformService informService) {
+    public AdminController(UserService userService, InformService informService) {
         this.userService = userService;
-        this.fileService = fileService;
         this.informService = informService;
     }
 
@@ -57,51 +53,51 @@ public class AdminController {
         }else {
             user = (User) a;
             model.addAttribute("current", user);
-            return "/admin/index";
+            return "admin/index";
         }
     }
     @RequestMapping("/authorities")
     public String authorities(Model model){
         Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())){
-            return "redirect:/logout";
+            return "redirect:logout";
         }else {
             user = (User) a;
             model.addAttribute("current", user);
-            return "/admin/authorities";
+            return "admin/authorities";
         }
     }
     @RequestMapping("/files")
     public String files(Model model){
         Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())){
-            return "redirect:/logout";
+            return "redirect:logout";
         }else {
             user = (User) a;
             model.addAttribute("current", user);
-            return "/admin/files";
+            return "admin/files";
         }
     }
     @RequestMapping("/informs")
     public String informs(Model model){
         Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())){
-            return "redirect:/logout";
+            return "redirect:logout";
         }else {
             user = (User) a;
             model.addAttribute("current", user);
-            return "/admin/informs";
+            return "admin/informs";
         }
     }
     @RequestMapping("/roles")
     public String roles(Model model){
         Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())){
-            return "redirect:/logout";
+            return "redirect:logout";
         }else {
             user = (User) a;
             model.addAttribute("current", user);
-            return "/admin/roles";
+            return "admin/roles";
         }
     }
     @RequestMapping("/search")
@@ -119,22 +115,22 @@ public class AdminController {
     public String students(Model model){
         Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())){
-            return "redirect:/logout";
+            return "redirect:logout";
         }else {
             user = (User) a;
             model.addAttribute("current", user);
-            return "/admin/students";
+            return "admin/students";
         }
     }
     @RequestMapping("/teachers")
     public String teachers(Model model){
         Object a =  SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())){
-            return "redirect:/logout";
+            return "redirect:logout";
         }else {
             user = (User) a;
             model.addAttribute("current", user);
-            return "/admin/teachers";
+            return "admin/teachers";
         }
     }
 
@@ -172,12 +168,12 @@ public class AdminController {
             MultipartFile currentFile = fileMap.get(string);
             String fileName = currentFile.getOriginalFilename();
             String suffixName = fileName.substring(fileName.lastIndexOf("."));
-            java.io.File upload = new java.io.File("src/main/resources/excel");
+            java.io.File upload = new java.io.File(OtherConstant.REALPATH+"excel");
             if(!upload.exists()){
                 upload.mkdirs();
             }
             fileName = UUID.randomUUID() + suffixName;
-            java.io.File dest = new java.io.File(upload.getAbsolutePath() +"/"+ fileName);
+            java.io.File dest = new java.io.File(upload.getAbsolutePath() + File.separator + fileName);
             try {
                 currentFile.transferTo(dest);
                 List<User> studentList = userExcelUtil.explain(dest.getAbsolutePath());

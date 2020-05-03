@@ -2,6 +2,7 @@ package com.lushu.checksystem.controller;
 
 import com.lushu.checksystem.constant.BasicConstant;
 import com.lushu.checksystem.constant.DatabaseConstant;
+import com.lushu.checksystem.constant.OtherConstant;
 import com.lushu.checksystem.pojo.*;
 import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.service.InformService;
@@ -23,7 +24,6 @@ import java.util.*;
 @RequestMapping("/teacher")
 public class TeacherController {
 
-    private StringBuffer root;
     private User user = new User();
     private FileService fileService;
     private UserService userService;
@@ -42,11 +42,11 @@ public class TeacherController {
     public String index(Model model) {
         Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())) {
-            return "redirect:/logout";
+            return "redirect:logout";
         } else {
             user = (User) a;
             model.addAttribute("current", user);
-            return "/teacher/index";
+            return "teacher/index";
         }
     }
 
@@ -54,11 +54,11 @@ public class TeacherController {
     public String personal(Model model) {
         Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())) {
-            return "redirect:/logout";
+            return "redirect:logout";
         } else {
             user = (User) a;
             model.addAttribute("current", user);
-            return "/teacher/personal";
+            return "teacher/personal";
         }
     }
 
@@ -66,11 +66,11 @@ public class TeacherController {
     public String update(Model model) {
         Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())) {
-            return "redirect:/logout";
+            return "redirect:logout";
         } else {
             user = (User) a;
             model.addAttribute("current", user);
-            return "/teacher/update";
+            return "teacher/update";
         }
     }
 
@@ -78,11 +78,11 @@ public class TeacherController {
     public String informs(Model model) {
         Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())) {
-            return "redirect:/logout";
+            return "redirect:logout";
         } else {
             user = (User) a;
             model.addAttribute("current", user);
-            return "/teacher/informs";
+            return "teacher/informs";
         }
     }
 
@@ -119,13 +119,13 @@ public class TeacherController {
     @ResponseBody
     public Map renameFile(@RequestParam String name, @RequestParam String path) {
         Map<String, Object> json = new HashMap<>();
-        path = root + path;
-        int index = path.lastIndexOf("\\");
+        path = OtherConstant.REALPATH + path;
+        int index = path.lastIndexOf(java.io.File.separator);
         String tmpPath;
-        if (index == path.indexOf("\\") + 1) {
+        if (index == path.indexOf(java.io.File.separator) + 1) {
             tmpPath = path.substring(0, index);
         } else {
-            tmpPath = path.substring(0, index) + "\\";
+            tmpPath = path.substring(0, index) + java.io.File.separator;
         }
         String tmpName = path.substring(index + 1);
         HashMap<String, Object> param = new HashMap<>();

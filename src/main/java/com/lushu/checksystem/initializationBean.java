@@ -1,6 +1,7 @@
 package com.lushu.checksystem;
 
 import com.lushu.checksystem.constant.DatabaseConstant;
+import com.lushu.checksystem.constant.OtherConstant;
 import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,5 +34,9 @@ public class initializationBean {
         user.setUsername("root");
         root.add(user);
         userService.addUsersByExcel(root, DatabaseConstant.Role.ROLE_ADMIN.ordinal()+1);
+        File programRoot = new File(OtherConstant.REALPATH);
+        if (!programRoot.exists()){
+            programRoot.mkdir();
+        }
     }
 }

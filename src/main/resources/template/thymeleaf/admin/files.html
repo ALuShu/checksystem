@@ -7,33 +7,6 @@
 </head>
 <body>
 
-<!-- 搜索框 -->
-<div class="layui-col-md12">
-    <form class="layui-form" action="" id="searchForm">
-        <div class="layui-form-item" style="margin: 0 auto">
-
-            <div class="layui-input-inline">
-                <select name="modules" lay-search="">
-                    <option value="">选择搜索方式</option>
-                    <option value="fileName">文件名</option>
-                    <option value="directionName">文件夹名</option>
-                    <option value="username">学号</option>
-                    <option value="realname">姓名</option>
-                </select>
-            </div>
-            <div class="layui-input-inline" style="width: 75%">
-                <input type="text" name="keyword" lay-verify="require" autocomplete="off"
-                       placeholder="输入关键词搜索文件或文件夹" class="layui-input">
-            </div>
-            <div class="layui-input-inline" style="width: 5%">
-                <button id="topSubmitBtn" type="submit" class="layui-btn" lay-submit="" lay-filter="topSubmitBtn"><i
-                        class="layui-icon layui-icon-search"></i>
-                </button>
-            </div>
-        </div>
-    </form>
-</div>
-
 <!-- 面包屑导航 -->
 <div class="layui-col-md12 layui-form-item" style="padding-left: 20px">
     <span id="view" class="layui-breadcrumb" lay-filter="breaddemo">
@@ -150,7 +123,7 @@
         table.render({
             elem: '#test'
             , url: url
-            , height: 'full-170'
+            , height: 'full-150'
             , limit: 15
             ,toolbar: '#toolbarDemo'
             , page: {
@@ -363,7 +336,16 @@
                     window.location.href="/file/downloadFile?path="+path.join('/')+"&name="+data.name
                 }
             } else if(obj.event === 'lookFile'){
-                layer.alert(JSON.stringify(data));
+                $.ajax({
+                    type:'post',
+                    async:false,
+                    mimeType: 'text/plain; charset=x-user-defined',
+                    url:'/file/doc2pdf',
+                    data:{'path':path.join('/')+'/','name':data.name},
+                    success:function(res){
+                        console.log(res)
+                    }
+                });
                 //页面上显示office文档，后续待做
             } else if(obj.event === 'delFile'){
                 var arr = [];
