@@ -3,7 +3,10 @@ package com.lushu.checksystem.controller;
 import com.lushu.checksystem.constant.BasicConstant;
 import com.lushu.checksystem.constant.DatabaseConstant;
 import com.lushu.checksystem.constant.OtherConstant;
-import com.lushu.checksystem.pojo.*;
+import com.lushu.checksystem.pojo.File;
+import com.lushu.checksystem.pojo.Inform;
+import com.lushu.checksystem.pojo.PageBean;
+import com.lushu.checksystem.pojo.User;
 import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.service.InformService;
 import com.lushu.checksystem.service.UserService;
@@ -64,13 +67,27 @@ public class TeacherController {
 
     @RequestMapping("/update")
     public String update(Model model) {
+        if (SecurityContextHolder.getContext().getAuthentication() == null){
+            return "redirect:logout";
+        }
         Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())) {
             return "redirect:logout";
         } else {
-            user = (User) a;
-            model.addAttribute("current", user);
-            return "teacher/update";
+            if (user != null){
+                User newUser = (User) userService.selectUser(user.getUsername()).get("user");
+                if (!user.getPassword().equals(newUser.getPassword())) {
+                    return "redirect:../logout";
+                }else {
+                    user = (User) a;
+                    model.addAttribute("current", user);
+                    return "teacher/update";
+                }
+            }else {
+                user = (User) a;
+                model.addAttribute("current", user);
+                return "teacher/update";
+            }
         }
     }
 

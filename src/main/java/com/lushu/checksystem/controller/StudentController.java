@@ -1,6 +1,5 @@
 package com.lushu.checksystem.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.lushu.checksystem.constant.DatabaseConstant;
 import com.lushu.checksystem.pojo.File;
 import com.lushu.checksystem.pojo.Inform;
@@ -116,13 +115,27 @@ public class StudentController {
 
     @RequestMapping("/update")
     public String update(Model model) {
+        if (SecurityContextHolder.getContext().getAuthentication() == null){
+            return "redirect:logout";
+        }
         Object a = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if ("anonymousUser".equals(a.toString())) {
             return "redirect:logout";
         } else {
-            user = (User) a;
-            model.addAttribute("current", user);
-            return "student/update";
+            if (user != null){
+                User newUser = (User) userService.selectUser(user.getUsername()).get("user");
+                if (!user.getPassword().equals(newUser.getPassword())) {
+                    return "redirect:../logout";
+                }else {
+                    user = (User) a;
+                    model.addAttribute("current", user);
+                    return "student/update";
+                }
+            }else {
+                user = (User) a;
+                model.addAttribute("current", user);
+                return "student/update";
+            }
         }
     }
 
@@ -208,7 +221,7 @@ public class StudentController {
      */
     @RequestMapping(value = "/updatePassword", method = RequestMethod.POST)
     @ResponseBody
-    public Map updatePassword(@RequestBody Map jsonUsers) throws JsonProcessingException {
+    public Map updatePassword(@RequestBody Map jsonUsers) {
         Map<String, Object> res = new HashMap<>(2);
         String oldPassword = (String) jsonUsers.get("oldPassword");
         String newPassword = (String) jsonUsers.get("newPassword");

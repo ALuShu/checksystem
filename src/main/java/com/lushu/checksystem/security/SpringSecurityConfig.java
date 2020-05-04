@@ -67,9 +67,10 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
             .and()
                 .logout()
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/public/login")
+                .clearAuthentication(true)
+                .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
+                .logoutSuccessUrl("/public/login")
                 .permitAll()
             .and()
                 //开放给前端的页面<iframe>引用

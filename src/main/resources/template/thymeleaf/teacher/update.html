@@ -135,9 +135,8 @@
                     if (data.code === -1) {
                         alert("旧密码不正确")
                     } else if (data.code === 1) {
-                        alert("修改成功，请重新登录");
-                        window.location.href = '/logout';
-                        window.open('/public/login','_self')
+                        alert('修改成功，请重新登录');
+                        window.location = '/logout';
                     } else {
                         alert("修改失败")
                     }
