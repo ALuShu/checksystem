@@ -336,7 +336,11 @@
                     window.location.href="/file/downloadFile?path="+path.join('/')+"&name="+data.name
                 }
             } else if(obj.event === 'lookFile'){
-                window.open("../pdf/web/viewer.html?file="+encodeURIComponent('/file/doc2pdf?path='+path.join('/')+'/&name='+data.name));
+                if(data.type !== 'file'){
+                    layer.msg('文件夹不支持pdf打开哦')
+                }else {
+                    window.open("../pdf/web/viewer.html?file="+encodeURIComponent('/file/doc2pdf?path='+path.join('/')+'/&name='+data.name));
+                }
             } else if(obj.event === 'delFile'){
                 var arr = [];
                 arr.push(data.name);
