@@ -59,7 +59,7 @@ public interface UserService extends UserDetailsService {
      * 继承UserDetailsService的方法
      */
     @Override
-    UserDetails loadUserByUsername(String var1) throws UsernameNotFoundException;
+    UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 
     /**
      * 用户表总记录数

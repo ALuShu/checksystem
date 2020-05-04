@@ -151,12 +151,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String var1) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         //先根据用户名查用户
-        User user = userDao.selectUserByUsername(var1);
+        User user = userDao.selectUserByUsername(username);
         if (user != null) {
             //再根据用户名查角色
-            List<Role> roles = roleDao.selectRole(var1);
+            List<Role> roles = roleDao.selectRole(username);
             List<Authority> authorities = new ArrayList<>();
             List<GrantedAuthority> authorityList = new ArrayList<>();
             for (Role role : roles) {
@@ -169,7 +169,11 @@ public class UserServiceImpl implements UserService {
                     authorityList.add(grantedAuthority);
                 }
             }
-
+            //更新最后登录时间
+            user.setLastLoginTime(OtherConstant.DATE_FORMAT.format(new Date()));
+            List<User> users = new ArrayList<>();
+            users.add(user);
+            userDao.updateUsers(users);
             //把该用户的角色和权限放User对象
             user.setAuthorities(authorityList);
             return user;
