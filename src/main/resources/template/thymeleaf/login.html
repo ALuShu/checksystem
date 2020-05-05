@@ -46,7 +46,7 @@
                 data:data.field,
                 type:"POST",
                 error:function(XMLHttpRequest, textStatus, errorThrown){
-                    let text = JSON.parse(XMLHttpRequest.responseText);
+                    var text = JSON.parse(XMLHttpRequest.responseText);
                     if (text.exception === 'Bad credentials'){
                         layer.msg('账号或密码不匹配')
                     }

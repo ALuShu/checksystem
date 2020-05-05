@@ -2,9 +2,11 @@ package com.lushu.checksystem.constant;
 
 import org.springframework.util.ClassUtils;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
 
 /**
  * @author ALuShu
@@ -23,6 +25,8 @@ public final class OtherConstant {
      */
     public static final Map<String, String> SHEET_HEAD = new HashMap<>();
     public static final String REALPATH;
+    public static final String NOT_SEPARATOR;
+    public static final String SEPARATOR;
 
     static {
         SHEET_HEAD.put("姓名", "realname");
@@ -33,6 +37,13 @@ public final class OtherConstant {
 
         REALPATH = ClassUtils.getDefaultClassLoader().getResource("").getPath()
                 .replaceAll("%20", " ") + "root";
+        if (File.separator.equals("/")){
+            SEPARATOR = File.separator;
+            NOT_SEPARATOR = Matcher.quoteReplacement("\\");
+        }else {
+            SEPARATOR = Matcher.quoteReplacement(File.separator);
+            NOT_SEPARATOR = "/";
+        }
     }
 
 }

@@ -183,17 +183,17 @@
             , form = layui.form
             , laytpl = layui.laytpl
             , tree = layui.tree;
-        let url = '/file/show';
+        var url = '/file/show';
         //用于与后端交互，异步更新url
-        let path = [];
+        var path = [];
         //面包屑导航多一个root元素以便返回根目录
-        let breadArray = [];
-        let j = {"name": "root"};
+        var breadArray = [];
+        var j = {"name": "root"};
         breadArray.push(j);
-        let breadData = {
+        var breadData = {
             "bread": breadArray
         };
-        let getTpl = bread.innerHTML
+        var getTpl = bread.innerHTML
             , view = document.getElementById('view');
 
 

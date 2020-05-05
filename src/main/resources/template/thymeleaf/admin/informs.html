@@ -127,7 +127,7 @@
         }
     }
 
-    let link0 = $(window.top.document).find('a')[8];
+    var link0 = $(window.top.document).find('a')[8];
 
     //layui官方方法
     layui.use(['table', 'tree', 'util', 'element', 'laytpl', 'upload', 'form'], function () {
@@ -221,7 +221,7 @@
                 case 'delInform':
                     var data = checkStatus.data
                         ,idParam = [];
-                    for (let i = 0; i < data.length; i++) {
+                    for (var i = 0; i < data.length; i++) {
                         idParam[i] = data[i].id;
                     }
                     layer.confirm('确认删除？', function(index){
@@ -297,8 +297,8 @@
                     }
                 });
             } else if(obj.event === 'delInform'){
-                let idParam = [];
-                idParam[0] = data[0].id;
+                var idParam = [];
+                idParam[0] = data.id;
                 layer.confirm('确认删除？', function(index){
                     $.ajax({
                         url:'/teacher/delInform',

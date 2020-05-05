@@ -85,6 +85,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public PageBean<Map<String, Object>> showFileList(String path, int page, int limit) {
         List<Map<String, Object>> fileList = new ArrayList<>();
+        path = path.replaceAll(OtherConstant.NOT_SEPARATOR, OtherConstant.SEPARATOR);
         //利用nio包的文件相关接口，此处生成一个对应目录下所有文件的Path集合，在for循环中遍历至自定义的结果集PageBean<T>中
         //PageBean<T>是分页实体类，包装了总页数、总记录数和数据集合等信息
         try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(new java.io.File(OtherConstant.REALPATH).getAbsolutePath() ,path))) {
@@ -107,6 +108,11 @@ public class FileServiceImpl implements FileService {
                 }
                 fileList.add(fileItem);
             }
+            Collections.sort(fileList, (o1, o2) -> {
+                String name1 =(String)o1.get("name");
+                String name2= (String)o2.get("name");
+                return name1.compareTo(name2);
+            });
             int start = (page - 1) * limit;
             int end = Math.min((start + limit), fileList.size());
             List<Map<String, Object>> newFileList = fileList.subList(start, end);
@@ -152,6 +158,7 @@ public class FileServiceImpl implements FileService {
     public int addFiles(Collection<MultipartFile> files, String path, Integer submitter) {
         Iterator<MultipartFile> fileIterator = files.iterator();
         String ownerUsername ;
+        path = path.replaceAll(OtherConstant.NOT_SEPARATOR, OtherConstant.SEPARATOR);
         if("\\".equals(path) || "/".equals(path)){
             ownerUsername = "root";
             path = "";
@@ -188,6 +195,7 @@ public class FileServiceImpl implements FileService {
      */
     private static File addMethod(MultipartFile paramFile, File destFile, String path, String ownerUsername, Integer submitter) {
         String fileName = paramFile.getOriginalFilename();
+        path = path.replaceAll(OtherConstant.NOT_SEPARATOR, OtherConstant.SEPARATOR);
         if (fileName != null) {
             java.io.File dest = new java.io.File(path, fileName);
             /*判断是file还是dir,dest对象还没在服务器上,所以用isFile()或isDirectory()都会返回false*/
@@ -222,6 +230,7 @@ public class FileServiceImpl implements FileService {
     public Integer addDirectory(String name, String path, Integer owner) {
         Path direction;
         File tempFile = new File();
+        path = path.replaceAll(OtherConstant.NOT_SEPARATOR, OtherConstant.SEPARATOR);
         if("\\".equals(path) || "/".equals(path)){
             direction = Paths.get(new java.io.File(OtherConstant.REALPATH).getAbsolutePath(), name);
             tempFile.setPath(new java.io.File(OtherConstant.REALPATH).getAbsolutePath() + java.io.File.separator);
@@ -247,6 +256,7 @@ public class FileServiceImpl implements FileService {
     public int updateFiles(HashMap<String, Object> updateParam, String action) {
         if (BasicConstant.FileAction.RENAME.getString().equals(action)) {
             String path = (String) updateParam.get("resourcePath");
+            path = path.replaceAll(OtherConstant.NOT_SEPARATOR, OtherConstant.SEPARATOR);
             String oldName = (String) updateParam.get("resourceName");
             Path resource = Paths.get(new java.io.File(OtherConstant.REALPATH).getAbsolutePath(), path, oldName);
             String newName = (String) updateParam.get("newName");
@@ -312,6 +322,7 @@ public class FileServiceImpl implements FileService {
             long time = System.currentTimeMillis();
             FileTime fileTime = FileTime.fromMillis(time);
             String path = (String) updateParam.get("resourcePath");
+            path = path.replaceAll(OtherConstant.NOT_SEPARATOR, OtherConstant.SEPARATOR);
             String name = (String) updateParam.get("resourceName");
             Path resource = Paths.get(new java.io.File(OtherConstant.REALPATH).getAbsolutePath(), path, name);
             Integer status = (Integer) updateParam.get("status");
@@ -365,6 +376,7 @@ public class FileServiceImpl implements FileService {
     @Override
     public int deleteFile(HashMap<String, Object> param) {
         String path = (String) param.get("path");
+        path = path.replaceAll(OtherConstant.NOT_SEPARATOR, OtherConstant.SEPARATOR);
         String[] name = (String[]) param.get("fileName");
         Integer delRes = 0;
         if ("\\".equals(path) || "/".equals(path)) {
@@ -406,6 +418,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public List<LayuiDtree> checkMethod(String[] names, String path) {
+        path = path.replaceAll(OtherConstant.NOT_SEPARATOR, OtherConstant.SEPARATOR);
         ArrayList<File> files = new ArrayList<>();
         ArrayList<SimHash> hashes = new ArrayList<>();
         String pathParam = new java.io.File(OtherConstant.REALPATH).getAbsolutePath() + java.io.File.separator + path;

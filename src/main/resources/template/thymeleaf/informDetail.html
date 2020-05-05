@@ -87,7 +87,7 @@
 <script src="../../layui/layui.js" type="text/javascript"></script>
 <script th:inline="none">
     function clickTeahcer(){
-        let username = document.getElementById('username').innerText;
+        var username = document.getElementById('username').innerText;
         if (username === 'root'){
             layer.msg('管理员无根目录')
         }else {

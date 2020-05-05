@@ -113,7 +113,7 @@
         window.location = "/student/index"
     }
 
-    let res = $('#tempRes').val();
+    var res = $('#tempRes').val();
 
     function openSingle(data){
         window.location.href = '/student/uploadByTeacher/' + data;
@@ -150,7 +150,7 @@
 
         //layui表格点击文件事件
         table.on('row(teachers)', function (obj) {
-            let data = obj.data;
+            var data = obj.data;
             $.ajax({
                 type: "post",
                 url: "/student/uploadByTeacher",

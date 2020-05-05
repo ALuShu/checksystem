@@ -297,7 +297,7 @@ public class FileController {
             , @RequestParam String path
             , HttpServletResponse response){
         StringBuffer fileName;
-        path = path.replaceAll("/",Matcher.quoteReplacement(File.separator));
+        path = path.replaceAll(OtherConstant.NOT_SEPARATOR, OtherConstant.SEPARATOR);
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<GrantedAuthority> grantedAuthorities = user.getAuthorities();
         if (grantedAuthorities.contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {

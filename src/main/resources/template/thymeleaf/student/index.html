@@ -154,9 +154,9 @@
 <script src="../layui/layui.js" type="text/javascript"></script>
 <script th:inline="none">
 
-    let departmentSelect = $("#currentDepartment").val();
-    let typeSelect = $("#typeSelect").val();
-    let selectElement = document.getElementById("departmentSelect");
+    var departmentSelect = $("#currentDepartment").val();
+    var typeSelect = $("#typeSelect").val();
+    var selectElement = document.getElementById("departmentSelect");
 
     //根据用户系别修改默认的下拉选项
     $("#departmentSelect option:contains(" + departmentSelect + ")").attr('selected', true);
@@ -206,7 +206,7 @@
         });
 
         table.on('row(recentTeacher)', function (obj) {
-            let data = obj.data;
+            var data = obj.data;
             $.ajax({
                 type: "post",
                 url: "/student/uploadByTeacher",
