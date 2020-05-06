@@ -64,6 +64,13 @@ public interface UserDao {
      * @param id
      * @return
      */
+    User selectById(Integer id);
+
+    /**
+     * id搜索用户
+     * @param id
+     * @return
+     */
     List<User> selectByIds(List<Integer> id);
 
 

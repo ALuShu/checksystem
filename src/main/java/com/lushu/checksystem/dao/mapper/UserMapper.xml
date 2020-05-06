@@ -54,6 +54,14 @@
         where major = #{major}
     </select>
 
+    <!-- selectById：id搜索用户；return：User -->
+    <select id="selectById" parameterType="User" resultType="User">
+        select *
+        from sys_user
+        where id=#{id}
+        limit 1
+    </select>
+
     <!-- selectByIds：id搜索用户；return：User -->
     <select id="selectByIds" parameterType="java.util.List" resultType="User">
         select *

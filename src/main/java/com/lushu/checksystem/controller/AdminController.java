@@ -182,7 +182,7 @@ public class AdminController {
                     existUsers.addAll((List<User>) resMap.get("exist"));
                 }
             } catch (IOException | IllegalAccessException | InstantiationException | InvocationTargetException e) {
-                log.error("解析Excel发生错误，控制器处理异常",e);
+                log.info("解析Excel发生错误，控制器处理异常",e);
                 json.put("code", -1);
                 json.put("msg", "上传失败！");
                 return json;

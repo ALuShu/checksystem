@@ -1,6 +1,7 @@
 package com.lushu.checksystem.util;
 
 import com.lushu.checksystem.constant.OtherConstant;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.CellType;
@@ -19,6 +20,7 @@ import java.util.Map;
  * @author lushu
  * @date 2019/11/14 22:54
  **/
+@Slf4j
 public class ExcelUtil<T> {
 
     /**
@@ -36,11 +38,11 @@ public class ExcelUtil<T> {
 
     public List<T> explain(String filename) throws IOException, IllegalAccessException, InstantiationException, InvocationTargetException {
         if (filename == null || "".equals(filename)){
-            throw new RuntimeException("文件名为空");
+            log.info("excel工具类：带解析文件名为null");
         }
 
         if(!filename.endsWith(XLS) && !filename.endsWith(XLSX)){
-            throw new IOException(filename + "不是excel文件");
+            log.info("excel工具类："+filename+"不是excel文件");
         }
 
         FileInputStream in = new FileInputStream(filename);

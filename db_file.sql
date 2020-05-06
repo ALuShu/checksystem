@@ -68,7 +68,7 @@ CREATE TABLE `sys_inform`  (
   `publisher` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '发布者',
   `department` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '通知到的系别',
   `content` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '通知内容',
-  `type` tinyint(1) NOT NULL COMMENT '0为选修，1为必修',
+  `type` int(1) NOT NULL COMMENT '0为选修，1为必修',
   `date` datetime(0) NOT NULL COMMENT '发布时间',
   `path` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '该通知所要提交到的目录的物理地址',
   PRIMARY KEY (`id`) USING BTREE,

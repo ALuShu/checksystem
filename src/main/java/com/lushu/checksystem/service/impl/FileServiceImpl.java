@@ -5,10 +5,7 @@ import com.lushu.checksystem.constant.DatabaseConstant;
 import com.lushu.checksystem.constant.OtherConstant;
 import com.lushu.checksystem.dao.FileDao;
 import com.lushu.checksystem.dao.UserDao;
-import com.lushu.checksystem.pojo.File;
-import com.lushu.checksystem.pojo.HaiMingDistance;
-import com.lushu.checksystem.pojo.LayuiDtree;
-import com.lushu.checksystem.pojo.PageBean;
+import com.lushu.checksystem.pojo.*;
 import com.lushu.checksystem.service.FileService;
 import com.lushu.checksystem.util.SimHash;
 import com.lushu.checksystem.util.WordUtil;
@@ -58,7 +55,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public PageBean<File> selectRecent(Integer owner, int page, int limit, String modern) {
-        HashMap<String, Object> pageMap = new HashMap<>(3);
+        HashMap<String, Object> pageMap = new HashMap<>(4);
         PageBean<File> pageBean = new PageBean<>();
         pageBean.setCurrentPage(page);
         pageBean.setPageSize(limit);
@@ -103,6 +100,13 @@ public class FileServiceImpl implements FileService {
                 for (File file : files) {
                     if (file.getName().equals(pathObj.getFileName().toString())) {
                         fileItem.put("status", file.getStatus());
+                        if (file.getSubmitter() != null){
+                            User submitter = userDao.selectById(file.getSubmitter());
+                            fileItem.put("submitterName",submitter.getRealname());
+
+                        }
+                        User owner = userDao.selectById(file.getOwner());
+                        fileItem.put("ownerName",owner.getRealname());
                         break;
                     }
                 }
@@ -123,7 +127,7 @@ public class FileServiceImpl implements FileService {
             pageBean.setCurrentPage(page);
             return pageBean;
         } catch (IOException e) {
-            log.error("文件遍历失败", e);
+            log.info("文件遍历失败", e);
             return null;
         }
     }
@@ -149,7 +153,7 @@ public class FileServiceImpl implements FileService {
             Files.createDirectory(Paths.get(new java.io.File(OtherConstant.REALPATH).getAbsolutePath() ,teacherRoot));
             return fileDao.addFile(teacherFile);
         } catch (IOException e) {
-            log.error("教师:" + username + "创建文件夹失败!", e);
+            log.info("教师:" + username + "创建文件夹失败!", e);
         }
         return -1;
     }
@@ -203,7 +207,7 @@ public class FileServiceImpl implements FileService {
                 log.info("添加覆盖操作");
                 boolean res = dest.delete();
                 if (!res) {
-                    log.error("覆盖失败，请检查文件夹是否非空");
+                    log.info("覆盖失败，请检查文件夹是否非空");
                     return null;
                 }
             }
@@ -214,7 +218,7 @@ public class FileServiceImpl implements FileService {
             try {
                 paramFile.transferTo(dest);
             } catch (IOException e) {
-                log.error("添加保存失败", e);
+                log.info("添加保存失败", e);
                 return null;
             }
         }
@@ -241,7 +245,7 @@ public class FileServiceImpl implements FileService {
         try {
             Files.createDirectory(direction);
         } catch (IOException e) {
-            log.error("创建文件夹失败", e);
+            log.info("创建文件夹失败", e);
             return 0;
         }
         tempFile.setName(name);
@@ -271,7 +275,7 @@ public class FileServiceImpl implements FileService {
                     return fileDao.updateFile(param);
                 }
             } catch (IOException e) {
-                log.error("重命名失败", e);
+                log.info("重命名失败", e);
                 return -1;
             }
 
@@ -308,7 +312,7 @@ public class FileServiceImpl implements FileService {
                     try {
                         Files.setAttribute(resource, "basic:lastModifiedTime", fileTime);
                     }catch (IOException e){
-                        log.error("修改更新时间失败",e);
+                        log.info("修改更新时间失败",e);
                         files.clear();
                         break;
                     }
@@ -353,7 +357,7 @@ public class FileServiceImpl implements FileService {
                 //size
                 file.setSize((Long) Files.getAttribute(source, "basic:size"));
             } catch (IOException e) {
-                log.error("覆盖操作获取文件大小失败", e);
+                log.info("覆盖操作获取文件大小失败", e);
                 return file;
             }
         }
@@ -366,7 +370,7 @@ public class FileServiceImpl implements FileService {
                 file.setUpdateTime(OtherConstant.DATE_FORMAT.format(new Date(ft.toMillis())));
             }
         } catch (IOException e) {
-            log.error("移动失败", e);
+            log.info("移动失败", e);
             file = null;
         }
         return file;
@@ -398,7 +402,7 @@ public class FileServiceImpl implements FileService {
         try {
             Files.delete(current);
         } catch (IOException e) {
-            log.error("删除文件" + fileName + "失败", e);
+            log.info("删除文件" + fileName + "失败", e);
             return null;
         }
         file.setName(fileName);
@@ -434,7 +438,7 @@ public class FileServiceImpl implements FileService {
                 hashes.add(tmpHash);
                 files.add(tmpFile);
             } catch (IOException e) {
-                log.error("simHash出错,检查文件是否存在", e);
+                log.info("simHash出错,检查文件是否存在", e);
             }
         }
         //更新sign字段

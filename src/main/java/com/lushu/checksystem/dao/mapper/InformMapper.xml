@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.lushu.checksystem.dao.InformDao">
-    <cache/>
 
     <!-- selectInform：单个通知；return：Inform -->
     <select id="selectInform" parameterType="Integer" resultType="Inform">
@@ -107,11 +106,12 @@
             <if test="date != null and date != ''">
                 date=#{date},
             </if>
-            <if test="path != null">
+            <if test="path != null and path != ''">
                 path=#{path},
             </if>
-            <if test="type != null and type != ''">
-                type=#{type}
+            /*巨坑：当有 "type != ''"时，传参为0时会变成false导致不能set成功*/
+            <if test="type != null">
+                type=#{type},
             </if>
         </set>
         where id=#{id}

@@ -133,7 +133,7 @@
 </script>
 
 <script type="text/html" id="barDemo">
-    <a id="renameId" class="layui-btn layui-btn-xs layui-disabled" lay-event="renameFile">重命名</a>
+<!--    <a id="renameId" class="layui-btn layui-btn-xs layui-disabled" lay-event="renameFile">重命名</a>-->
     <a class="layui-btn layui-btn-xs" lay-event="downloadFile">下载</a>
     <a class="layui-btn layui-btn-xs" lay-event="lookFile">查看</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="delFile">删除</a>
@@ -215,6 +215,7 @@
                 , {field: 'date', title: '修改日期', width: 150, sort: true}
                 , {field: 'size', title: '文件大小', width: 120, sort: true}
                 , {field: 'type', title: '文件类型', width: 120}
+                , {field: 'submitterName', title: '提交人'}
                 , {field: 'status', title: '状态', sort: true, templet:'#statusTpl'}
                 , {fixed: 'right', title:'操作', toolbar: '#barDemo', width:220}
             ]]

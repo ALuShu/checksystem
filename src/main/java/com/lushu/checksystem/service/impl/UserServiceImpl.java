@@ -63,7 +63,7 @@ public class UserServiceImpl implements UserService {
     public HashMap<String, Object> selectUser(String username) {
         User user = userDao.selectUserByUsername(username);
         List<Role> role = roleDao.selectRole(username);
-        HashMap<String, Object> res = new HashMap<>(4);
+        HashMap<String, Object> res = new HashMap<>(2);
         res.put("user", user);
         res.put("role", role);
         return res;
@@ -77,10 +77,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public HashMap<String, Object> selectUserByRealname(String realname) {
         User user = userDao.selectUserByRealname("%"+realname+"%");
-        List<Role> role = roleDao.selectRole(user.getUsername());
-        HashMap<String, Object> res = new HashMap<>(4);
+        HashMap<String, Object> res = new HashMap<>(2);
+        if (user != null){
+            List<Role> role = roleDao.selectRole(user.getUsername());
+            res.put("role", role);
+        }
         res.put("user", user);
-        res.put("role", role);
         return res;
     }
 
@@ -235,7 +237,7 @@ public class UserServiceImpl implements UserService {
                     } else {
                         res.put("exist", existUsers);
                         for (User user : existUsers) {
-                            log.error("教师-" + user.getRealname() + "-注册失败，已有相同记录");
+                            log.info("教师-" + user.getRealname() + "-注册失败，已有相同记录");
                         }
                         return res;
                     }
@@ -258,7 +260,7 @@ public class UserServiceImpl implements UserService {
                     } else {
                         res.put("exist", existUsers);
                         for (User user : existUsers) {
-                            log.error("学生-" + user.getRealname() + "-注册失败，已有相同记录");
+                            log.info("学生-" + user.getRealname() + "-注册失败，已有相同记录");
                         }
                         return res;
                     }

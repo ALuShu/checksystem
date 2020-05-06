@@ -37,11 +37,11 @@ public class WordUtil {
                 buffer = extractor.getText();
                 opcPackage.close();
             } else {
-                log.debug("此文件不是word文件！");
+                log.info("word工具类：此文件不是word文件！");
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            log.info("word工具类：未知异常！"+e);
         }
         //new
         return buffer;

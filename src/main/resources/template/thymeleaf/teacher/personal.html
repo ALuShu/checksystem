@@ -50,14 +50,14 @@
                                 <legend>未批改</legend>
                                 <div class="layui-field-box">
                                     <table id="fileTable" class="layui-table" lay-filter="informTable"></table>
-                                    <a href="javascript:;" style="float: right; color: #FF5722">>>查看更多</a>
+<!--                                    <a href="javascript:;" style="float: right; color: #FF5722">>>查看更多</a>-->
                                 </div>
                             </fieldset>
                             <fieldset class="layui-elem-field">
                                 <legend>最近提交</legend>
                                 <div class="layui-field-box">
                                     <table id="uploadTable" class="layui-table" lay-filter="uploadTable"></table>
-                                    <a href="javascript:;" style="float: right; color: #FF5722">>>查看更多</a>
+<!--                                    <a href="javascript:;" style="float: right; color: #FF5722">>>查看更多</a>-->
                                 </div>
                             </fieldset>
                         </div>
@@ -126,7 +126,7 @@
                 {field: 'name', title: '文件名', unresize: true}
                 , {field: 'updateTime', title: '修改日期', unresize: true}
                 , {field: 'status', title: '状态', unresize: true, templet: '#statusTpl'}
-                , {field: 'submitter', title: '提交人', unresize: true}
+                , {field: 'submitterName', title: '提交人', unresize: true}
             ]]
         });
 
@@ -157,7 +157,7 @@
                 {field: 'name', title: '文件名', unresize: true}
                 , {field: 'updateTime', title: '提交时间', unresize: true}
                 , {field: 'status', title: '状态', unresize: true, templet: '#statusTpl'}
-                , {field: 'submitter', title: '提交人', unresize: true}
+                , {field: 'submitterName', title: '提交人', unresize: true}
             ]]
         });
 

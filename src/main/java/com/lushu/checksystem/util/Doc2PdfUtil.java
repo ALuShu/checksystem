@@ -57,22 +57,19 @@ public class Doc2PdfUtil {
                     //最核心的操作，doc转pdf
                     converter.convert(docFile, pdfFile);
                     connection.disconnect();
-                    log.info("****pdf转换成功，PDF输出：" + pdfFile.getPath() + "****");
                 } catch (java.net.ConnectException e) {
-                    log.info("****pdf转换异常，openoffice服务未启动！****");
-                    e.printStackTrace();
+                    log.info("pdf工具类：open office服务器未启动！\n"+"异常："+e);
                     throw e;
                 } catch (com.artofsolving.jodconverter.openoffice.connection.OpenOfficeException e) {
-                    System.out.println("****pdf转换器异常，读取转换文件失败****");
-                    e.printStackTrace();
+                    log.info("pdf工具类：读取转换文件失败！\n"+"异常："+e);
                     throw e;
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.info("pdf工具类：未知异常！\n"+"异常："+e);
                     throw e;
                 }
             }
         } else {
-            log.info("****pdf转换异常，需要转换的doc文档不存在，无法转换****");
+            log.info("pdf工具类：带转换文档不存在！\n");
         }
         return pdfFile;
     }
