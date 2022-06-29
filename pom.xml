@@ -101,7 +101,7 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>4.1.0</version>
+            <version>4.1.1</version>
         </dependency>
         <!-- 解析.xlsx后缀3个jar包(也可以解析.docx) -->
         <dependency>
